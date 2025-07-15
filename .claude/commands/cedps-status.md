@@ -17,7 +17,7 @@ Display comprehensive CE-DPS project status including current phase, completion 
 # Check if project is initialized
 !if [ ! -f "docs/ce-dps-state.json" ]; then
     echo "❌ CE-DPS project not initialized"
-    echo "💡 Run '/cedps init' to initialize the project"
+    echo "💡 Run '/cedps-init' to initialize the project"
     exit 0
 fi
 
@@ -51,12 +51,12 @@ else
     echo "🔄 Phase 1: Strategic Planning - In Progress"
     if [ -f "docs/phases/phase-1-planning.md" ]; then
         if grep -q "✅ Approved" docs/phases/phase-1-planning.md; then
-            echo "   ⏳ Awaiting validation - run '/cedps phase1 validate'"
+            echo "   ⏳ Awaiting validation - run '/cedps-phase1-validate'"
         else
             echo "   ⏳ Awaiting human approval of architectural analysis"
         fi
     else
-        echo "   ⏳ Not started - run '/cedps phase1 setup'"
+        echo "   ⏳ Not started - run '/cedps-phase1-setup'"
     fi
 fi
 
@@ -70,12 +70,12 @@ elif jq -e '.phases_completed | contains([1])' docs/ce-dps-state.json >/dev/null
     echo "🔄 Phase 2: Sprint Planning - Available"
     if [ -f "docs/phases/phase-2-sprint-planning.md" ]; then
         if grep -q "✅ Approved" docs/phases/phase-2-sprint-planning.md; then
-            echo "   ⏳ Awaiting validation - run '/cedps phase2 validate'"
+            echo "   ⏳ Awaiting validation - run '/cedps-phase2-validate'"
         else
             echo "   ⏳ Awaiting human approval of implementation plan"
         fi
     else
-        echo "   ⏳ Not started - run '/cedps phase2 setup'"
+        echo "   ⏳ Not started - run '/cedps-phase2-setup'"
     fi
 else
     echo "⏸️  Phase 2: Sprint Planning - Blocked (complete Phase 1 first)"
@@ -91,12 +91,12 @@ elif jq -e '.phases_completed | contains([1, 2])' docs/ce-dps-state.json >/dev/n
     echo "🔄 Phase 3: Implementation - Available"
     if [ -f "docs/phases/phase-3-implementation.md" ]; then
         if grep -q "✅ Approved" docs/phases/phase-3-implementation.md; then
-            echo "   ⏳ Awaiting validation - run '/cedps phase3 validate'"
+            echo "   ⏳ Awaiting validation - run '/cedps-phase3-validate'"
         else
             echo "   ⏳ Implementation in progress or awaiting human validation"
         fi
     else
-        echo "   ⏳ Not started - run '/cedps phase3 setup'"
+        echo "   ⏳ Not started - run '/cedps-phase3-setup'"
     fi
 else
     echo "⏸️  Phase 3: Implementation - Blocked (complete Phases 1 and 2 first)"
@@ -153,46 +153,46 @@ fi
 
 !if [ "$CURRENT_PHASE" = "0" ]; then
     echo "👉 Start Phase 1: Strategic Planning"
-    echo "   Command: /cedps phase1 setup"
+    echo "   Command: /cedps-phase1-setup"
     echo "   Purpose: Define project vision and approve architecture"
 elif [ "$CURRENT_PHASE" = "1" ]; then
     if jq -e '.phases_completed | contains([1])' docs/ce-dps-state.json >/dev/null 2>&1; then
         echo "👉 Start Phase 2: Sprint Planning"
-        echo "   Command: /cedps phase2 setup"
+        echo "   Command: /cedps-phase2-setup"
         echo "   Purpose: Select features and create implementation plan"
     else
         if [ -f "docs/phases/phase-1-planning.md" ]; then
             if grep -q "✅ Approved" docs/phases/phase-1-planning.md; then
                 echo "👉 Validate Phase 1 completion"
-                echo "   Command: /cedps phase1 validate"
+                echo "   Command: /cedps-phase1-validate"
             else
                 echo "👉 Complete Phase 1 analysis"
-                echo "   Command: /cedps phase1 analyze"
+                echo "   Command: /cedps-phase1-analyze"
                 echo "   Note: Fill out business requirements first"
             fi
         else
             echo "👉 Start Phase 1: Strategic Planning"
-            echo "   Command: /cedps phase1 setup"
+            echo "   Command: /cedps-phase1-setup"
         fi
     fi
 elif [ "$CURRENT_PHASE" = "2" ]; then
     if jq -e '.phases_completed | contains([2])' docs/ce-dps-state.json >/dev/null 2>&1; then
         echo "👉 Start Phase 3: Implementation"
-        echo "   Command: /cedps phase3 setup"
+        echo "   Command: /cedps-phase3-setup"
         echo "   Purpose: Implement approved features with quality gates"
     else
         if [ -f "docs/phases/phase-2-sprint-planning.md" ]; then
             if grep -q "✅ Approved" docs/phases/phase-2-sprint-planning.md; then
                 echo "👉 Validate Phase 2 completion"
-                echo "   Command: /cedps phase2 validate"
+                echo "   Command: /cedps-phase2-validate"
             else
                 echo "👉 Complete Phase 2 planning"
-                echo "   Command: /cedps phase2 plan"
+                echo "   Command: /cedps-phase2-plan"
                 echo "   Note: Select features for sprint first"
             fi
         else
             echo "👉 Start Phase 2: Sprint Planning"
-            echo "   Command: /cedps phase2 setup"
+            echo "   Command: /cedps-phase2-setup"
         fi
     fi
 elif [ "$CURRENT_PHASE" = "3" ]; then
@@ -200,20 +200,20 @@ elif [ "$CURRENT_PHASE" = "3" ]; then
         echo "🎉 Implementation Complete!"
         echo "👉 Ready for production deployment"
         echo "   Checklist: docs/phases/phase-3-artifacts/production-deployment-checklist.md"
-        echo "   Or start next sprint: /cedps phase2 setup"
+        echo "   Or start next sprint: /cedps-phase2-setup"
     else
         if [ -f "docs/phases/phase-3-implementation.md" ]; then
             if grep -q "✅ Approved" docs/phases/phase-3-implementation.md; then
                 echo "👉 Validate Phase 3 completion"
-                echo "   Command: /cedps phase3 validate"
+                echo "   Command: /cedps-phase3-validate"
             else
                 echo "👉 Complete Phase 3 implementation"
-                echo "   Command: /cedps phase3 implement"
+                echo "   Command: /cedps-phase3-implement"
                 echo "   Note: Comprehensive TDD implementation with quality gates"
             fi
         else
             echo "👉 Start Phase 3: Implementation"
-            echo "   Command: /cedps phase3 setup"
+            echo "   Command: /cedps-phase3-setup"
         fi
     fi
 fi
@@ -221,8 +221,8 @@ fi
 !echo ""
 !echo "💡 Other Commands"
 !echo "================"
-!echo "/cedps tools  - Run quality gates and validation tools"
-!echo "/cedps help   - Show detailed command help"
+!echo "/cedps-tools  - Run quality gates and validation tools"
+!echo "/cedps-help   - Show detailed command help"
 !echo ""
 !echo "📚 Documentation"
 !echo "================"
@@ -268,7 +268,7 @@ The status report shows:
 1. **Read the recommendation** in the "Next Steps" section
 2. **Run the suggested command** to proceed with the workflow
 3. **Complete any human actions** required (approvals, validations, etc.)
-4. **Run `/cedps status`** again to see updated progress
+4. **Run `/cedps-status`** again to see updated progress
 
 ### <troubleshooting-status>
 **If Status Seems Wrong**:
@@ -287,7 +287,7 @@ The status report shows:
 
 ## <troubleshooting>
 ### <common-issues>
-- **"Project not initialized"**: Run `/cedps init` first
+- **"Project not initialized"**: Run `/cedps-init` first
 - **"jq: command not found"**: Install jq for JSON processing
 - **"Git not found"**: Initialize git repository or install git
 - **Status seems outdated**: State files may be corrupted or missing

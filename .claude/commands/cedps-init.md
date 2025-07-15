@@ -56,7 +56,7 @@ This project follows the CE-DPS (Context Engineered Development Process Suite) m
 
 ## Current Status
 - **Phase**: Not started
-- **Next Action**: Run `/cedps phase1 setup` to begin strategic planning
+- **Next Action**: Run `/cedps-phase1-setup` to begin strategic planning
 
 ## Quality Standards
 - >95% test coverage required
@@ -96,10 +96,10 @@ fi
 **To Begin Development**:
 ```bash
 # Check current project status
-/cedps status
+/cedps-status
 
 # Start Phase 1: Strategic Planning
-/cedps phase1 setup
+/cedps-phase1-setup
 ```
 
 **Project Structure Created**:

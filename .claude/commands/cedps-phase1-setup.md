@@ -14,7 +14,7 @@ Initialize Phase 1 strategic planning with business requirements template, envir
 !echo "📋 Setting up CE-DPS Phase 1: Strategic Planning..."
 
 # Validate project initialization
-!if [ ! -f "docs/ce-dps-state.json" ]; then echo "❌ Error: CE-DPS project not initialized. Run '/cedps init' first."; exit 1; fi
+!if [ ! -f "docs/ce-dps-state.json" ]; then echo "❌ Error: CE-DPS project not initialized. Run '/cedps-init' first."; exit 1; fi
 
 # Check if already in Phase 1
 !if [ -f "docs/phases/phase-1-planning.md" ]; then
@@ -120,7 +120,7 @@ fi
 ### <ready-to-proceed>
 **When template is complete, run**:
 ```bash
-/cedps phase1 analyze
+/cedps-phase1-analyze
 ```
 
 This will trigger Claude Code to perform comprehensive architectural analysis based on your requirements.
@@ -129,7 +129,7 @@ This will trigger Claude Code to perform comprehensive architectural analysis ba
 
 ## <troubleshooting>
 ### <common-errors>
-- **"CE-DPS project not initialized"**: Run `/cedps init` first
+- **"CE-DPS project not initialized"**: Run `/cedps-init` first
 - **"Phase 1 template not found"**: Ensure you're in CE-DPS project root
 - **"Permission denied"**: Check docs/ directory write permissions
 - **"jq: command not found"**: Install jq for JSON processing

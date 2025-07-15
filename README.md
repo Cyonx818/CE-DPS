@@ -45,19 +45,19 @@ Getting started with CE-DPS is simple with the slash command interface:
 
 1. **Initialize Your Project** (1 minute)
    ```bash
-   /cedps init
+   /cedps-init
    ```
    This creates the project structure and prepares the environment.
 
 2. **Check Status and Next Steps** (1 minute)
    ```bash
-   /cedps status
+   /cedps-status
    ```
    Shows current phase and exactly what to do next.
 
 3. **Start Phase 1: Strategic Planning** (5 minutes)
    ```bash
-   /cedps phase1 setup
+   /cedps-phase1-setup
    ```
    Creates business requirements template at `docs/phases/phase-1-planning.md`.
 
@@ -70,17 +70,17 @@ Getting started with CE-DPS is simple with the slash command interface:
 
 5. **Get AI Analysis** (30 minutes)
    ```bash
-   /cedps phase1 analyze
+   /cedps-phase1-analyze
    ```
    AI performs comprehensive architectural analysis based on your requirements.
 
 6. **Review and Approve** (10 minutes)
    - Review AI-proposed architecture and implementation plan
    - Approve or request changes to the approach
-   - Run `/cedps phase1 validate` when ready
+   - Run `/cedps-phase1-validate` when ready
 
 7. **Continue Through Phases** (Ongoing)
-   - Follow `/cedps status` guidance for Phase 2 and 3
+   - Follow `/cedps-status` guidance for Phase 2 and 3
    - AI implements code following CE-DPS patterns
    - You review and approve based on business value
    - Quality gates ensure production-ready code
@@ -95,9 +95,9 @@ Getting started with CE-DPS is simple with the slash command interface:
 
 **Slash Commands**:
 ```bash
-/cedps phase1 setup    # Initialize Phase 1 environment and template
-/cedps phase1 analyze  # Trigger AI architectural analysis
-/cedps phase1 validate # Validate completion and human approvals
+/cedps-phase1-setup    # Initialize Phase 1 environment and template
+/cedps-phase1-analyze  # Trigger AI architectural analysis
+/cedps-phase1-validate # Validate completion and human approvals
 ```
 
 **Human Responsibilities**:
@@ -118,9 +118,9 @@ Getting started with CE-DPS is simple with the slash command interface:
 
 **Slash Commands**:
 ```bash
-/cedps phase2 setup    # Initialize Phase 2 environment and feature selection
-/cedps phase2 plan     # Trigger AI implementation planning
-/cedps phase2 validate # Validate completion and implementation approach
+/cedps-phase2-setup    # Initialize Phase 2 environment and feature selection
+/cedps-phase2-plan     # Trigger AI implementation planning
+/cedps-phase2-validate # Validate completion and implementation approach
 ```
 
 **Human Responsibilities**:
@@ -141,9 +141,9 @@ Getting started with CE-DPS is simple with the slash command interface:
 
 **Slash Commands**:
 ```bash
-/cedps phase3 setup     # Initialize Phase 3 environment with quality gates
-/cedps phase3 implement # Trigger AI implementation with test-driven development
-/cedps phase3 validate  # Validate completion and production readiness
+/cedps-phase3-setup     # Initialize Phase 3 environment with quality gates
+/cedps-phase3-implement # Trigger AI implementation with test-driven development
+/cedps-phase3-validate  # Validate completion and production readiness
 ```
 
 **Human Responsibilities**:
@@ -216,31 +216,31 @@ CE-DPS provides user-friendly slash commands that automate the entire methodolog
 
 #### Project Management
 ```bash
-/cedps init           # Initialize new CE-DPS project
-/cedps status         # Show current project status and next steps
-/cedps tools          # Run quality gates and validation tools
-/cedps help           # Show comprehensive help and command reference
+/cedps-init           # Initialize new CE-DPS project
+/cedps-status         # Show current project status and next steps
+/cedps-tools          # Run quality gates and validation tools
+/cedps-help           # Show comprehensive help and command reference
 ```
 
 #### Phase 1: Strategic Planning
 ```bash
-/cedps phase1 setup    # Initialize Phase 1 environment and business template
-/cedps phase1 analyze  # Trigger AI architectural analysis of requirements
-/cedps phase1 validate # Validate Phase 1 completion and human approvals
+/cedps-phase1-setup    # Initialize Phase 1 environment and business template
+/cedps-phase1-analyze  # Trigger AI architectural analysis of requirements
+/cedps-phase1-validate # Validate Phase 1 completion and human approvals
 ```
 
 #### Phase 2: Sprint Planning
 ```bash
-/cedps phase2 setup    # Initialize Phase 2 environment and feature selection
-/cedps phase2 plan     # Trigger AI implementation planning for selected features
-/cedps phase2 validate # Validate Phase 2 completion and implementation approach
+/cedps-phase2-setup    # Initialize Phase 2 environment and feature selection
+/cedps-phase2-plan     # Trigger AI implementation planning for selected features
+/cedps-phase2-validate # Validate Phase 2 completion and implementation approach
 ```
 
 #### Phase 3: Implementation
 ```bash
-/cedps phase3 setup     # Initialize Phase 3 environment with quality gates
-/cedps phase3 implement # Trigger AI implementation with test-driven development
-/cedps phase3 validate  # Validate Phase 3 completion and production readiness
+/cedps-phase3-setup     # Initialize Phase 3 environment with quality gates
+/cedps-phase3-implement # Trigger AI implementation with test-driven development
+/cedps-phase3-validate  # Validate Phase 3 completion and production readiness
 ```
 
 ### Command Usage Examples
@@ -248,15 +248,15 @@ CE-DPS provides user-friendly slash commands that automate the entire methodolog
 #### Starting a New Project
 ```bash
 # Initialize project structure and environment
-/cedps init
+/cedps-init
 
 # Check current status and next steps
-/cedps status
+/cedps-status
 # Output: "👉 Start Phase 1: Strategic Planning"
-# Command: /cedps phase1 setup
+# Command: /cedps-phase1-setup
 
 # Set up Phase 1 strategic planning
-/cedps phase1 setup
+/cedps-phase1-setup
 # Creates: docs/phases/phase-1-planning.md
 # Next: Fill out business requirements template
 ```
@@ -264,12 +264,12 @@ CE-DPS provides user-friendly slash commands that automate the entire methodolog
 #### Phase 1 Workflow
 ```bash
 # After filling business requirements template
-/cedps phase1 analyze
+/cedps-phase1-analyze
 # AI performs comprehensive architectural analysis
 # Provides: System architecture, technology evaluation, implementation strategy
 
 # After reviewing and approving AI analysis
-/cedps phase1 validate
+/cedps-phase1-validate
 # Validates: Human approvals, architectural decisions, readiness for Phase 2
 # Output: "🎉 Phase 1 complete! Ready for Phase 2"
 ```
@@ -277,17 +277,17 @@ CE-DPS provides user-friendly slash commands that automate the entire methodolog
 #### Phase 2 Workflow
 ```bash
 # Start sprint planning
-/cedps phase2 setup
+/cedps-phase2-setup
 # Creates: Sprint planning template with feature roadmap from Phase 1
 # Next: Select 2-4 features for sprint implementation
 
 # After selecting features for sprint
-/cedps phase2 plan
+/cedps-phase2-plan
 # AI creates: Detailed implementation plans, complexity analysis, effort estimates
 # Provides: File-level task breakdown, technical approach, risk assessment
 
 # After reviewing and approving implementation plan
-/cedps phase2 validate
+/cedps-phase2-validate
 # Validates: Feature selection, implementation approach, timeline
 # Output: "🎉 Phase 2 complete! Ready for Phase 3"
 ```
@@ -295,17 +295,17 @@ CE-DPS provides user-friendly slash commands that automate the entire methodolog
 #### Phase 3 Workflow
 ```bash
 # Start implementation
-/cedps phase3 setup
+/cedps-phase3-setup
 # Creates: Implementation environment, feature branch, quality gates
 # Prepares: Testing framework, security validation, performance benchmarks
 
 # Begin AI implementation
-/cedps phase3 implement
+/cedps-phase3-implement
 # AI performs: Test-driven development, comprehensive testing, security validation
 # Provides: Working features with >95% test coverage, security patterns
 
 # After validating business value of implemented features
-/cedps phase3 validate
+/cedps-phase3-validate
 # Validates: Feature functionality, business value, production readiness
 # Output: "🎉 Implementation complete! Ready for production"
 ```
@@ -321,7 +321,7 @@ Each command clearly indicates when human action is required:
 ### Quality Integration
 
 Commands integrate seamlessly with quality gates:
-- `/cedps tools` runs comprehensive quality validation
+- `/cedps-tools` runs comprehensive quality validation
 - Each phase automatically runs appropriate quality checks
 - Human approval required only after quality standards are met
 
@@ -333,17 +333,17 @@ The recommended way to run tools is through the integrated slash commands:
 
 ```bash
 # Primary quality validation tool
-/cedps tools
+/cedps-tools
 # Runs: Quality gates, test suite, security audit, performance benchmarks
 # Provides: Comprehensive quality validation with actionable recommendations
 
 # Project status and guidance
-/cedps status
+/cedps-status
 # Shows: Current phase, completion status, next steps
 # Guides: What to do next to proceed with the methodology
 
 # Help and command reference
-/cedps help
+/cedps-help
 # Displays: All available commands, workflow guidance, troubleshooting
 ```
 
@@ -421,12 +421,12 @@ Use the Phase 1 template created by `/cedps phase1 setup`:
 **Getting Started**:
 ```bash
 # Initialize project and get template
-/cedps init
-/cedps phase1 setup
+/cedps-init
+/cedps-phase1-setup
 
 # Fill out docs/phases/phase-1-planning.md with your requirements
 # Then trigger AI analysis
-/cedps phase1 analyze
+/cedps-phase1-analyze
 ```
 
 **Reviewing AI Proposals**:
@@ -465,13 +465,13 @@ Use the Phase 1 template created by `/cedps phase1 setup`:
 **Monitoring Progress**:
 ```bash
 # Check current status and next steps
-/cedps status
+/cedps-status
 
 # Run quality validation
-/cedps tools
+/cedps-tools
 
 # Get help if needed
-/cedps help
+/cedps-help
 ```
 
 ## Directory Structure
@@ -568,10 +568,10 @@ This methodology is designed to be freely used and adapted by development teams.
 
 ---
 
-**Ready to start?** Run `/cedps init` to initialize your first CE-DPS project. The slash commands will guide you through each step of the process with clear instructions and automated setup.
+**Ready to start?** Run `/cedps-init` to initialize your first CE-DPS project. The slash commands will guide you through each step of the process with clear instructions and automated setup.
 
 For questions or support:
-- Run `/cedps help` for comprehensive command reference
-- Use `/cedps status` to see current progress and next steps
+- Run `/cedps-help` for comprehensive command reference
+- Use `/cedps-status` to see current progress and next steps
 - Refer to the documentation in the `methodology/` directory
 - Reach out to the development team

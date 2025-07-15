@@ -15,7 +15,7 @@ Trigger comprehensive AI implementation planning for selected sprint features, i
 
 # Validate Phase 2 setup
 !if [ ! -f "docs/phases/phase-2-sprint-planning.md" ]; then
-    echo "❌ Error: Phase 2 not set up. Run '/cedps phase2 setup' first."
+    echo "❌ Error: Phase 2 not set up. Run '/cedps-phase2-setup' first."
     exit 1
 fi
 
@@ -222,7 +222,7 @@ Claude Code is now performing comprehensive Phase 2 implementation planning incl
 2. **Validate effort estimates** against team capacity and timeline
 3. **Assess technical approach** for alignment with organizational standards
 4. **Approve sprint scope** or request adjustments
-5. **Run `/cedps phase2 validate`** when ready to proceed to implementation
+5. **Run `/cedps-phase2-validate`** when ready to proceed to implementation
 
 ### <approval-process>
 **You will approve/reject each section**:
@@ -251,7 +251,7 @@ Claude Code is now performing comprehensive Phase 2 implementation planning incl
 
 ## <troubleshooting>
 ### <common-errors>
-- **"Phase 2 not set up"**: Run `/cedps phase2 setup` first
+- **"Phase 2 not set up"**: Run `/cedps-phase2-setup` first
 - **"Feature selection not completed"**: Complete feature selection in phase-2-sprint-planning.md
 - **"Template not completed"**: Replace template placeholders with actual feature selections
 - **Planning too vague**: Request more specific implementation details

@@ -15,13 +15,13 @@ Validate Phase 2 sprint planning completion, verify human approvals for implemen
 
 # Validate Phase 2 setup exists
 !if [ ! -f "docs/phases/phase-2-sprint-planning.md" ]; then
-    echo "❌ Error: Phase 2 not found. Run '/cedps phase2 setup' first."
+    echo "❌ Error: Phase 2 not found. Run '/cedps-phase2-setup' first."
     exit 1
 fi
 
 # Check for AI implementation planning completion
 !if ! grep -q "Feature Breakdown" docs/phases/phase-2-sprint-planning.md; then
-    echo "❌ Error: AI implementation planning not completed. Run '/cedps phase2 plan' first."
+    echo "❌ Error: AI implementation planning not completed. Run '/cedps-phase2-plan' first."
     exit 1
 fi
 
@@ -201,7 +201,7 @@ cat docs/phases/phase-2-completion-report.md
 cat docs/sprints/sprint-001/backlog/sprint-backlog.md
 
 # Start Phase 3 when ready
-/cedps phase3 setup
+/cedps-phase3-setup
 ```
 
 ### <success-criteria-met>
@@ -225,8 +225,8 @@ cat docs/sprints/sprint-001/backlog/sprint-backlog.md
 
 ## <troubleshooting>
 ### <common-errors>
-- **"Phase 2 not found"**: Run `/cedps phase2 setup` first
-- **"AI planning not completed"**: Run `/cedps phase2 plan` first
+- **"Phase 2 not found"**: Run `/cedps-phase2-setup` first
+- **"AI planning not completed"**: Run `/cedps-phase2-plan` first
 - **"Missing approval sections"**: Ensure Claude Code provided all required approval sections
 - **"No human approvals found"**: Review and approve implementation plans in planning document
 - **"Rejected sections found"**: Address items marked "❌ Requires Revision"

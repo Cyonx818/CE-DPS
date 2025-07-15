@@ -57,28 +57,28 @@ Comprehensive help system for CE-DPS slash commands, methodology overview, and w
 !echo ""
 !echo "🔧 Project Management"
 !echo "--------------------"
-!echo "/cedps init           - Initialize new CE-DPS project"
-!echo "/cedps status         - Show current project status and next steps"
-!echo "/cedps tools          - Run quality gates and validation tools"
-!echo "/cedps help           - Show this help information"
+!echo "/cedps-init           - Initialize new CE-DPS project"
+!echo "/cedps-status         - Show current project status and next steps"
+!echo "/cedps-tools          - Run quality gates and validation tools"
+!echo "/cedps-help           - Show this help information"
 !echo ""
 !echo "📋 Phase 1: Strategic Planning"
 !echo "------------------------------"
-!echo "/cedps phase1 setup    - Initialize Phase 1 environment and template"
-!echo "/cedps phase1 analyze  - Trigger AI analysis of business requirements"
-!echo "/cedps phase1 validate - Validate Phase 1 completion and approve"
+!echo "/cedps-phase1-setup    - Initialize Phase 1 environment and template"
+!echo "/cedps-phase1-analyze  - Trigger AI analysis of business requirements"
+!echo "/cedps-phase1-validate - Validate Phase 1 completion and approve"
 !echo ""
 !echo "🎯 Phase 2: Sprint Planning"
 !echo "---------------------------"
-!echo "/cedps phase2 setup    - Initialize Phase 2 environment and template"
-!echo "/cedps phase2 plan     - Trigger AI implementation planning"
-!echo "/cedps phase2 validate - Validate Phase 2 completion and approve"
+!echo "/cedps-phase2-setup    - Initialize Phase 2 environment and template"
+!echo "/cedps-phase2-plan     - Trigger AI implementation planning"
+!echo "/cedps-phase2-validate - Validate Phase 2 completion and approve"
 !echo ""
 !echo "🚀 Phase 3: Implementation"
 !echo "--------------------------"
-!echo "/cedps phase3 setup     - Initialize Phase 3 environment and tools"
-!echo "/cedps phase3 implement - Trigger AI implementation with TDD"
-!echo "/cedps phase3 validate  - Validate Phase 3 completion and production readiness"
+!echo "/cedps-phase3-setup     - Initialize Phase 3 environment and tools"
+!echo "/cedps-phase3-implement - Trigger AI implementation with TDD"
+!echo "/cedps-phase3-validate  - Validate Phase 3 completion and production readiness"
 !echo ""
 
 # Command Usage Patterns
@@ -86,21 +86,21 @@ Comprehensive help system for CE-DPS slash commands, methodology overview, and w
 !echo "========================="
 !echo ""
 !echo "🔄 Typical Workflow:"
-!echo "1. /cedps init                 # Initialize project"
-!echo "2. /cedps phase1 setup         # Start strategic planning"
+!echo "1. /cedps-init                 # Initialize project"
+!echo "2. /cedps-phase1-setup         # Start strategic planning"
 !echo "3. [Fill business requirements] # Human action required"
-!echo "4. /cedps phase1 analyze       # AI architectural analysis"
+!echo "4. /cedps-phase1-analyze       # AI architectural analysis"
 !echo "5. [Review and approve]        # Human approval required"
-!echo "6. /cedps phase1 validate      # Validate completion"
-!echo "7. /cedps phase2 setup         # Start sprint planning"
+!echo "6. /cedps-phase1-validate      # Validate completion"
+!echo "7. /cedps-phase2-setup         # Start sprint planning"
 !echo "8. [Select features]           # Human feature selection"
-!echo "9. /cedps phase2 plan          # AI implementation planning"
+!echo "9. /cedps-phase2-plan          # AI implementation planning"
 !echo "10. [Review and approve]       # Human approval required"
-!echo "11. /cedps phase2 validate     # Validate completion"
-!echo "12. /cedps phase3 setup        # Start implementation"
-!echo "13. /cedps phase3 implement    # AI code implementation"
+!echo "11. /cedps-phase2-validate     # Validate completion"
+!echo "12. /cedps-phase3-setup        # Start implementation"
+!echo "13. /cedps-phase3-implement    # AI code implementation"
 !echo "14. [Validate business value]  # Human validation required"
-!echo "15. /cedps phase3 validate     # Validate completion"
+!echo "15. /cedps-phase3-validate     # Validate completion"
 !echo ""
 
 # Human Actions Required
@@ -200,8 +200,8 @@ Comprehensive help system for CE-DPS slash commands, methodology overview, and w
 !echo "• Coverage too low: Add more comprehensive tests"
 !echo ""
 !echo "Getting Help:"
-!echo "• /cedps status - Check current project status"
-!echo "• /cedps tools - Run quality validation"
+!echo "• /cedps-status - Check current project status"
+!echo "• /cedps-tools - Run quality validation"
 !echo "• Check docs/PROJECT.md for project-specific information"
 !echo "• Review phase documents in docs/phases/"
 !echo ""
@@ -211,19 +211,19 @@ Comprehensive help system for CE-DPS slash commands, methodology overview, and w
 !echo "=================="
 !echo ""
 !echo "New Project:"
-!echo "1. Run '/cedps init' to initialize the project"
-!echo "2. Run '/cedps status' to see current state"
+!echo "1. Run '/cedps-init' to initialize the project"
+!echo "2. Run '/cedps-status' to see current state"
 !echo "3. Follow the recommended next steps"
 !echo ""
 !echo "Existing Project:"
-!echo "1. Run '/cedps status' to see current phase"
+!echo "1. Run '/cedps-status' to see current phase"
 !echo "2. Follow the recommended next steps"
-!echo "3. Use '/cedps tools' to validate quality"
+!echo "3. Use '/cedps-tools' to validate quality"
 !echo ""
 !echo "Need Help:"
-!echo "• This help: /cedps help"
-!echo "• Project status: /cedps status"
-!echo "• Quality check: /cedps tools"
+!echo "• This help: /cedps-help"
+!echo "• Project status: /cedps-status"
+!echo "• Quality check: /cedps-tools"
 !echo ""
 
 # Footer
@@ -268,10 +268,10 @@ This comprehensive help system provides:
 
 ### <getting-started>
 **For New Users**:
-1. **Start with `/cedps init`** to initialize your project
-2. **Run `/cedps status`** to see your current state
+1. **Start with `/cedps-init`** to initialize your project
+2. **Run `/cedps-status`** to see your current state
 3. **Follow the recommended next steps** from the status command
-4. **Use `/cedps help`** whenever you need guidance
+4. **Use `/cedps-help`** whenever you need guidance
 
 ### <workflow-summary>
 **Quick Workflow Reference**:
@@ -303,8 +303,8 @@ This comprehensive help system provides:
 - **Command not working**: Ensure you're in the CE-DPS project root
 - **Information unclear**: Check specific phase documentation
 - **Need more detail**: Review methodology documentation
-- **Process questions**: Use `/cedps status` for current state
-- **Quality issues**: Use `/cedps tools` for validation
+- **Process questions**: Use `/cedps-status` for current state
+- **Quality issues**: Use `/cedps-tools` for validation
 </help-system-issues>
 
 ### <quality-validation>

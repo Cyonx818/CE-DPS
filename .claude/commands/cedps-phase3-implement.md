@@ -15,7 +15,7 @@ Trigger comprehensive AI implementation of approved sprint features using test-d
 
 # Validate Phase 3 setup
 !if [ ! -f "docs/phases/phase-3-implementation.md" ]; then
-    echo "❌ Error: Phase 3 not set up. Run '/cedps phase3 setup' first."
+    echo "❌ Error: Phase 3 not set up. Run '/cedps-phase3-setup' first."
     exit 1
 fi
 
@@ -29,7 +29,7 @@ fi
 !CURRENT_BRANCH=$(git branch --show-current)
 !if [[ "$CURRENT_BRANCH" != *"sprint-001-implementation"* ]]; then
     echo "❌ Error: Not on implementation branch. Current branch: $CURRENT_BRANCH"
-    echo "💡 Switch to sprint-001-implementation branch or run '/cedps phase3 setup' again."
+    echo "💡 Switch to sprint-001-implementation branch or run '/cedps-phase3-setup' again."
     exit 1
 fi
 
@@ -314,12 +314,12 @@ Claude Code is now executing comprehensive Phase 3 implementation including:
 1. **Final Quality Gates**: Comprehensive validation across all features
 2. **Integration Testing**: Cross-feature functionality validation
 3. **Human Business Validation**: Overall sprint success validation
-4. **Run `/cedps phase3 validate`**: Formal completion validation
+4. **Run `/cedps-phase3-validate`**: Formal completion validation
 </human-action-required>
 
 ## <troubleshooting>
 ### <common-errors>
-- **"Phase 3 not set up"**: Run `/cedps phase3 setup` first
+- **"Phase 3 not set up"**: Run `/cedps-phase3-setup` first
 - **"Sprint backlog not found"**: Ensure Phase 2 was completed properly
 - **"Not on implementation branch"**: Switch to sprint-001-implementation branch
 - **"Quality gates failed"**: Address specific quality issues reported
