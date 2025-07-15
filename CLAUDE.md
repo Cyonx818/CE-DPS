@@ -1,97 +1,105 @@
-# CE-DPS Claude Code Integration
+# <context>CE-DPS Claude Code Integration</context>
 
-## Overview
+<meta>
+  <title>CE-DPS Claude Code Integration</title>
+  <type>ai-configuration</type>
+  <audience>ai_assistant</audience>
+  <complexity>advanced</complexity>
+  <updated>2025-07-15</updated>
+</meta>
 
-This document configures Claude Code for effective use with the CE-DPS (Context Engineered Development Process Suite) methodology. The configuration ensures AI assistants can implement code effectively under human strategic oversight.
+## <summary priority="high">TL;DR</summary>
+- **Purpose**: Claude Code configuration for CE-DPS methodology implementation
+- **Authority Model**: AI implements all code/tests/docs; humans provide strategic oversight
+- **Workflow**: 3-phase process (Planning → Sprint → Implementation)
+- **Quality Gates**: >95% test coverage, security-first, comprehensive validation
+- **Integration**: Fortitude knowledge management + quality validation tools
 
-## Core Principles
+## <implementation>Core Authority Framework</implementation>
 
-### AI Implementation Authority
-- **Code Implementation**: AI writes ALL code, tests, and technical documentation
-- **Quality Enforcement**: AI implements comprehensive testing and validation
-- **Pattern Application**: AI applies established patterns and best practices
-- **Knowledge Integration**: AI leverages Fortitude for pattern lookup and learning
-- **Documentation Standards**: AI follows [LLM Documentation Guidelines](methodology/ai-implementation/llm-documentation-guidelines.md) for all generated documentation
+### <pattern>AI Implementation Authority</pattern>
+- **Code Implementation**: ALL code, tests, technical documentation
+- **Quality Enforcement**: Comprehensive testing and validation
+- **Pattern Application**: Established best practices via Fortitude
+- **Knowledge Integration**: Pattern lookup and learning capture
+- **Documentation Standards**: [LLM Documentation Guidelines](methodology/ai-implementation/llm-documentation-guidelines.md)
 
-### Human Strategic Authority
-- **Vision & Direction**: Humans define project vision and business requirements
-- **Architecture Approval**: Humans approve system architecture and design decisions
-- **Feature Prioritization**: Humans select features and approve sprint scope
-- **Business Validation**: Humans validate business value and strategic alignment
+### <pattern>Human Strategic Authority</pattern>
+- **Vision & Direction**: Project vision, business requirements
+- **Architecture Approval**: System architecture, design decisions
+- **Feature Prioritization**: Sprint scope, feature selection
+- **Business Validation**: Value assessment, strategic alignment
 
-## Development Workflow
+## <workflow>Development Process</workflow>
 
-### Phase 1: Strategic Planning (Human-Led)
-```markdown
-## Human Responsibilities
-1. Define business requirements and success metrics
-2. Set strategic constraints and technical requirements
-3. Review and approve AI-proposed architecture
-4. Validate feature roadmap and timeline
+### <phase>Phase 1: Strategic Planning (Human-Led)</phase>
 
-## AI Responsibilities
-1. Research architectural patterns and best practices
-2. Design system architecture with security and scalability
-3. Create detailed feature roadmap with effort estimates
-4. Identify risks and propose mitigation strategies
+<responsibilities>
+**Human**:
+1. Define business requirements + success metrics
+2. Set strategic constraints + technical requirements
+3. Review/approve AI architecture proposals
+4. Validate feature roadmap + timeline
 
-## Approval Process
-- Human reviews AI analysis and architecture proposals
-- Human approves or requests changes to approach
-- Human signs off on Phase 1 completion
-```
+**AI**:
+1. Research architectural patterns + best practices
+2. Design system architecture (security + scalability)
+3. Create detailed feature roadmap + effort estimates
+4. Identify risks + mitigation strategies
 
-### Phase 2: Sprint Planning (AI-Led with Human Approval)
-```markdown
-## AI Responsibilities
-1. Analyze selected features for implementation complexity
-2. Create detailed implementation plans with file-level breakdown
-3. Research knowledge gaps using parallel subagents
-4. Estimate effort and identify dependencies
+**Approval**: Human reviews AI analysis → approves/requests changes → signs off
+</responsibilities>
 
-## Human Responsibilities
-1. Select features for sprint based on business priorities
-2. Review and approve implementation approach
-3. Validate timeline and resource allocation
+### <phase>Phase 2: Sprint Planning (AI-Led, Human Approval)</phase>
+
+<responsibilities>
+**AI**:
+1. Analyze features for implementation complexity
+2. Create file-level implementation plans
+3. Research knowledge gaps via parallel subagents
+4. Estimate effort + identify dependencies
+
+**Human**:
+1. Select features based on business priorities
+2. Review/approve implementation approach
+3. Validate timeline + resource allocation
 4. Authorize sprint execution
 
-## Quality Gates
-- Implementation plan detailed to file level
-- All dependencies identified and researched
-- Security and performance considerations addressed
-- Testing approach comprehensive and realistic
-```
+**Quality Gates**:
+- File-level implementation detail
+- All dependencies identified/researched
+- Security + performance considerations
+- Comprehensive testing approach
+</responsibilities>
 
-### Phase 3: Implementation (AI-Led with Human Validation)
-```markdown
-## AI Responsibilities
-1. Implement all code using test-driven development
-2. Create comprehensive test coverage (unit, integration, security)
-3. Enforce quality gates and standards
+### <phase>Phase 3: Implementation (AI-Led, Human Validation)</phase>
+
+<responsibilities>
+**AI**:
+1. Implement code using TDD
+2. Create comprehensive test coverage (unit/integration/security)
+3. Enforce quality gates + standards
 4. Generate complete technical documentation
 
-## Human Responsibilities
-1. Validate features against business requirements
-2. Confirm user experience meets expectations
-3. Approve features for production deployment
-4. Provide feedback for continuous improvement
+**Human**:
+1. Validate features vs business requirements
+2. Confirm user experience expectations
+3. Approve for production deployment
+4. Provide continuous improvement feedback
 
-## Quality Standards
-- >95% test coverage for all business logic
-- Security scan passes with no critical vulnerabilities
-- Performance meets defined requirements
-- Documentation is complete and current
-```
+**Quality Standards**:
+- >95% test coverage for business logic
+- Security scan passes (no critical vulnerabilities)
+- Performance meets requirements
+- Documentation complete + current
+</responsibilities>
 
-## Code Quality Standards
+## <standards>Code Quality Requirements</standards>
 
-### Security Requirements
+### <security>Security Implementation</security>
 ```rust
-// Always implement comprehensive security patterns
 use bcrypt::hash;
 use jsonwebtoken::{encode, decode, Header, Algorithm, Validation};
-
-// Input validation is mandatory
 use validator::Validate;
 
 #[derive(Deserialize, Validate)]
@@ -103,25 +111,21 @@ struct UserInput {
 }
 ```
 
-### Error Handling Requirements
+### <error-handling>Error Types</error-handling>
 ```rust
-// Use structured error types
 #[derive(Debug, thiserror::Error)]
 pub enum ServiceError {
     #[error("Database error: {0}")]
     Database(#[from] sqlx::Error),
-    
     #[error("Validation error: {0}")]
     Validation(String),
-    
     #[error("Authentication failed")]
     Authentication,
 }
 ```
 
-### Testing Requirements
+### <testing>Testing Standards</testing>
 ```rust
-// Comprehensive testing is mandatory
 #[cfg(test)]
 mod tests {
     use super::*;
@@ -129,132 +133,113 @@ mod tests {
     // ANCHOR: Core functionality regression test
     #[tokio::test]
     async fn test_user_authentication() {
-        // Test implementation with realistic data
-        // Must cover success and failure scenarios
-        // Must include security validation
+        // Realistic data + success/failure scenarios + security validation
     }
 }
 ```
 
-## Fortitude Integration
+## <integration>Fortitude Knowledge Management</integration>
 
-### Knowledge Management
+### <commands>Pattern Operations</commands>
 ```bash
 # Query existing patterns before implementation
 ./tools/fortitude-integration.sh query "authentication patterns"
 
-# Update patterns after successful implementation
+# Update patterns after successful implementation  
 ./tools/fortitude-integration.sh update
 
 # Generate knowledge report
 ./tools/fortitude-integration.sh report
 ```
 
-### Pattern Lookup Process
+### <process>Pattern Lookup Workflow</process>
 1. **Before Implementation**: Query Fortitude for existing patterns
-2. **During Implementation**: Reference proven approaches and templates
+2. **During Implementation**: Reference proven approaches + templates
 3. **After Implementation**: Update knowledge base with new patterns
-4. **Continuous Learning**: Capture successful human-AI collaboration patterns
+4. **Continuous Learning**: Capture human-AI collaboration patterns
 
-## Tool Integration
+## <tools>Quality Validation Tools</tools>
 
-### Quality Gates
+### <quality-gates>Validation Commands</quality-gates>
 ```bash
-# Run comprehensive quality validation
+# Comprehensive quality validation
 ./tools/quality-gates.sh
 
-# Validate phase completion
-./tools/phase-validator.py --phase 3
+# Phase completion validation
+./tools/phase-validator.py --phase [1|2|3]
 ```
 
-### Phase Validation
-```bash
-# Validate Phase 1 completion
-./tools/phase-validator.py --phase 1
+## <guidelines>Implementation Standards</guidelines>
 
-# Validate Phase 2 completion
-./tools/phase-validator.py --phase 2
+### <code-style>Code Requirements</code-style>
+- Consistent formatting (rustfmt, prettier)
+- Established naming conventions
+- Comprehensive error handling
+- Business logic comments
 
-# Validate Phase 3 completion
-./tools/phase-validator.py --phase 3
-```
+### <testing-strategy>Testing Approach</testing-strategy>
+- TDD (tests first)
+- Unit + integration + security tests
+- >95% test coverage
+- Anchor tests for critical functionality
 
-## Implementation Guidelines
+### <documentation>Documentation Standards</documentation>
+- API documentation + examples
+- Business logic comments
+- Deployment + configuration guides
+- Troubleshooting + error resolution guides
 
-### Code Style
-- Use consistent formatting (rustfmt, prettier, etc.)
-- Follow established naming conventions
-- Include comprehensive error handling
-- Add meaningful comments for business logic
+## <communication>Escalation Framework</communication>
 
-### Testing Strategy
-- Write tests first (TDD approach)
-- Include unit, integration, and security tests
-- Achieve >95% test coverage
-- Create anchor tests for critical functionality
-
-### Documentation Requirements
-- API documentation with examples
-- Code comments explaining business logic
-- Deployment and configuration guides
-- Troubleshooting and error resolution guides
-
-## Communication Patterns
-
-### Escalation Procedures
-```markdown
-## When to Escalate to Human
+### <escalation>When to Escalate</escalation>
 1. Ambiguous business requirements
 2. Strategic architectural decisions
-3. Resource or timeline constraints
+3. Resource/timeline constraints
 4. Quality gate failures requiring business decision
 
-## Escalation Format
-- Clear description of issue and impact
-- Analysis of options and trade-offs
-- Specific decision or guidance needed
+### <format>Escalation Format</format>
+- Clear issue description + impact
+- Options analysis + trade-offs
+- Specific decision/guidance needed
 - Timeline for decision requirement
-```
 
-### Progress Reporting
-```markdown
-## Implementation Progress Updates
-- Daily: Current feature implementation status
-- Weekly: Sprint progress against goals
-- End of Phase: Comprehensive completion report
-- Issues: Immediate escalation with impact assessment
-```
+### <reporting>Progress Updates</reporting>
+- **Daily**: Feature implementation status
+- **Weekly**: Sprint progress vs goals
+- **End of Phase**: Comprehensive completion report
+- **Issues**: Immediate escalation + impact assessment
 
-## Success Metrics
+## <metrics>Success Validation</metrics>
 
-### Technical Metrics
+### <technical>Technical Metrics</technical>
 - Test coverage >95%
-- Security scan passes with no critical issues
-- Performance meets defined requirements
+- Security scan passes (no critical issues)
+- Performance meets requirements
 - Documentation completeness >90%
 
-### Business Metrics
+### <business>Business Metrics</business>
 - Features deliver expected business value
-- User satisfaction scores meet targets
-- Timeline and budget adherence
+- User satisfaction meets targets
+- Timeline + budget adherence
 - Strategic goals advancement
 
-## Continuous Improvement
+## <improvement>Continuous Learning</improvement>
 
-### Learning Integration
+### <learning>Learning Integration</learning>
 - Capture successful implementation patterns
-- Document effective human-AI collaboration approaches
+- Document effective human-AI collaboration
 - Refine quality gates based on outcomes
-- Optimize development velocity while maintaining quality
+- Optimize velocity while maintaining quality
 
-### Pattern Evolution
-- Update implementation templates based on experience
+### <evolution>Pattern Evolution</evolution>
+- Update implementation templates from experience
 - Refine testing approaches for better coverage
-- Enhance security patterns based on threat landscape
+- Enhance security patterns for threat landscape
 - Improve documentation patterns for clarity
 
-## MCP Server Configuration
+## <configuration>System Configuration</configuration>
 
+### <mcp>MCP Server Setup</mcp>
 ```json
 {
   "mcpServers": {
@@ -267,14 +252,14 @@ mod tests {
 }
 ```
 
-## Environment Variables
-
+### <environment>Environment Variables</environment>
 ```bash
-# Set these in your development environment
 export CE_DPS_PHASE=1  # Current phase (1=Planning, 2=Sprint, 3=Implementation)
 export CE_DPS_FORTITUDE_ENABLED=true  # Enable Fortitude integration
 export CE_DPS_QUALITY_GATES=true  # Enable quality gate enforcement
-export CE_DPS_HUMAN_APPROVAL_REQUIRED=true  # Require human approval for strategic decisions
+export CE_DPS_HUMAN_APPROVAL_REQUIRED=true  # Strategic decisions require approval
 ```
 
-This configuration ensures Claude Code operates effectively within the CE-DPS methodology, maintaining the AI-as-implementer philosophy while enabling human strategic oversight.
+## <validation>Integration Validation</validation>
+
+Claude Code operates within CE-DPS methodology maintaining AI-as-implementer philosophy with human strategic oversight. All implementations must pass quality gates and align with security-first, comprehensive testing standards.
