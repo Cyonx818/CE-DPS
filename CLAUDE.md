@@ -2,7 +2,7 @@
 
 ## Overview
 
-This document configures Claude Code for effective use with the CE-DPS (Context Engineering - Development Process Solution) methodology. The configuration ensures AI assistants can implement code effectively under human strategic oversight.
+This document configures Claude Code for effective use with the CE-DPS (Context Engineered Development Process Suite) methodology. The configuration ensures AI assistants can implement code effectively under human strategic oversight.
 
 ## Core Principles
 
@@ -11,6 +11,7 @@ This document configures Claude Code for effective use with the CE-DPS (Context 
 - **Quality Enforcement**: AI implements comprehensive testing and validation
 - **Pattern Application**: AI applies established patterns and best practices
 - **Knowledge Integration**: AI leverages Fortitude for pattern lookup and learning
+- **Documentation Standards**: AI follows [LLM Documentation Guidelines](methodology/ai-implementation/llm-documentation-guidelines.md) for all generated documentation
 
 ### Human Strategic Authority
 - **Vision & Direction**: Humans define project vision and business requirements

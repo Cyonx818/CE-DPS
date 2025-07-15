@@ -1,4 +1,4 @@
-// Performance benchmarks for Sprint 009 Task 2.5: Quality-based provider selection optimization
+// Performance benchmarks: Quality-based provider selection optimization
 //! Validates that the optimization system meets performance requirements:
 //! - Provider selection latency: <100ms for real-time optimization
 //! - Learning adaptation: <5 seconds for performance trend updates

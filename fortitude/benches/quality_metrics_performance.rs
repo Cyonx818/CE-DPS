@@ -7,7 +7,7 @@
 use criterion::{black_box, criterion_group, criterion_main, BenchmarkId, Criterion, Throughput};
 use fortitude::quality::{
     InMemoryMetricsStorage, MetricFilters, MetricType, MetricValue, MetricsCollector,
-    MetricsConfig, QualityMetric, QualityScore,
+    MetricsConfig, MetricsStorage, QualityMetric, QualityScore,
 };
 use std::sync::Arc;
 use std::time::Duration;

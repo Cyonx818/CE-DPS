@@ -8,6 +8,8 @@
 
 **Duration**: 15-30 minutes with parallel research for knowledge gaps
 
+**Documentation Standards**: Sprint documentation must follow [LLM Documentation Guidelines](llm-documentation-guidelines.md) with emphasis on token efficiency
+
 ## <method>AI Sprint Planning Process</method>
 
 ### <step priority="high">1. Feature Selection Analysis</step>

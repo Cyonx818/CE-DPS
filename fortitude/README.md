@@ -25,16 +25,15 @@ Fortitude emphasizes:
 ## <features>What Fortitude Provides</features>
 
 ### <feature-category>AI Development Infrastructure</feature-category>
-- **`AI_RULES.md`**: Comprehensive guidance for AI coding assistants
-- **`DEVELOPMENT_PROCESS.md`**: Three-phase development methodology
-- **`CLAUDE.md`**: Claude Code integration and context
-- **`tests/README.md`**: Testing strategy and requirements
+- **CE-DPS Integration**: Fortitude operates as an integrated knowledge management platform within the CE-DPS methodology
+- **Multi-crate Workspace**: Modular Rust architecture with specialized crates
+- **MCP Server**: Model Context Protocol server for Claude Code integration
 
-### <feature-category>Documentation Architecture</feature-category>
-- **`docs/architecture/`**: System design and architectural decisions
-- **`docs/planning/`**: Implementation plans structured for AI coding assistants
-- **`docs/research/`**: Technical research and troubleshooting guides
-- **`docs/reference_library/`**: AI-optimized knowledge management system
+### <feature-category>Core Capabilities</feature-category>
+- **Research Pipeline**: Automated AI knowledge generation and gap analysis
+- **Learning System**: Real-time adaptation from user feedback and performance metrics
+- **Classification Engine**: Intelligent content categorization and prioritization
+- **Monitoring Infrastructure**: Comprehensive health checks and observability
 
 ### <feature-category>Testing Infrastructure</feature-category>
 - **Multi-layered testing**: Unit, integration, property-based, and performance tests
@@ -193,30 +192,27 @@ fortitude/
 │   ├── integration/            # Integration tests
 │   ├── anchor/                 # Permanent regression tests
 │   ├── property/               # Property-based tests
-│   ├── performance/            # Performance tests
-│   ├── learning_system_comprehensive_tests.rs # Learning system tests
-│   ├── learning_api_mcp_integration_tests.rs  # Cross-service learning tests
-│   ├── anchor_monitoring_tests.rs             # Monitoring system tests
-│   └── fixtures/               # Test data
 ├── crates/                      # Multi-crate workspace
 │   ├── fortitude-api-server/   # JSON API server with learning/monitoring endpoints
 │   ├── fortitude-mcp-server/   # MCP server with learning/monitoring tools
 │   ├── fortitude-core/         # Core research and classification logic
-│   └── [other crates]         # Additional workspace crates
-├── AI_RULES.md                  # AI assistant guidance
-├── CLAUDE.md                    # Claude Code integration
-├── DEVELOPMENT_PROCESS.md       # Development methodology
-├── GETTING_STARTED.md           # Human onboarding guide
-├── .gitignore                   # Comprehensive ignore patterns
-└── Cargo.toml                   # Rust project configuration
+│   ├── fortitude-cli/          # Command-line interface
+│   ├── fortitude-types/        # Shared type definitions
+│   └── fortitude-test-utils/   # Testing utilities
+├── benches/                     # Performance benchmarks
+├── reference_library/           # Local knowledge cache
+├── monitoring_data/             # Runtime monitoring data
+└── Cargo.toml                   # Rust workspace configuration
 ```
 
-## <usage>Using with AI Coding Assistants</usage>
+## <usage>CE-DPS Integration</usage>
 
-1. **Always reference `AI_RULES.md`** when starting AI sessions
-2. **Follow `DEVELOPMENT_PROCESS.md`** for systematic development
-3. **Use the three-phase development methodology** for complex features
-4. **Reference architecture and planning documents** during implementation
+Fortitude operates as an integrated knowledge management platform within the CE-DPS (Context Engineered Development Process Suite) methodology:
+
+1. **Follow CE-DPS methodology** for all development work
+2. **Use the main CE-DPS CLAUDE.md** for AI assistant context and guidance
+3. **Leverage Fortitude MCP server** for knowledge management and research
+4. **Reference CE-DPS documentation** for implementation patterns and quality standards
 5. **Follow testing requirements** - never skip TDD process
 6. **Update documentation** as part of every development cycle
 
@@ -240,4 +236,3 @@ fortitude/
 
 ---
 
-**Core References**: `AI_RULES.md` (AI guidelines), `DEVELOPMENT_PROCESS.md` (methodology), `GETTING_STARTED.md` (onboarding), `tests/README.md` (testing) 

@@ -30,29 +30,47 @@ impl ResourceProvider {
         }
     }
 
-    /// Find the docs base path by looking for the docs/reference_library directory
+    /// Find the docs base path by looking for CE-DPS reference/methodology or legacy docs/reference_library directory
     fn find_docs_base_path() -> PathBuf {
-        // Start from current directory and work up to find docs/reference_library
+        // Start from current directory and work up to find CE-DPS methodology/reference
         let current_path = std::env::current_dir().unwrap_or_else(|_| PathBuf::from("."));
 
-        // Try common locations
+        // Try CE-DPS locations first, then legacy fortitude locations
         let possible_paths = vec![
+            // CE-DPS reference directory (preferred)
+            current_path.join("../../../reference"),
+            current_path.join("../../reference"), 
+            current_path.join("../reference"),
+            current_path.join("reference"),
+            // CE-DPS methodology directory
+            current_path.join("../../../methodology"),
+            current_path.join("../../methodology"),
+            current_path.join("../methodology"),
+            current_path.join("methodology"),
+            // Legacy fortitude docs (fallback)
             current_path.join("docs"),
             current_path.join("../docs"),
             current_path.join("../../docs"),
             current_path.join("../../../docs"),
-            // Absolute path for fortitude project
-            PathBuf::from("/home/cyonx/Documents/GitHub/concordia/fortitude/docs"),
         ];
 
         for path in possible_paths {
+            // Check for CE-DPS reference structure
+            if path.join("llm-documentation-quick-reference.md").exists() {
+                return path;
+            }
+            // Check for CE-DPS methodology structure  
+            if path.join("ai-implementation").exists() {
+                return path;
+            }
+            // Check for legacy fortitude reference_library
             if path.join("reference_library").exists() {
                 return path;
             }
         }
 
-        // Fallback to current directory
-        PathBuf::from("docs")
+        // Fallback to CE-DPS reference directory
+        PathBuf::from("reference")
     }
 
     /// List all available resources
@@ -106,23 +124,38 @@ impl ResourceProvider {
         &self,
         resources: &mut Vec<Resource>,
     ) -> Result<(), McpError> {
-        let reference_library_path = self.docs_base_path.join("reference_library");
+        // Try CE-DPS structure first, then legacy fortitude structure
+        let possible_library_paths = vec![
+            // CE-DPS reference directory
+            self.docs_base_path.clone(),
+            // CE-DPS methodology directory  
+            self.docs_base_path.clone(),
+            // Legacy fortitude reference_library
+            self.docs_base_path.join("reference_library"),
+        ];
 
-        if !reference_library_path.exists() {
-            debug!(
-                "Reference library path does not exist: {}",
-                reference_library_path.display()
-            );
-            return Ok(());
+        for library_path in possible_library_paths {
+            if library_path.exists() {
+                debug!(
+                    "Found reference library path: {}",
+                    library_path.display()
+                );
+                
+                self.scan_directory_for_resources(
+                    &library_path,
+                    &library_path,
+                    resources,
+                )
+                .await?;
+                
+                return Ok(());
+            }
         }
 
-        self.scan_directory_for_resources(
-            &reference_library_path,
-            &reference_library_path,
-            resources,
-        )
-        .await?;
-
+        debug!(
+            "No reference library path found, base path: {}",
+            self.docs_base_path.display()
+        );
         Ok(())
     }
 

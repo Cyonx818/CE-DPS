@@ -160,15 +160,15 @@ tower = { workspace = true }
 hyper = { workspace = true }
 
 [[bench]]
-name = "sprint_008_performance_validation"
+name = "performance_validation"
 harness = false
 
 [[bench]]
-name = "sprint_008_task_6_5_manual_lookup_time_validation"
+name = "manual_lookup_time_validation"
 harness = false
 
 [[bench]]
-name = "sprint_008_task_6_5_workflow_efficiency_validation"
+name = "workflow_efficiency_validation"
 harness = false
 
 [[bench]]

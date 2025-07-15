@@ -8,6 +8,8 @@
 
 **Duration**: 30-60 minutes with parallel research subagents
 
+**Documentation Standards**: Follow [LLM Documentation Guidelines](llm-documentation-guidelines.md) for all AI-generated documentation
+
 ## <method>AI Planning Process</method>
 
 ### <step priority="high">1. Project Vision Analysis</step>

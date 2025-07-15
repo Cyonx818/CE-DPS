@@ -1,4 +1,4 @@
-# CE-DPS: Context Engineering - Development Process Solution
+# CE-DPS: Context Engineered Development Process Suite
 
 A comprehensive methodology that integrates AI implementation capabilities with human strategic oversight to accelerate development while maintaining quality and business alignment.
 
@@ -18,7 +18,8 @@ CE-DPS combines the systematic approach of Development Process Solutions (DPS) w
 ### Prerequisites
 
 - Git and a code editor
-- Programming language toolchain (Rust, Python, Node.js, etc.)
+- Rust 1.70+ with Cargo
+- Python 3.8+ (for phase-validator tool)
 - Basic understanding of software development principles
 
 ### Installation
@@ -28,32 +29,58 @@ CE-DPS combines the systematic approach of Development Process Solutions (DPS) w
 git clone https://github.com/your-org/CE-DPS.git
 cd CE-DPS
 
-# Set up Fortitude knowledge management
-./tools/fortitude-integration.sh install
+# Build the complete workspace
+cargo build --workspace
 
-# Validate installation
-./tools/phase-validator.py --phase 1
+# Set up Fortitude knowledge management
+cargo run --bin fortitude-integration -- install
+
+# Validate installation with quality gates
+cargo run --bin quality-gates
 ```
 
 ### Your First CE-DPS Project
 
-1. **Define Your Vision** (5 minutes)
+Getting started with CE-DPS is simple with the slash command interface:
+
+1. **Initialize Your Project** (1 minute)
+   ```bash
+   /cedps init
+   ```
+   This creates the project structure and prepares the environment.
+
+2. **Check Status and Next Steps** (1 minute)
+   ```bash
+   /cedps status
+   ```
+   Shows current phase and exactly what to do next.
+
+3. **Start Phase 1: Strategic Planning** (5 minutes)
+   ```bash
+   /cedps phase1 setup
+   ```
+   Creates business requirements template at `docs/phases/phase-1-planning.md`.
+
+4. **Define Your Vision** (15 minutes)
+   Fill out the template with:
    - What business problem are you solving?
    - Who are your target users?
    - What does success look like?
+   - Technical requirements and constraints
 
-2. **Use the Planning Template** (15 minutes)
+5. **Get AI Analysis** (30 minutes)
    ```bash
-   cp methodology/templates/phase-1-template.md docs/phase-1-planning.md
-   # Fill in your business requirements and constraints
+   /cedps phase1 analyze
    ```
+   AI performs comprehensive architectural analysis based on your requirements.
 
-3. **Get AI Analysis** (30 minutes)
-   - Share your requirements with Claude Code
+6. **Review and Approve** (10 minutes)
    - Review AI-proposed architecture and implementation plan
    - Approve or request changes to the approach
+   - Run `/cedps phase1 validate` when ready
 
-4. **Start Implementation** (Ongoing)
+7. **Continue Through Phases** (Ongoing)
+   - Follow `/cedps status` guidance for Phase 2 and 3
    - AI implements code following CE-DPS patterns
    - You review and approve based on business value
    - Quality gates ensure production-ready code
@@ -65,6 +92,13 @@ cd CE-DPS
 #### Phase 1: Strategic Planning (Human-Led)
 **Duration**: 30-60 minutes  
 **Focus**: Business requirements and architectural decisions
+
+**Slash Commands**:
+```bash
+/cedps phase1 setup    # Initialize Phase 1 environment and template
+/cedps phase1 analyze  # Trigger AI architectural analysis
+/cedps phase1 validate # Validate completion and human approvals
+```
 
 **Human Responsibilities**:
 - Define project vision and success metrics
@@ -82,6 +116,13 @@ cd CE-DPS
 **Duration**: 15-30 minutes  
 **Focus**: Detailed implementation planning
 
+**Slash Commands**:
+```bash
+/cedps phase2 setup    # Initialize Phase 2 environment and feature selection
+/cedps phase2 plan     # Trigger AI implementation planning
+/cedps phase2 validate # Validate completion and implementation approach
+```
+
 **Human Responsibilities**:
 - Select features for sprint based on business priorities
 - Review and approve implementation approach
@@ -97,6 +138,13 @@ cd CE-DPS
 #### Phase 3: Implementation (AI-Led with Human Validation)
 **Duration**: 60-180 minutes  
 **Focus**: Code implementation and business validation
+
+**Slash Commands**:
+```bash
+/cedps phase3 setup     # Initialize Phase 3 environment with quality gates
+/cedps phase3 implement # Trigger AI implementation with test-driven development
+/cedps phase3 validate  # Validate completion and production readiness
+```
 
 **Human Responsibilities**:
 - Validate features against business requirements
@@ -160,19 +208,163 @@ cd CE-DPS
 - Deployment and configuration guides
 - Troubleshooting and error resolution guides
 
+## CE-DPS Slash Commands
+
+CE-DPS provides user-friendly slash commands that automate the entire methodology workflow. These commands handle environment setup, template management, and provide clear guidance at each step.
+
+### Command Overview
+
+#### Project Management
+```bash
+/cedps init           # Initialize new CE-DPS project
+/cedps status         # Show current project status and next steps
+/cedps tools          # Run quality gates and validation tools
+/cedps help           # Show comprehensive help and command reference
+```
+
+#### Phase 1: Strategic Planning
+```bash
+/cedps phase1 setup    # Initialize Phase 1 environment and business template
+/cedps phase1 analyze  # Trigger AI architectural analysis of requirements
+/cedps phase1 validate # Validate Phase 1 completion and human approvals
+```
+
+#### Phase 2: Sprint Planning
+```bash
+/cedps phase2 setup    # Initialize Phase 2 environment and feature selection
+/cedps phase2 plan     # Trigger AI implementation planning for selected features
+/cedps phase2 validate # Validate Phase 2 completion and implementation approach
+```
+
+#### Phase 3: Implementation
+```bash
+/cedps phase3 setup     # Initialize Phase 3 environment with quality gates
+/cedps phase3 implement # Trigger AI implementation with test-driven development
+/cedps phase3 validate  # Validate Phase 3 completion and production readiness
+```
+
+### Command Usage Examples
+
+#### Starting a New Project
+```bash
+# Initialize project structure and environment
+/cedps init
+
+# Check current status and next steps
+/cedps status
+# Output: "👉 Start Phase 1: Strategic Planning"
+# Command: /cedps phase1 setup
+
+# Set up Phase 1 strategic planning
+/cedps phase1 setup
+# Creates: docs/phases/phase-1-planning.md
+# Next: Fill out business requirements template
+```
+
+#### Phase 1 Workflow
+```bash
+# After filling business requirements template
+/cedps phase1 analyze
+# AI performs comprehensive architectural analysis
+# Provides: System architecture, technology evaluation, implementation strategy
+
+# After reviewing and approving AI analysis
+/cedps phase1 validate
+# Validates: Human approvals, architectural decisions, readiness for Phase 2
+# Output: "🎉 Phase 1 complete! Ready for Phase 2"
+```
+
+#### Phase 2 Workflow
+```bash
+# Start sprint planning
+/cedps phase2 setup
+# Creates: Sprint planning template with feature roadmap from Phase 1
+# Next: Select 2-4 features for sprint implementation
+
+# After selecting features for sprint
+/cedps phase2 plan
+# AI creates: Detailed implementation plans, complexity analysis, effort estimates
+# Provides: File-level task breakdown, technical approach, risk assessment
+
+# After reviewing and approving implementation plan
+/cedps phase2 validate
+# Validates: Feature selection, implementation approach, timeline
+# Output: "🎉 Phase 2 complete! Ready for Phase 3"
+```
+
+#### Phase 3 Workflow
+```bash
+# Start implementation
+/cedps phase3 setup
+# Creates: Implementation environment, feature branch, quality gates
+# Prepares: Testing framework, security validation, performance benchmarks
+
+# Begin AI implementation
+/cedps phase3 implement
+# AI performs: Test-driven development, comprehensive testing, security validation
+# Provides: Working features with >95% test coverage, security patterns
+
+# After validating business value of implemented features
+/cedps phase3 validate
+# Validates: Feature functionality, business value, production readiness
+# Output: "🎉 Implementation complete! Ready for production"
+```
+
+### Human Action Points
+
+Each command clearly indicates when human action is required:
+
+**Phase 1**: Fill business requirements → Review AI analysis → Approve architecture
+**Phase 2**: Select sprint features → Review implementation plan → Approve approach  
+**Phase 3**: Validate implemented features → Confirm business value → Approve production
+
+### Quality Integration
+
+Commands integrate seamlessly with quality gates:
+- `/cedps tools` runs comprehensive quality validation
+- Each phase automatically runs appropriate quality checks
+- Human approval required only after quality standards are met
+
 ## Tools and Automation
 
-### Quality Gates Script
+### CE-DPS Slash Commands Integration
+
+The recommended way to run tools is through the integrated slash commands:
+
+```bash
+# Primary quality validation tool
+/cedps tools
+# Runs: Quality gates, test suite, security audit, performance benchmarks
+# Provides: Comprehensive quality validation with actionable recommendations
+
+# Project status and guidance
+/cedps status
+# Shows: Current phase, completion status, next steps
+# Guides: What to do next to proceed with the methodology
+
+# Help and command reference
+/cedps help
+# Displays: All available commands, workflow guidance, troubleshooting
+```
+
+### Quality Gates Tool
 ```bash
 # Run comprehensive quality validation
-./tools/quality-gates.sh
+cargo run --bin quality-gates
+
+# With custom options
+cargo run --bin quality-gates -- --coverage-target 98 --performance-target 150
+
+# Generate quality report
+cargo run --bin quality-gates -- --output target/quality-report.json
 
 # Features:
-# - Code formatting and linting
+# - Pre/implementation/post quality gates
+# - Code formatting and linting validation
 # - Security vulnerability scanning
 # - Test coverage analysis
-# - Performance benchmarking
-# - Documentation generation
+# - TODO comment tracking
+# - Comprehensive reporting
 ```
 
 ### Phase Validator
@@ -185,16 +377,31 @@ cd CE-DPS
 # Generates comprehensive validation reports
 ```
 
-### Fortitude Integration
+### Fortitude Integration Tool
 ```bash
+# Check Fortitude installation
+cargo run --bin fortitude-integration -- check
+
+# Initialize Fortitude for CE-DPS
+cargo run --bin fortitude-integration -- init
+
+# Start Fortitude services
+cargo run --bin fortitude-integration -- start
+
 # Query existing patterns
-./tools/fortitude-integration.sh query "authentication patterns"
+cargo run --bin fortitude-integration -- query "authentication patterns"
 
 # Update knowledge base
-./tools/fortitude-integration.sh update
+cargo run --bin fortitude-integration -- update
 
 # Generate reports
-./tools/fortitude-integration.sh report
+cargo run --bin fortitude-integration -- report
+
+# Setup Claude Code integration
+cargo run --bin fortitude-integration -- setup-claude
+
+# Complete installation
+cargo run --bin fortitude-integration -- install
 ```
 
 ## Human-AI Collaboration
@@ -202,12 +409,24 @@ cd CE-DPS
 ### Effective Communication Patterns
 
 **Providing Clear Requirements**:
+Use the Phase 1 template created by `/cedps phase1 setup`:
 ```markdown
 ## Authentication Requirements
 **Business Goal**: Reduce user onboarding friction while maintaining security
 **User Story**: As a customer, I want to log in with my corporate credentials
 **Success Metrics**: Onboarding time < 5 minutes, Support tickets < 5/week
 **Acceptance Criteria**: Support SAML 2.0, fallback to email/password
+```
+
+**Getting Started**:
+```bash
+# Initialize project and get template
+/cedps init
+/cedps phase1 setup
+
+# Fill out docs/phases/phase-1-planning.md with your requirements
+# Then trigger AI analysis
+/cedps phase1 analyze
 ```
 
 **Reviewing AI Proposals**:
@@ -243,6 +462,18 @@ cd CE-DPS
 - Specific decision or guidance needed
 - Timeline for decision requirement
 
+**Monitoring Progress**:
+```bash
+# Check current status and next steps
+/cedps status
+
+# Run quality validation
+/cedps tools
+
+# Get help if needed
+/cedps help
+```
+
 ## Directory Structure
 
 ```
@@ -251,10 +482,14 @@ CE-DPS/
 │   ├── ai-implementation/      # AI-facing methodology documents
 │   ├── human-oversight/        # Human-facing oversight guides
 │   └── templates/             # Implementation templates
-├── fortitude/                 # Knowledge management system
-├── tools/                     # Automation and helper scripts
+├── fortitude/                 # Knowledge management platform
+├── tools/                     # CE-DPS development tools
+│   ├── quality-gates/         # Rust: Quality validation tool
+│   ├── fortitude-integration/ # Rust: Fortitude management tool
+│   └── phase-validator.py     # Python: Phase completion validation
 ├── examples/                  # Real-world implementation examples
 ├── reference/                 # Quick reference materials
+├── Cargo.toml                 # Rust workspace configuration
 ├── CLAUDE.md                  # Claude Code integration
 └── README.md                  # This file
 ```
@@ -275,9 +510,9 @@ CE-DPS/
 - Check that quality gates are enabled
 
 **"Quality gates are failing"**:
-- Review quality-gates.sh output for specific issues
-- Ensure all dependencies are installed
-- Check that test coverage meets requirements
+- Review `cargo run --bin quality-gates` output for specific issues
+- Ensure Rust toolchain and dependencies are installed
+- Check that test coverage meets requirements (default: 95%)
 
 **"Human approval process is unclear"**:
 - Review human-oversight documentation
@@ -333,6 +568,10 @@ This methodology is designed to be freely used and adapted by development teams.
 
 ---
 
-**Ready to start?** Copy a phase template from `methodology/templates/` and begin your first CE-DPS project. The methodology will guide you through each step of the process.
+**Ready to start?** Run `/cedps init` to initialize your first CE-DPS project. The slash commands will guide you through each step of the process with clear instructions and automated setup.
 
-For questions or support, please refer to the documentation in the `methodology/` directory or reach out to the development team.
+For questions or support:
+- Run `/cedps help` for comprehensive command reference
+- Use `/cedps status` to see current progress and next steps
+- Refer to the documentation in the `methodology/` directory
+- Reach out to the development team

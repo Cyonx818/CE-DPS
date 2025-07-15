@@ -1,6 +1,6 @@
 # Contributing to CE-DPS
 
-Thank you for your interest in contributing to CE-DPS (Context Engineering - Development Process Solution)! This document provides guidelines for contributing to both the methodology and the integrated Fortitude knowledge management platform.
+Thank you for your interest in contributing to CE-DPS (Context Engineered Development Process Suite)! This document provides guidelines for contributing to both the methodology and the integrated Fortitude knowledge management platform.
 
 ## Overview
 

@@ -8,6 +8,8 @@
 
 **Duration**: 60-180 minutes with sequential subagent coordination for context management
 
+**Documentation Standards**: All generated documentation must follow [LLM Documentation Guidelines](llm-documentation-guidelines.md) for optimal AI comprehension
+
 ## <method>AI Implementation Process</method>
 
 ### <step priority="critical">1. Test-Driven Implementation</step>
