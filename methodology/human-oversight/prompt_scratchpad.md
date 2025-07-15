@@ -670,6 +670,14 @@ CE-DPS/fortitude's:
 I need you to verify that none of these folders, nor the files they contain, serve vital purposes for fortitude to run in its current context as a project within the CE-DPS workspace, and are clear to be deleted.
 
 -------------------------------------------------------------------------------
+
+  build-matrix:
+    name: Build Matrix
+    runs-on: ${{ matrix.os }}
+    strategy:
+      matrix:
+        os: [ubuntu-latest, windows-latest, macos-latest]
+
 -------------------------------------------------------------------------------
 -------------------------------------------------------------------------------
 -------------------------------------------------------------------------------
