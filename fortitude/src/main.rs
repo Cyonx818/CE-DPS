@@ -541,10 +541,10 @@ async fn handle_research_command(
         );
     }
 
-    println!("🔍 Starting research on: {}", topic);
-    println!("  Provider: {}", provider);
-    println!("  Cross-validation: {}", cross_validate);
-    println!("  Quality threshold: {:.2}", quality_threshold);
+    println!("🔍 Starting research on: {topic}");
+    println!("  Provider: {provider}");
+    println!("  Cross-validation: {cross_validate}");
+    println!("  Quality threshold: {quality_threshold:.2}");
     
     // Create a research pipeline with the infrastructure
     match create_research_pipeline().await {
@@ -553,7 +553,7 @@ async fn handle_research_command(
             
             // Show cache lookup attempt
             println!("\n🔍 Checking reference library cache...");
-            println!("  📂 Looking for existing research on: '{}'", topic);
+            println!("  📂 Looking for existing research on: '{topic}'");
             
             // Use the enhanced query processing with the provider preference
             let provider_pref = if provider == "auto" { None } else { Some(provider) };
@@ -585,24 +585,31 @@ async fn handle_research_command(
                             println!("  🔄 Cross-validation enabled - comparing multiple providers");
                         }
                         
-                        println!("  ⏱️  Processing completed in {}ms", result.metadata.processing_time_ms);
+                        let processing_time = result.metadata.processing_time_ms;
+                        println!("  ⏱️  Processing completed in {processing_time}ms");
                         
                         // Show sources consulted as indication of provider activity
                         if !result.metadata.sources_consulted.is_empty() {
-                            println!("  📡 Consulted {} source(s)", result.metadata.sources_consulted.len());
+                            let source_count = result.metadata.sources_consulted.len();
+                            println!("  📡 Consulted {source_count} source(s)");
                         }
                     }
                     
                     println!("\n📝 Research Results:");
                     println!("==================");
-                    println!("Query: {}", result.original_query());
-                    println!("Type: {}", result.research_type());
-                    println!("Quality Score: {:.2}", result.metadata.quality_score);
-                    println!("Source: {}", if was_cached { "Cache" } else { "New Research" });
+                    let query = result.original_query();
+                    println!("Query: {query}");
+                    let research_type = result.research_type();
+                    println!("Type: {research_type}");
+                    let quality_score = result.metadata.quality_score;
+                    println!("Quality Score: {quality_score:.2}");
+                    let source = if was_cached { "Cache" } else { "New Research" };
+                    println!("Source: {source}");
                     
                     // Show sources consulted
                     if !result.metadata.sources_consulted.is_empty() {
-                        println!("Sources: {}", result.metadata.sources_consulted.join(", "));
+                        let sources = result.metadata.sources_consulted.join(", ");
+                        println!("Sources: {sources}");
                     }
                     
                     println!("\n💡 Answer:");
@@ -611,14 +618,18 @@ async fn handle_research_command(
                     if !result.supporting_evidence.is_empty() {
                         println!("\n🔍 Supporting Evidence:");
                         for evidence in &result.supporting_evidence {
-                            println!("  • {} ({})", evidence.source, evidence.evidence_type);
+                            let source = &evidence.source;
+                            let evidence_type = &evidence.evidence_type;
+                            println!("  • {source} ({evidence_type})");
                         }
                     }
                     
                     if !result.implementation_details.is_empty() {
                         println!("\n⚙️ Implementation Details:");
                         for detail in &result.implementation_details {
-                            println!("  • {}: {}", detail.category, detail.content);
+                            let category = &detail.category;
+                            let content = &detail.content;
+                            println!("  • {category}: {content}");
                         }
                     }
                     
@@ -629,15 +640,15 @@ async fn handle_research_command(
                     println!("\n✅ Research completed successfully");
                 }
                 Err(e) => {
-                    error!("Research failed: {}", e);
-                    println!("❌ Research failed: {}", e);
+                    error!("Research failed: {e}");
+                    println!("❌ Research failed: {e}");
                     return Err(Box::new(e));
                 }
             }
         }
         Err(e) => {
-            error!("Failed to create research pipeline: {}", e);
-            println!("❌ Failed to create research pipeline: {}", e);
+            error!("Failed to create research pipeline: {e}");
+            println!("❌ Failed to create research pipeline: {e}");
             println!("💡 Tip: Make sure API keys are configured properly");
             return Err(e);
         }
@@ -662,7 +673,7 @@ fn is_placeholder_key(key: &str) -> bool {
     ];
     
     // Check for exact matches
-    if placeholders.iter().any(|&p| key == p) {
+    if placeholders.contains(&key) {
         return true;
     }
     
@@ -711,7 +722,7 @@ async fn test_model_access(client: &reqwest::Client, api_key: &str, model: &str)
     
     let response = client
         .post("https://api.openai.com/v1/chat/completions")
-        .header("Authorization", format!("Bearer {}", api_key))
+        .header("Authorization", format!("Bearer {api_key}"))
         .header("Content-Type", "application/json")
         .json(&request_body)
         .send()
@@ -734,7 +745,7 @@ async fn test_gemini_key_validity(api_key: &str) -> bool {
         .unwrap_or_default();
     
     // Test with a simple model list request
-    let url = format!("https://generativelanguage.googleapis.com/v1/models?key={}", api_key);
+    let url = format!("https://generativelanguage.googleapis.com/v1/models?key={api_key}");
     
     let response = client
         .get(&url)
@@ -818,7 +829,7 @@ async fn create_research_pipeline() -> Result<fortitude_core::pipeline::Research
             
             // Try gpt-3.5-turbo first (more widely accessible), with gpt-4 as fallback
             let model = determine_openai_model(&openai_key).await;
-            println!("  📝 Using model: {}", model);
+            println!("  📝 Using model: {model}");
             
             let openai_settings = ProviderSettings::new(openai_key.clone(), model)
                 .with_timeout(Duration::from_secs(30))
@@ -842,21 +853,21 @@ async fn create_research_pipeline() -> Result<fortitude_core::pipeline::Research
                                     println!("✅ OpenAI provider added successfully (healthy)");
                                 },
                                 HealthStatus::Degraded(reason) => {
-                                    println!("⚠️  OpenAI provider added with degraded health: {}", reason);
+                                    println!("⚠️  OpenAI provider added with degraded health: {reason}");
                                 },
                                 HealthStatus::Unhealthy(reason) => {
-                                    println!("❌ OpenAI provider unhealthy but added: {}", reason);
+                                    println!("❌ OpenAI provider unhealthy but added: {reason}");
                                 },
                             }
                         },
                         Err(e) => {
-                            println!("❌ OpenAI provider health check failed: {}", e);
+                            println!("❌ OpenAI provider health check failed: {e}");
                             println!("   Skipping OpenAI provider");
                         }
                     }
                 },
                 Err(e) => {
-                    println!("❌ Failed to create OpenAI provider: {}", e);
+                    println!("❌ Failed to create OpenAI provider: {e}");
                     println!("   Skipping OpenAI provider");
                 }
             }
@@ -895,21 +906,21 @@ async fn create_research_pipeline() -> Result<fortitude_core::pipeline::Research
                                     println!("✅ Claude provider added successfully (healthy)");
                                 },
                                 HealthStatus::Degraded(reason) => {
-                                    println!("⚠️  Claude provider added with degraded health: {}", reason);
+                                    println!("⚠️  Claude provider added with degraded health: {reason}");
                                 },
                                 HealthStatus::Unhealthy(reason) => {
-                                    println!("❌ Claude provider unhealthy but added: {}", reason);
+                                    println!("❌ Claude provider unhealthy but added: {reason}");
                                 },
                             }
                         },
                         Err(e) => {
-                            println!("❌ Claude provider health check failed: {}", e);
+                            println!("❌ Claude provider health check failed: {e}");
                             println!("   Skipping Claude provider");
                         }
                     }
                 },
                 Err(e) => {
-                    println!("❌ Failed to create Claude provider: {}", e);
+                    println!("❌ Failed to create Claude provider: {e}");
                     println!("   Skipping Claude provider");
                 }
             }
@@ -928,7 +939,7 @@ async fn create_research_pipeline() -> Result<fortitude_core::pipeline::Research
             
             // Use gemini-2.5-flash as default (latest fast model)
             let model = "gemini-2.5-flash".to_string();
-            println!("  📝 Using model: {}", model);
+            println!("  📝 Using model: {model}");
             
             let gemini_settings = ProviderSettings::new(gemini_key.clone(), model)
                 .with_timeout(Duration::from_secs(30))
@@ -952,21 +963,21 @@ async fn create_research_pipeline() -> Result<fortitude_core::pipeline::Research
                                     println!("✅ Gemini provider added successfully (healthy)");
                                 },
                                 HealthStatus::Degraded(reason) => {
-                                    println!("⚠️  Gemini provider added with degraded health: {}", reason);
+                                    println!("⚠️  Gemini provider added with degraded health: {reason}");
                                 },
                                 HealthStatus::Unhealthy(reason) => {
-                                    println!("❌ Gemini provider unhealthy but added: {}", reason);
+                                    println!("❌ Gemini provider unhealthy but added: {reason}");
                                 },
                             }
                         },
                         Err(e) => {
-                            println!("❌ Gemini provider health check failed: {}", e);
+                            println!("❌ Gemini provider health check failed: {e}");
                             println!("   Skipping Gemini provider");
                         }
                     }
                 },
                 Err(e) => {
-                    println!("❌ Failed to create Gemini provider: {}", e);
+                    println!("❌ Failed to create Gemini provider: {e}");
                     println!("   Skipping Gemini provider");
                 }
             }
@@ -988,7 +999,7 @@ async fn create_research_pipeline() -> Result<fortitude_core::pipeline::Research
         return Err("No API providers configured".into());
     }
 
-    println!("🎯 Configured {} provider(s) for automatic selection", provider_count);
+    println!("🎯 Configured {provider_count} provider(s) for automatic selection");
 
     // Create multi-provider research engine
     let multi_provider_config = MultiProviderConfig {
@@ -1017,9 +1028,11 @@ async fn create_research_pipeline() -> Result<fortitude_core::pipeline::Research
     println!("✅ Multi-provider research engine created successfully");
     
     // Create basic components with proper configurations  
-    let mut classification_config = ClassificationConfig::default();
     // Lower confidence threshold for CLI usage (demo mode)
-    classification_config.default_threshold = 0.05;
+    let classification_config = ClassificationConfig {
+        default_threshold: 0.05,
+        ..Default::default()
+    };
     let classifier = Arc::new(BasicClassifier::new(classification_config));
     
     let storage_config = StorageConfig::default();
@@ -1253,9 +1266,9 @@ async fn handle_provider_health(
                 };
                 
                 if model.starts_with("❌") {
-                    println!("❌ Unhealthy ({})", model);
+                    println!("❌ Unhealthy ({model})");
                 } else {
-                    println!("✅ Healthy (using {})", model);
+                    println!("✅ Healthy (using {model})");
                 }
                 checked_providers.push("openai");
             } else {
@@ -1313,7 +1326,7 @@ async fn handle_provider_health(
 
     if let Some(specific_provider) = &provider {
         if !checked_providers.contains(&specific_provider.as_str()) {
-            println!("❌ Unknown provider: {}", specific_provider);
+            println!("❌ Unknown provider: {specific_provider}");
             println!("   Available providers: openai, claude, gemini");
         }
     }
