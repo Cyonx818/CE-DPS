@@ -23,10 +23,18 @@ fi
 
 # Read current project state
 !echo "🔍 Reading project state..."
-!CURRENT_PHASE=$(jq -r '.current_phase' docs/ce-dps-state.json)
-!PHASES_COMPLETED=$(jq -r '.phases_completed // []' docs/ce-dps-state.json)
-!PROJECT_INITIALIZED=$(jq -r '.project_initialized // false' docs/ce-dps-state.json)
-!READY_FOR_PRODUCTION=$(jq -r '.ready_for_production // false' docs/ce-dps-state.json)
+!if command -v jq >/dev/null 2>&1; then
+    CURRENT_PHASE=$(jq -r '.current_phase' docs/ce-dps-state.json)
+    PHASES_COMPLETED=$(jq -r '.phases_completed // []' docs/ce-dps-state.json)
+    PROJECT_INITIALIZED=$(jq -r '.project_initialized // false' docs/ce-dps-state.json)
+    READY_FOR_PRODUCTION=$(jq -r '.ready_for_production // false' docs/ce-dps-state.json)
+else
+    echo "⚠️ Warning: jq not found. Using fallback status detection."
+    CURRENT_PHASE="unknown"
+    PHASES_COMPLETED="[]"
+    PROJECT_INITIALIZED="false"
+    READY_FOR_PRODUCTION="false"
+fi
 
 !echo ""
 !echo "📈 Project Overview"
@@ -42,7 +50,7 @@ fi
 !echo "==============="
 
 # Phase 1 Status
-!if jq -e '.phases_completed | contains([1])' docs/ce-dps-state.json >/dev/null 2>&1; then
+!if command -v jq >/dev/null 2>&1 && jq -e '.phases_completed | contains([1])' docs/ce-dps-state.json >/dev/null 2>&1; then
     echo "✅ Phase 1: Strategic Planning - Complete"
     if [ -f "docs/phases/phase-1-completion-report.md" ]; then
         echo "   📊 Report: docs/phases/phase-1-completion-report.md"
@@ -61,12 +69,12 @@ else
 fi
 
 # Phase 2 Status
-!if jq -e '.phases_completed | contains([2])' docs/ce-dps-state.json >/dev/null 2>&1; then
+!if command -v jq >/dev/null 2>&1 && jq -e '.phases_completed | contains([2])' docs/ce-dps-state.json >/dev/null 2>&1; then
     echo "✅ Phase 2: Sprint Planning - Complete"
     if [ -f "docs/phases/phase-2-completion-report.md" ]; then
         echo "   📊 Report: docs/phases/phase-2-completion-report.md"
     fi
-elif jq -e '.phases_completed | contains([1])' docs/ce-dps-state.json >/dev/null 2>&1; then
+elif command -v jq >/dev/null 2>&1 && jq -e '.phases_completed | contains([1])' docs/ce-dps-state.json >/dev/null 2>&1; then
     echo "🔄 Phase 2: Sprint Planning - Available"
     if [ -f "docs/phases/phase-2-sprint-planning.md" ]; then
         if grep -q "✅ Approved" docs/phases/phase-2-sprint-planning.md; then
@@ -82,12 +90,12 @@ else
 fi
 
 # Phase 3 Status
-!if jq -e '.phases_completed | contains([3])' docs/ce-dps-state.json >/dev/null 2>&1; then
+!if command -v jq >/dev/null 2>&1 && jq -e '.phases_completed | contains([3])' docs/ce-dps-state.json >/dev/null 2>&1; then
     echo "✅ Phase 3: Implementation - Complete"
     if [ -f "docs/phases/phase-3-completion-report.md" ]; then
         echo "   📊 Report: docs/phases/phase-3-completion-report.md"
     fi
-elif jq -e '.phases_completed | contains([1, 2])' docs/ce-dps-state.json >/dev/null 2>&1; then
+elif command -v jq >/dev/null 2>&1 && jq -e '.phases_completed | contains([1, 2])' docs/ce-dps-state.json >/dev/null 2>&1; then
     echo "🔄 Phase 3: Implementation - Available"
     if [ -f "docs/phases/phase-3-implementation.md" ]; then
         if grep -q "✅ Approved" docs/phases/phase-3-implementation.md; then
@@ -107,10 +115,10 @@ fi
     echo ""
     echo "🚀 Sprint Status"
     echo "================"
-    SPRINT_STATUS=$(jq -r '.status' docs/sprints/sprint-001/sprint-info.json)
+    SPRINT_STATUS=$(jq -r '.status' docs/sprints/sprint-001/sprint-info.json 2>/dev/null || echo "unknown")
     echo "Sprint 1: $SPRINT_STATUS"
     if [ -f "docs/sprints/sprint-001/implementation/implementation-status.json" ]; then
-        IMPL_STATUS=$(jq -r '.status' docs/sprints/sprint-001/implementation/implementation-status.json)
+        IMPL_STATUS=$(jq -r '.status' docs/sprints/sprint-001/implementation/implementation-status.json 2>/dev/null || echo "unknown")
         echo "Implementation: $IMPL_STATUS"
     fi
 fi
@@ -151,12 +159,12 @@ fi
 !echo "🎯 Next Steps"
 !echo "============="
 
-!if [ "$CURRENT_PHASE" = "0" ]; then
+!if [ "$CURRENT_PHASE" = "0" ] || [ "$CURRENT_PHASE" = "unknown" ]; then
     echo "👉 Start Phase 1: Strategic Planning"
     echo "   Command: /cedps-phase1-setup"
     echo "   Purpose: Define project vision and approve architecture"
 elif [ "$CURRENT_PHASE" = "1" ]; then
-    if jq -e '.phases_completed | contains([1])' docs/ce-dps-state.json >/dev/null 2>&1; then
+    if command -v jq >/dev/null 2>&1 && jq -e '.phases_completed | contains([1])' docs/ce-dps-state.json >/dev/null 2>&1; then
         echo "👉 Start Phase 2: Sprint Planning"
         echo "   Command: /cedps-phase2-setup"
         echo "   Purpose: Select features and create implementation plan"
@@ -176,7 +184,7 @@ elif [ "$CURRENT_PHASE" = "1" ]; then
         fi
     fi
 elif [ "$CURRENT_PHASE" = "2" ]; then
-    if jq -e '.phases_completed | contains([2])' docs/ce-dps-state.json >/dev/null 2>&1; then
+    if command -v jq >/dev/null 2>&1 && jq -e '.phases_completed | contains([2])' docs/ce-dps-state.json >/dev/null 2>&1; then
         echo "👉 Start Phase 3: Implementation"
         echo "   Command: /cedps-phase3-setup"
         echo "   Purpose: Implement approved features with quality gates"
@@ -196,7 +204,7 @@ elif [ "$CURRENT_PHASE" = "2" ]; then
         fi
     fi
 elif [ "$CURRENT_PHASE" = "3" ]; then
-    if jq -e '.phases_completed | contains([3])' docs/ce-dps-state.json >/dev/null 2>&1; then
+    if command -v jq >/dev/null 2>&1 && jq -e '.phases_completed | contains([3])' docs/ce-dps-state.json >/dev/null 2>&1; then
         echo "🎉 Implementation Complete!"
         echo "👉 Ready for production deployment"
         echo "   Checklist: docs/phases/phase-3-artifacts/production-deployment-checklist.md"

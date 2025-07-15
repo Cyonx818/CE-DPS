@@ -104,10 +104,17 @@ fi
 fi
 
 # Update project state
-!jq '.phases_completed += [3] | .phase_3_completed = now | .ready_for_production = true' docs/ce-dps-state.json > docs/ce-dps-state.tmp && mv docs/ce-dps-state.tmp docs/ce-dps-state.json
-
-# Update implementation tracking
-!jq '.status = "completed" | .implementation_completed = now | .quality_gates_passed = true | .human_validation_complete = true' docs/sprints/sprint-001/implementation/implementation-status.json > docs/sprints/sprint-001/implementation/implementation-status.tmp && mv docs/sprints/sprint-001/implementation/implementation-status.tmp docs/sprints/sprint-001/implementation/implementation-status.json
+!if command -v jq >/dev/null 2>&1; then
+    jq '.phases_completed += [3] | .phase_3_completed = now | .ready_for_production = true' docs/ce-dps-state.json > docs/ce-dps-state.tmp && mv docs/ce-dps-state.tmp docs/ce-dps-state.json
+    
+    # Update implementation tracking if file exists
+    if [ -f "docs/sprints/sprint-001/implementation/implementation-status.json" ]; then
+        jq '.status = "completed" | .implementation_completed = now | .quality_gates_passed = true | .human_validation_complete = true' docs/sprints/sprint-001/implementation/implementation-status.json > docs/sprints/sprint-001/implementation/implementation-status.tmp && mv docs/sprints/sprint-001/implementation/implementation-status.tmp docs/sprints/sprint-001/implementation/implementation-status.json
+    fi
+else
+    echo "⚠️ Warning: jq not found. State update skipped."
+    echo "💡 Install jq for automatic state management or update state files manually"
+fi
 
 # Generate comprehensive quality report
 !if command -v cargo >/dev/null 2>&1; then

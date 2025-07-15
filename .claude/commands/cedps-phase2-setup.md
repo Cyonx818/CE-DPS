@@ -19,7 +19,14 @@ Initialize Phase 2 sprint planning with feature selection template, implementati
     exit 1
 fi
 
-!if ! jq -e '.phases_completed | contains([1])' docs/ce-dps-state.json >/dev/null 2>&1; then
+!if ! command -v jq >/dev/null 2>&1; then
+    echo "⚠️ Warning: jq not found. Cannot validate Phase 1 completion automatically."
+    echo "💡 Install jq or manually verify Phase 1 is complete"
+    if [ ! -f "docs/phases/phase-1-completion-report.md" ]; then
+        echo "❌ Error: Phase 1 completion report not found. Complete Phase 1 first."
+        exit 1
+    fi
+elif ! jq -e '.phases_completed | contains([1])' docs/ce-dps-state.json >/dev/null 2>&1; then
     echo "❌ Error: Phase 1 not completed. Run '/cedps-phase1-validate' first."
     exit 1
 fi
@@ -38,7 +45,12 @@ fi
 !export CE_DPS_HUMAN_APPROVAL_REQUIRED=true
 
 # Update project state
-!jq '.current_phase = 2 | .last_updated = now | .phase_2_started = now' docs/ce-dps-state.json > docs/ce-dps-state.tmp && mv docs/ce-dps-state.tmp docs/ce-dps-state.json
+!if command -v jq >/dev/null 2>&1; then
+    jq '.current_phase = 2 | .last_updated = now | .phase_2_started = now' docs/ce-dps-state.json > docs/ce-dps-state.tmp && mv docs/ce-dps-state.tmp docs/ce-dps-state.json
+else
+    echo "⚠️ Warning: jq not found. State update skipped."
+    echo "💡 Install jq for automatic state management"
+fi
 
 # Copy Phase 2 template
 !if [ ! -f "methodology/templates/phase-2-template.md" ]; then

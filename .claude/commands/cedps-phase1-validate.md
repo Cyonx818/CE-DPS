@@ -20,15 +20,16 @@ Validate Phase 1 strategic planning completion, verify human approvals, and prep
 fi
 
 # Check for AI analysis completion
-!if ! grep -q "Architecture Analysis" docs/phases/phase-1-planning.md; then
+!if ! grep -qi "architecture analysis" docs/phases/phase-1-planning.md; then
     echo "❌ Error: AI analysis not completed. Run '/cedps-phase1-analyze' first."
     exit 1
 fi
 
 # Validate human approvals are present
-!APPROVAL_SECTIONS=("Architecture Approval" "Feature Roadmap Approval" "Risk Acceptance" "Final Approval")
-!for section in "${APPROVAL_SECTIONS[@]}"; do
-    if ! grep -q "$section" docs/phases/phase-1-planning.md; then
+!APPROVAL_SECTIONS="Architecture Approval,Feature Roadmap Approval,Risk Acceptance,Final Approval"
+!IFS=',' read -ra SECTIONS <<< "$APPROVAL_SECTIONS"
+!for section in "${SECTIONS[@]}"; do
+    if ! grep -qi "$section" docs/phases/phase-1-planning.md; then
         echo "❌ Error: Missing human approval section: $section"
         echo "💡 Ensure Claude Code provided all required approval sections."
         exit 1
@@ -55,9 +56,15 @@ fi
 fi
 
 # Update project state
-!jq '.phases_completed += [1] | .phase_1_completed = now | .ready_for_phase_2 = true' docs/ce-dps-state.json > docs/ce-dps-state.tmp && mv docs/ce-dps-state.tmp docs/ce-dps-state.json
+!if command -v jq >/dev/null 2>&1; then
+    jq '.phases_completed += [1] | .phase_1_completed = now | .ready_for_phase_2 = true' docs/ce-dps-state.json > docs/ce-dps-state.tmp && mv docs/ce-dps-state.tmp docs/ce-dps-state.json
+else
+    echo "⚠️ Warning: jq not found. State update skipped."
+    echo "💡 Install jq for automatic state management or update docs/ce-dps-state.json manually"
+fi
 
 # Create Phase 1 completion report
+!mkdir -p docs/phases
 !cat > docs/phases/phase-1-completion-report.md << 'EOF'
 # Phase 1 Strategic Planning - Completion Report
 
