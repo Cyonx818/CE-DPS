@@ -1556,7 +1556,10 @@ mod tests {
     #[tokio::test]
     async fn test_anchor_context_aware_indexing() {
         let (storage, _temp_dir) = create_test_storage().await;
-        let result = create_test_result();
+        let mut result = create_test_result();
+        
+        // Clear the existing cache key to force context-aware key generation
+        result.metadata.cache_key = String::new();
 
         // Store with context awareness
         let cache_key = storage.store_with_context(&result, None).await.unwrap();

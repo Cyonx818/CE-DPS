@@ -678,8 +678,36 @@ mod tests {
     }
 
     fn create_test_processor() -> ResearchFeedbackProcessor {
-        // This would need to be updated with actual test doubles
-        // For now, returning a minimal processor for testing
-        todo!("Implement test processor creation")
+        // Create minimal test implementations
+        use crate::vector::{SemanticSearchService, KeywordSearcher, HybridSearchService, VectorStorage, EmbeddingConfig, LocalEmbeddingService, VectorConfig, QdrantClient};
+        
+        // Create test storage
+        let embedding_config = EmbeddingConfig::default();
+        let embedding_service = Arc::new(LocalEmbeddingService::new(embedding_config));
+        let qdrant_config = VectorConfig::default();
+        
+        // Create a runtime for async operations in tests
+        let rt = tokio::runtime::Runtime::new().unwrap();
+        let qdrant_client = rt.block_on(async {
+            QdrantClient::new(qdrant_config).await.unwrap()
+        });
+        
+        let vector_storage = Arc::new(VectorStorage::new(Arc::new(qdrant_client), embedding_service.clone()));
+        
+        // Create hybrid search service  
+        let semantic_service = Arc::new(SemanticSearchService::new(vector_storage.clone()));
+        let keyword_searcher = Arc::new(KeywordSearcher::new());
+        let hybrid_search = Arc::new(HybridSearchService::with_defaults(semantic_service, keyword_searcher));
+        
+        // Create test config
+        let config = FeedbackConfig {
+            min_quality_rating: 1,
+            max_quality_rating: 5,
+            require_feedback_text: false,
+            auto_process_feedback: true,
+            feedback_retention_days: 30,
+        };
+        
+        ResearchFeedbackProcessor::new(hybrid_search, vector_storage, config)
     }
 }

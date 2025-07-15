@@ -1215,10 +1215,12 @@ mod tests {
         assert_eq!(result.total_attempted, 3);
     }
 
-    #[tokio::test]
-    async fn test_vector_storage_stats() {
+    #[test]
+    fn test_vector_storage_stats() {
         let storage = create_test_storage();
-        let stats = storage.get_stats().await.unwrap();
+        
+        // Use tokio_test::block_on for the async call
+        let stats = tokio_test::block_on(storage.get_stats()).unwrap();
 
         assert_eq!(stats.total_documents, 0);
         assert_eq!(stats.total_searches, 0);
