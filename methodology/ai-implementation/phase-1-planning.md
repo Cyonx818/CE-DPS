@@ -6,7 +6,7 @@
 
 **Human Oversight**: Humans define project vision, approve architectural decisions, and validate business alignment.
 
-**Duration**: 30-60 minutes with parallel research subagents
+**Research Approach**: Parallel research subagents for comprehensive analysis
 
 **Documentation Standards**: Follow [LLM Documentation Guidelines](llm-documentation-guidelines.md) for all AI-generated documentation
 
