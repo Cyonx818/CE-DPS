@@ -1,0 +1,71 @@
+[package]
+name = "fortitude-api-server"
+version = "0.1.0"
+edition = "2021"
+description = "Production-ready JSON API server for Fortitude research system"
+authors = ["Fortitude Team"]
+
+[dependencies]
+# Workspace dependencies
+tokio = { workspace = true }
+anyhow = { workspace = true }
+thiserror = { workspace = true }
+serde = { workspace = true }
+serde_json = { workspace = true }
+uuid = { workspace = true }
+chrono = { workspace = true }
+tracing = { workspace = true }
+tracing-subscriber = { workspace = true }
+async-trait = { workspace = true }
+
+# HTTP server framework
+axum = { version = "0.8", features = ["macros", "tokio", "tower-log"] }
+tower = { version = "0.5", features = ["util", "timeout", "load-shed", "limit"] }
+tower-http = { version = "0.6", features = ["cors", "trace", "compression-br", "compression-gzip", "request-id", "limit", "catch-panic"] }
+tower_governor = "0.4"
+hyper = { version = "1.0", features = ["full"] }
+
+# Authentication & middleware
+jsonwebtoken = "9.3"
+validator = { version = "0.18", features = ["derive"] }
+
+# Configuration
+config = "0.14"
+
+# Query string parsing
+serde_qs = "0.12"
+
+# Fortitude workspace crates
+fortitude-types = { path = "../fortitude-types" }
+fortitude-core = { path = "../fortitude-core" }
+
+# OpenAPI documentation
+utoipa = { version = "5.0", features = ["axum_extras", "chrono", "uuid"] }
+utoipa-swagger-ui = { version = "8.0", features = ["axum"] }
+
+[dev-dependencies]
+tokio-test = { workspace = true }
+tempfile = { workspace = true }
+reqwest = { workspace = true }
+serde_json = { workspace = true }
+tower-service = "0.3"
+hyper = { version = "1.0", features = ["full"] }
+axum-test = "15.0"
+criterion = { version = "0.5", features = ["html_reports"] }
+futures = "0.3"
+
+[features]
+default = []
+integration-tests = []
+
+[[bench]]
+name = "api_benchmarks"
+harness = false
+
+[[bench]]
+name = "concurrent_load_test"
+harness = false
+
+[[bench]]
+name = "cache_performance"
+harness = false

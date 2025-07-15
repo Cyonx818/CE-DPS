@@ -1,0 +1,83 @@
+[workspace]
+resolver = "2"
+members = [
+    "tools/quality-gates",
+    "tools/fortitude-integration",
+]
+
+[workspace.package]
+version = "0.1.0"
+edition = "2021"
+authors = ["CE-DPS Project"]
+license = "MIT"
+repository = "https://github.com/your-org/CE-DPS"
+keywords = ["development", "methodology", "ai", "knowledge-management"]
+categories = ["development-tools"]
+
+[workspace.dependencies]
+# Async runtime
+tokio = { version = "1.0", features = ["full"] }
+
+# HTTP client for API calls
+reqwest = { version = "0.11", features = ["json", "rustls-tls"], default-features = false }
+
+# CLI interface
+clap = { version = "4.0", features = ["derive"] }
+
+# Error handling
+thiserror = "1.0"
+anyhow = "1.0"
+
+# Serialization
+serde = { version = "1.0", features = ["derive"] }
+serde_json = "1.0"
+serde_yaml = "0.9"
+toml = "0.8"
+
+# Configuration validation
+validator = { version = "0.18", features = ["derive"] }
+
+# Logging
+tracing = "0.1"
+tracing-subscriber = { version = "0.3", features = ["env-filter"] }
+
+# New dependencies for classification
+regex = "1.10"
+async-trait = "0.1"
+uuid = { version = "1.0", features = ["v4", "serde"] }
+chrono = { version = "0.4", features = ["serde"] }
+
+# Vector database
+qdrant-client = { version = "1.7", features = ["default"] }
+
+# File system monitoring
+notify = { version = "8.0.0", features = ["serde"] }
+notify-debouncer-mini = "0.6.0"
+
+# MCP server dependencies
+rmcp = { version = "0.2.0", features = ["server", "transport-io"] }
+
+# Web server framework
+axum = { version = "0.8", features = ["macros", "tokio", "tower-log"] }
+tower = { version = "0.5", features = ["util", "timeout", "load-shed", "limit"] }
+tower-http = { version = "0.6", features = ["cors", "trace", "compression-br", "compression-gzip", "request-id", "limit", "catch-panic"] }
+hyper = { version = "1.0", features = ["full"] }
+
+# Development dependencies
+tokio-test = "0.4"
+assert_cmd = "2.0"
+assert_fs = "1.0"
+predicates = "3.0"
+tempfile = "3.8"
+proptest = "1.0"
+mockall = "0.11"
+rand = "0.8"
+futures = "0.3"
+tracing-test = "0.2"
+criterion = { version = "0.5", features = ["html_reports", "async_tokio"] }
+
+# CE-DPS specific dependencies
+colored = "2.0"
+indicatif = "0.17"
+git2 = "0.18"
+dirs = "5.0"

@@ -1,0 +1,1777 @@
+openapi: 3.0.3
+info:
+  title: Fortitude API Server
+  description: |
+    Production-ready JSON API server for the Fortitude research system.
+    
+    This API provides endpoints for:
+    - Research operations with AI-powered analysis
+    - Content classification with advanced algorithms  
+    - Caching management with Redis integration
+    - Health monitoring and system status
+    
+    ## Authentication
+    All endpoints (except /health) require API key authentication via the `X-API-Key` header.
+    
+    ## Rate Limiting
+    Requests are rate-limited to 60 requests per minute per IP address.
+    
+    ## Error Handling
+    All errors follow a consistent JSON format with error codes, messages, and request IDs for tracing.
+  version: 0.1.0
+  contact:
+    name: Fortitude Team
+    email: fortitude@example.com
+  license:
+    name: MIT
+    url: https://opensource.org/licenses/MIT
+
+servers:
+  - url: http://localhost:8080
+    description: Local development server
+  - url: https://api.fortitude.example.com
+    description: Production server
+
+security:
+  - ApiKeyAuth: []
+
+paths:
+  /health:
+    get:
+      summary: Health check endpoint
+      description: Returns server health status and component information
+      operationId: getHealth
+      security: [] # No auth required for health checks
+      tags:
+        - Health
+      responses:
+        '200':
+          description: Server is healthy
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HealthResponse'
+        '503':
+          description: Server is unhealthy
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+
+  /api/v1/research:
+    post:
+      summary: Perform research query
+      description: Execute a research query with AI-powered analysis and return structured results
+      operationId: performResearch
+      tags:
+        - Research
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ResearchRequest'
+      responses:
+        '200':
+          description: Research completed successfully
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: '#/components/schemas/ApiResponse'
+                  - type: object
+                    properties:
+                      data:
+                        $ref: '#/components/schemas/ResearchResponse'
+        '400':
+          description: Invalid request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '401':
+          description: Authentication required
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '429':
+          description: Rate limit exceeded
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '500':
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+
+  /api/v1/classify:
+    post:
+      summary: Classify content
+      description: Classify text content using advanced algorithms and return classification results
+      operationId: classifyContent
+      tags:
+        - Classification
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ClassificationRequest'
+      responses:
+        '200':
+          description: Classification completed successfully
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: '#/components/schemas/ApiResponse'
+                  - type: object
+                    properties:
+                      data:
+                        $ref: '#/components/schemas/ClassificationResponse'
+        '400':
+          description: Invalid request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '401':
+          description: Authentication required
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '429':
+          description: Rate limit exceeded
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '500':
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+
+  /api/v1/health/protected:
+    get:
+      summary: Protected health check endpoint
+      description: Returns detailed health status for authenticated users with component information
+      operationId: getProtectedHealth
+      tags:
+        - Health
+      responses:
+        '200':
+          description: Server health status with detailed component information
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HealthResponse'
+        '401':
+          description: Authentication required
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '503':
+          description: Server is unhealthy
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+
+  /api/v1/research/{id}:
+    get:
+      summary: Get research result by ID
+      description: Retrieve a specific research result by its unique identifier
+      operationId: getResearchById
+      tags:
+        - Research
+      parameters:
+        - name: id
+          in: path
+          required: true
+          description: Research result unique identifier
+          schema:
+            type: string
+            format: uuid
+      responses:
+        '200':
+          description: Research result retrieved successfully
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: '#/components/schemas/ApiResponse'
+                  - type: object
+                    properties:
+                      data:
+                        $ref: '#/components/schemas/ResearchResult'
+        '404':
+          description: Research result not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '401':
+          description: Authentication required
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '500':
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+
+  /api/v1/research:
+    get:
+      summary: List research results
+      description: Retrieve a paginated list of research results with optional filtering
+      operationId: listResearchResults
+      tags:
+        - Research
+      parameters:
+        - name: limit
+          in: query
+          description: Number of results to return (max 100)
+          schema:
+            type: integer
+            minimum: 1
+            maximum: 100
+            default: 20
+        - name: offset
+          in: query
+          description: Number of results to skip for pagination
+          schema:
+            type: integer
+            minimum: 0
+            default: 0
+        - name: query
+          in: query
+          description: Filter results by query text
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Research results list retrieved successfully
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: '#/components/schemas/ApiResponse'
+                  - type: object
+                    properties:
+                      data:
+                        $ref: '#/components/schemas/ResearchListResponse'
+        '400':
+          description: Invalid query parameters
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '401':
+          description: Authentication required
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '500':
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+
+    post:
+      summary: Perform research query
+      description: Execute a research query with AI-powered analysis and return structured results
+      operationId: performResearch
+      tags:
+        - Research
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ResearchRequest'
+            examples:
+              simple_query:
+                summary: Simple research query
+                value:
+                  query: "AI-powered content classification algorithms"
+                  priority: "high"
+              detailed_query:
+                summary: Research query with context
+                value:
+                  query: "Best practices for Rust async programming"
+                  context: "Focus on performance and error handling patterns from 2020-2024"
+                  priority: "medium"
+                  audience_context:
+                    level: "intermediate"
+                    domain: "rust"
+                    format: "markdown"
+                  domain_context:
+                    technology: "rust"
+                    architecture: "microservices"
+      responses:
+        '200':
+          description: Research completed successfully
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: '#/components/schemas/ApiResponse'
+                  - type: object
+                    properties:
+                      data:
+                        $ref: '#/components/schemas/ResearchResponse'
+              examples:
+                successful_research:
+                  summary: Successful research response
+                  value:
+                    request_id: "123e4567-e89b-12d3-a456-426614174000"
+                    timestamp: "2024-01-15T10:30:00Z"
+                    success: true
+                    data:
+                      results:
+                        - id: "res_123e4567"
+                          title: "Advanced Classification Algorithms in NLP"
+                          content: "This research explores machine learning approaches..."
+                          relevance_score: 0.92
+                          source: "IEEE Transactions on AI, 2023"
+                          created_at: "2024-01-15T10:30:00Z"
+                      total_count: 15
+                      processing_time_ms: 1250
+        '400':
+          description: Invalid request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '401':
+          description: Authentication required
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '429':
+          description: Rate limit exceeded
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '500':
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+
+  /api/v1/classify/{id}:
+    get:
+      summary: Get classification result by ID
+      description: Retrieve a specific classification result by its unique identifier
+      operationId: getClassificationById
+      tags:
+        - Classification
+      parameters:
+        - name: id
+          in: path
+          required: true
+          description: Classification result unique identifier
+          schema:
+            type: string
+            format: uuid
+      responses:
+        '200':
+          description: Classification result retrieved successfully
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: '#/components/schemas/ApiResponse'
+                  - type: object
+                    properties:
+                      data:
+                        $ref: '#/components/schemas/ClassificationResponse'
+        '404':
+          description: Classification result not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '401':
+          description: Authentication required
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '500':
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+
+  /api/v1/classify:
+    get:
+      summary: List classification results
+      description: Retrieve a paginated list of classification results with optional filtering
+      operationId: listClassificationResults
+      tags:
+        - Classification
+      parameters:
+        - name: limit
+          in: query
+          description: Number of results to return (max 100)
+          schema:
+            type: integer
+            minimum: 1
+            maximum: 100
+            default: 20
+        - name: offset
+          in: query
+          description: Number of results to skip for pagination
+          schema:
+            type: integer
+            minimum: 0
+            default: 0
+        - name: category
+          in: query
+          description: Filter results by classification category
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Classification results list retrieved successfully
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: '#/components/schemas/ApiResponse'
+                  - type: object
+                    properties:
+                      data:
+                        $ref: '#/components/schemas/ClassificationListResponse'
+        '400':
+          description: Invalid query parameters
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '401':
+          description: Authentication required
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '500':
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+
+    post:
+      summary: Classify content
+      description: Classify text content using advanced algorithms and return classification results
+      operationId: classifyContent
+      tags:
+        - Classification
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ClassificationRequest'
+            examples:
+              simple_classification:
+                summary: Simple content classification
+                value:
+                  content: "This document discusses machine learning approaches for text classification using transformer models."
+              advanced_classification:
+                summary: Classification with custom categories
+                value:
+                  content: "How do I implement async functions in Rust with proper error handling?"
+                  categories: ["technical", "tutorial", "rust"]
+                  context_preferences:
+                    detect_urgency: true
+                    detect_audience: true
+                    detect_domain: true
+      responses:
+        '200':
+          description: Classification completed successfully
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: '#/components/schemas/ApiResponse'
+                  - type: object
+                    properties:
+                      data:
+                        $ref: '#/components/schemas/ClassificationResponse'
+              examples:
+                successful_classification:
+                  summary: Successful classification response
+                  value:
+                    request_id: "123e4567-e89b-12d3-a456-426614174000"
+                    timestamp: "2024-01-15T10:30:00Z"
+                    success: true
+                    data:
+                      classifications:
+                        - category: "technical-documentation"
+                          confidence: 0.94
+                          metadata:
+                            detected_language: "rust"
+                            complexity_level: "intermediate"
+                        - category: "tutorial"
+                          confidence: 0.87
+                          metadata:
+                            tutorial_type: "programming"
+                      confidence: 0.91
+                      processing_time_ms: 340
+        '400':
+          description: Invalid request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '401':
+          description: Authentication required
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '429':
+          description: Rate limit exceeded
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '500':
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+
+  /api/v1/classify/types:
+    get:
+      summary: Get available classification types
+      description: Retrieve all available classification categories, audience levels, technical domains, and system information
+      operationId: getClassificationTypes
+      tags:
+        - Classification
+      responses:
+        '200':
+          description: Classification types retrieved successfully
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: '#/components/schemas/ApiResponse'
+                  - type: object
+                    properties:
+                      data:
+                        $ref: '#/components/schemas/ClassificationTypesResponse'
+        '401':
+          description: Authentication required
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '500':
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+
+  /api/v1/cache/stats:
+    get:
+      summary: Get cache statistics
+      description: Retrieve comprehensive cache statistics including hit rates, storage efficiency, and performance metrics
+      operationId: getCacheStats
+      tags:
+        - Cache
+      responses:
+        '200':
+          description: Cache statistics retrieved successfully
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: '#/components/schemas/ApiResponse'
+                  - type: object
+                    properties:
+                      data:
+                        $ref: '#/components/schemas/CacheStatsResponse'
+        '401':
+          description: Authentication required
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '403':
+          description: Insufficient permissions (requires ResourcesRead)
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '500':
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+
+  /api/v1/cache/search:
+    get:
+      summary: Search cache entries
+      description: Search cache entries with filters, pagination, and sorting options
+      operationId: searchCacheEntries
+      tags:
+        - Cache
+      parameters:
+        - name: query
+          in: query
+          description: Search query string
+          schema:
+            type: string
+        - name: limit
+          in: query
+          description: Number of results to return (max 100)
+          schema:
+            type: integer
+            minimum: 1
+            maximum: 100
+            default: 20
+        - name: offset
+          in: query
+          description: Number of results to skip for pagination
+          schema:
+            type: integer
+            minimum: 0
+            default: 0
+        - name: sort
+          in: query
+          description: Sort order for results
+          schema:
+            type: string
+            enum: [newest, oldest, relevance, hits]
+            default: newest
+        - name: research_type
+          in: query
+          description: Filter by research type
+          schema:
+            type: string
+        - name: min_quality
+          in: query
+          description: Minimum quality threshold (0.0 to 1.0)
+          schema:
+            type: number
+            minimum: 0.0
+            maximum: 1.0
+      responses:
+        '200':
+          description: Cache search results retrieved successfully
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: '#/components/schemas/ApiResponse'
+                  - type: object
+                    properties:
+                      data:
+                        $ref: '#/components/schemas/CacheSearchResponse'
+        '400':
+          description: Invalid search parameters
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '401':
+          description: Authentication required
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '403':
+          description: Insufficient permissions (requires ResourcesRead)
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '500':
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+
+  /api/v1/cache/{id}:
+    get:
+      summary: Get cache entry by ID
+      description: Retrieve a specific cache entry by its unique identifier
+      operationId: getCacheEntry
+      tags:
+        - Cache
+      parameters:
+        - name: id
+          in: path
+          required: true
+          description: Cache entry unique identifier
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Cache entry retrieved successfully
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: '#/components/schemas/ApiResponse'
+                  - type: object
+                    properties:
+                      data:
+                        $ref: '#/components/schemas/CacheItemResponse'
+        '404':
+          description: Cache entry not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '401':
+          description: Authentication required
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '403':
+          description: Insufficient permissions (requires ResourcesRead)
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '500':
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+
+    delete:
+      summary: Delete cache entry
+      description: Delete a specific cache entry by its unique identifier (requires Admin permission)
+      operationId: deleteCacheEntry
+      tags:
+        - Cache
+      parameters:
+        - name: id
+          in: path
+          required: true
+          description: Cache entry unique identifier
+          schema:
+            type: string
+      responses:
+        '204':
+          description: Cache entry deleted successfully
+        '404':
+          description: Cache entry not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '401':
+          description: Authentication required
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '403':
+          description: Insufficient permissions (requires Admin)
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '500':
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+
+  /api/v1/cache/invalidate:
+    post:
+      summary: Invalidate cache entries
+      description: Invalidate cache entries based on keys, patterns, or criteria (requires Admin permission)
+      operationId: invalidateCacheEntries
+      tags:
+        - Cache
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CacheInvalidateRequest'
+            examples:
+              invalidate_by_keys:
+                summary: Invalidate specific cache keys
+                value:
+                  keys: ["research:query:123", "classification:content:456"]
+                  dry_run: false
+              invalidate_by_pattern:
+                summary: Invalidate by pattern matching
+                value:
+                  pattern: "research:*"
+                  max_age_seconds: 86400
+                  dry_run: true
+              selective_invalidation:
+                summary: Selective invalidation with criteria
+                value:
+                  research_type: "troubleshooting"
+                  min_quality: 0.5
+                  max_age_seconds: 3600
+                  dry_run: false
+      responses:
+        '200':
+          description: Cache invalidation completed successfully
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: '#/components/schemas/ApiResponse'
+                  - type: object
+                    properties:
+                      data:
+                        $ref: '#/components/schemas/CacheInvalidateResponse'
+        '400':
+          description: Invalid invalidation parameters
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '401':
+          description: Authentication required
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '403':
+          description: Insufficient permissions (requires Admin)
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '500':
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+
+  /api/v1/cache/cleanup:
+    post:
+      summary: Perform cache cleanup
+      description: Perform comprehensive cache cleanup operations (requires Admin permission)
+      operationId: cleanupCache
+      tags:
+        - Cache
+      responses:
+        '200':
+          description: Cache cleanup completed successfully
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: '#/components/schemas/ApiResponse'
+                  - type: object
+                    properties:
+                      data:
+                        $ref: '#/components/schemas/CacheCleanupResponse'
+        '401':
+          description: Authentication required
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '403':
+          description: Insufficient permissions (requires Admin)
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '500':
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+
+components:
+  securitySchemes:
+    ApiKeyAuth:
+      type: apiKey
+      in: header
+      name: X-API-Key
+      description: API key for authentication
+
+  schemas:
+    ApiResponse:
+      type: object
+      required:
+        - request_id
+        - timestamp
+        - success
+      properties:
+        request_id:
+          type: string
+          format: uuid
+          description: Unique request identifier for tracing
+        timestamp:
+          type: string
+          format: date-time
+          description: Response timestamp in ISO 8601 format
+        success:
+          type: boolean
+          description: Indicates if the request was successful
+
+    ErrorResponse:
+      type: object
+      required:
+        - error_code
+        - message
+        - timestamp
+      properties:
+        error_code:
+          type: string
+          description: Machine-readable error code
+          example: "VALIDATION_ERROR"
+        message:
+          type: string
+          description: Human-readable error message
+          example: "Validation error: Query must be between 1 and 1000 characters"
+        details:
+          type: string
+          description: Additional error details
+        request_id:
+          type: string
+          format: uuid
+          description: Request ID for tracing
+        timestamp:
+          type: string
+          format: date-time
+          description: Error timestamp in ISO 8601 format
+        path:
+          type: string
+          description: Request path where error occurred
+
+    ResearchRequest:
+      type: object
+      required:
+        - query
+      properties:
+        query:
+          type: string
+          minLength: 1
+          maxLength: 1000
+          description: The research query or topic
+          example: "AI-powered content classification algorithms"
+        context:
+          type: string
+          maxLength: 5000
+          description: Optional context for the research
+          example: "Focus on machine learning approaches from 2020-2024"
+        priority:
+          type: string
+          description: Research priority level
+          enum: [low, medium, high, urgent]
+          example: "high"
+
+    ResearchResponse:
+      type: object
+      required:
+        - results
+        - total_count
+        - processing_time_ms
+      properties:
+        results:
+          type: array
+          items:
+            $ref: '#/components/schemas/ResearchResult'
+          description: Array of research results
+        total_count:
+          type: integer
+          minimum: 0
+          description: Total number of results found
+          example: 15
+        processing_time_ms:
+          type: integer
+          minimum: 0
+          description: Processing time in milliseconds
+          example: 1250
+
+    ResearchResult:
+      type: object
+      required:
+        - id
+        - title
+        - content
+        - relevance_score
+        - created_at
+      properties:
+        id:
+          type: string
+          format: uuid
+          description: Unique result identifier
+        title:
+          type: string
+          description: Result title or summary
+          example: "Advanced Classification Algorithms in NLP"
+        content:
+          type: string
+          description: Result content
+          example: "This research explores..."
+        relevance_score:
+          type: number
+          minimum: 0.0
+          maximum: 1.0
+          description: Relevance score from 0.0 to 1.0
+          example: 0.92
+        source:
+          type: string
+          description: Source information
+          example: "IEEE Transactions on AI, 2023"
+        created_at:
+          type: string
+          format: date-time
+          description: Creation timestamp
+
+    ClassificationRequest:
+      type: object
+      required:
+        - content
+      properties:
+        content:
+          type: string
+          minLength: 1
+          maxLength: 10000
+          description: Content to classify
+          example: "This document discusses machine learning approaches..."
+        categories:
+          type: array
+          items:
+            type: string
+          description: Optional list of categories to consider
+          example: ["technical", "research", "tutorial"]
+        context_preferences:
+          $ref: '#/components/schemas/ClassificationContextPreferences'
+
+    ClassificationResponse:
+      type: object
+      required:
+        - classifications
+        - confidence
+        - processing_time_ms
+      properties:
+        classifications:
+          type: array
+          items:
+            $ref: '#/components/schemas/Classification'
+          description: Array of classification results
+        confidence:
+          type: number
+          minimum: 0.0
+          maximum: 1.0
+          description: Overall confidence score
+          example: 0.87
+        processing_time_ms:
+          type: integer
+          minimum: 0
+          description: Processing time in milliseconds
+          example: 340
+
+    Classification:
+      type: object
+      required:
+        - category
+        - confidence
+      properties:
+        category:
+          type: string
+          description: Category name
+          example: "technical-documentation"
+        confidence:
+          type: number
+          minimum: 0.0
+          maximum: 1.0
+          description: Confidence score for this category
+          example: 0.94
+        metadata:
+          type: object
+          description: Additional classification metadata
+          additionalProperties: true
+
+    AudienceContextRequest:
+      type: object
+      required:
+        - level
+        - domain
+        - format
+      properties:
+        level:
+          type: string
+          description: Technical level (beginner, intermediate, advanced)
+          example: "intermediate"
+        domain:
+          type: string
+          description: Domain expertise (rust, web, devops, etc.)
+          example: "rust"
+        format:
+          type: string
+          description: Output format preference (markdown, json, plain)
+          example: "markdown"
+
+    DomainContextRequest:
+      type: object
+      required:
+        - technology
+        - architecture
+      properties:
+        technology:
+          type: string
+          description: Technology stack (rust, javascript, python, etc.)
+          example: "rust"
+        architecture:
+          type: string
+          description: Architecture pattern (microservices, monolith, serverless, etc.)
+          example: "microservices"
+
+    ClassificationContextPreferences:
+      type: object
+      properties:
+        detect_urgency:
+          type: boolean
+          description: Enable urgency level detection
+          default: true
+        detect_audience:
+          type: boolean
+          description: Enable audience level detection
+          default: true
+        detect_domain:
+          type: boolean
+          description: Enable domain detection
+          default: true
+
+    ResearchListResponse:
+      type: object
+      required:
+        - results
+        - total_count
+        - pagination
+      properties:
+        results:
+          type: array
+          items:
+            $ref: '#/components/schemas/ResearchResult'
+          description: Array of research results
+        total_count:
+          type: integer
+          minimum: 0
+          description: Total number of results available
+          example: 150
+        pagination:
+          $ref: '#/components/schemas/PaginationInfo'
+
+    ClassificationListResponse:
+      type: object
+      required:
+        - results
+        - total_count
+        - pagination
+      properties:
+        results:
+          type: array
+          items:
+            $ref: '#/components/schemas/ClassificationResponse'
+          description: Array of classification results
+        total_count:
+          type: integer
+          minimum: 0
+          description: Total number of results available
+          example: 75
+        pagination:
+          $ref: '#/components/schemas/PaginationInfo'
+
+    ClassificationTypesResponse:
+      type: object
+      required:
+        - research_types
+        - audience_levels
+        - technical_domains
+        - urgency_levels
+        - system_info
+      properties:
+        research_types:
+          type: array
+          items:
+            type: string
+          description: Available research types
+          example: ["implementation", "troubleshooting", "decision", "learning", "validation"]
+        audience_levels:
+          type: array
+          items:
+            type: string
+          description: Available audience levels
+          example: ["beginner", "intermediate", "advanced", "expert"]
+        technical_domains:
+          type: array
+          items:
+            type: string
+          description: Available technical domains
+          example: ["rust", "web", "devops", "ai", "databases"]
+        urgency_levels:
+          type: array
+          items:
+            type: string
+          description: Available urgency levels
+          example: ["low", "medium", "high", "urgent"]
+        system_info:
+          $ref: '#/components/schemas/ClassificationSystemInfo'
+
+    ClassificationSystemInfo:
+      type: object
+      required:
+        - version
+        - advanced_classification_available
+        - context_detection_available
+        - default_confidence_threshold
+      properties:
+        version:
+          type: string
+          description: Classification system version
+          example: "1.0.0"
+        advanced_classification_available:
+          type: boolean
+          description: Whether advanced classification features are available
+          example: true
+        context_detection_available:
+          type: boolean
+          description: Whether context detection is available
+          example: true
+        default_confidence_threshold:
+          type: number
+          minimum: 0.0
+          maximum: 1.0
+          description: Default confidence threshold for classifications
+          example: 0.6
+
+    CacheStatsResponse:
+      type: object
+      required:
+        - total_entries
+        - hit_rate
+        - storage_efficiency
+        - performance_metrics
+        - by_research_type
+      properties:
+        total_entries:
+          type: integer
+          minimum: 0
+          description: Total number of cache entries
+          example: 1523
+        hit_rate:
+          type: number
+          minimum: 0.0
+          maximum: 1.0
+          description: Overall cache hit rate
+          example: 0.78
+        storage_efficiency:
+          $ref: '#/components/schemas/StorageEfficiencyResponse'
+        performance_metrics:
+          $ref: '#/components/schemas/CachePerformanceResponse'
+        by_research_type:
+          type: object
+          additionalProperties:
+            $ref: '#/components/schemas/CacheTypeStatsResponse'
+          description: Statistics broken down by research type
+
+    StorageEfficiencyResponse:
+      type: object
+      required:
+        - compression_ratio
+        - deduplication_savings
+        - total_size_bytes
+        - compressed_size_bytes
+      properties:
+        compression_ratio:
+          type: number
+          minimum: 0.0
+          description: Data compression ratio
+          example: 0.65
+        deduplication_savings:
+          type: number
+          minimum: 0.0
+          maximum: 1.0
+          description: Space saved through deduplication
+          example: 0.23
+        total_size_bytes:
+          type: integer
+          minimum: 0
+          description: Total storage size in bytes
+          example: 2048576
+        compressed_size_bytes:
+          type: integer
+          minimum: 0
+          description: Compressed storage size in bytes
+          example: 1331200
+
+    CachePerformanceResponse:
+      type: object
+      required:
+        - average_read_time_ms
+        - average_write_time_ms
+        - recent_operations
+      properties:
+        average_read_time_ms:
+          type: number
+          minimum: 0.0
+          description: Average read operation time in milliseconds
+          example: 2.5
+        average_write_time_ms:
+          type: number
+          minimum: 0.0
+          description: Average write operation time in milliseconds
+          example: 8.3
+        recent_operations:
+          $ref: '#/components/schemas/RecentOperationsResponse'
+
+    RecentOperationsResponse:
+      type: object
+      required:
+        - hits
+        - misses
+        - writes
+        - time_window_minutes
+      properties:
+        hits:
+          type: integer
+          minimum: 0
+          description: Cache hits in recent time window
+          example: 245
+        misses:
+          type: integer
+          minimum: 0
+          description: Cache misses in recent time window
+          example: 34
+        writes:
+          type: integer
+          minimum: 0
+          description: Cache writes in recent time window
+          example: 18
+        time_window_minutes:
+          type: integer
+          minimum: 1
+          description: Time window for recent operations in minutes
+          example: 15
+
+    CacheTypeStatsResponse:
+      type: object
+      required:
+        - entries
+        - size_bytes
+        - hit_rate
+        - hits
+        - misses
+        - average_quality
+      properties:
+        entries:
+          type: integer
+          minimum: 0
+          description: Number of entries for this type
+          example: 156
+        size_bytes:
+          type: integer
+          minimum: 0
+          description: Storage size for this type in bytes
+          example: 524288
+        hit_rate:
+          type: number
+          minimum: 0.0
+          maximum: 1.0
+          description: Hit rate for this type
+          example: 0.82
+        hits:
+          type: integer
+          minimum: 0
+          description: Total hits for this type
+          example: 1203
+        misses:
+          type: integer
+          minimum: 0
+          description: Total misses for this type
+          example: 267
+        average_quality:
+          type: number
+          minimum: 0.0
+          maximum: 1.0
+          description: Average quality score for this type
+          example: 0.85
+
+    CacheSearchResponse:
+      type: object
+      required:
+        - results
+        - total_count
+        - pagination
+        - search_metadata
+      properties:
+        results:
+          type: array
+          items:
+            $ref: '#/components/schemas/CacheItemResponse'
+          description: Array of cache entries matching search
+        total_count:
+          type: integer
+          minimum: 0
+          description: Total number of matching results
+          example: 42
+        pagination:
+          $ref: '#/components/schemas/PaginationInfo'
+        search_metadata:
+          $ref: '#/components/schemas/CacheSearchMetadata'
+
+    CacheSearchMetadata:
+      type: object
+      required:
+        - query
+        - search_time_ms
+        - filters_applied
+      properties:
+        query:
+          type: string
+          description: The search query used
+          example: "rust async"
+        search_time_ms:
+          type: integer
+          minimum: 0
+          description: Search execution time in milliseconds
+          example: 45
+        filters_applied:
+          type: array
+          items:
+            type: string
+          description: List of filters that were applied
+          example: ["research_type", "quality_threshold"]
+
+    CacheItemResponse:
+      type: object
+      required:
+        - id
+        - key
+        - content_type
+        - size_bytes
+        - created_at
+        - last_accessed
+        - hit_count
+        - quality_score
+      properties:
+        id:
+          type: string
+          description: Unique cache entry identifier
+          example: "cache_123e4567"
+        key:
+          type: string
+          description: Cache key
+          example: "research:rust-async:123"
+        content_type:
+          type: string
+          description: Type of cached content
+          example: "research_result"
+        content:
+          type: object
+          description: Cached content (optional, may be large)
+          additionalProperties: true
+        size_bytes:
+          type: integer
+          minimum: 0
+          description: Size of cached entry in bytes
+          example: 8192
+        created_at:
+          type: string
+          format: date-time
+          description: When the entry was created
+        last_accessed:
+          type: string
+          format: date-time
+          description: When the entry was last accessed
+        hit_count:
+          type: integer
+          minimum: 0
+          description: Number of times this entry has been accessed
+          example: 15
+        quality_score:
+          type: number
+          minimum: 0.0
+          maximum: 1.0
+          description: Quality score of the cached content
+          example: 0.87
+        metadata:
+          type: object
+          description: Additional metadata for the cache entry
+          additionalProperties: true
+
+    PaginationInfo:
+      type: object
+      required:
+        - limit
+        - offset
+        - total_count
+        - has_next
+        - has_previous
+      properties:
+        limit:
+          type: integer
+          minimum: 1
+          description: Number of items per page
+          example: 20
+        offset:
+          type: integer
+          minimum: 0
+          description: Number of items skipped
+          example: 40
+        total_count:
+          type: integer
+          minimum: 0
+          description: Total number of items available
+          example: 150
+        has_next:
+          type: boolean
+          description: Whether there are more items after this page
+          example: true
+        has_previous:
+          type: boolean
+          description: Whether there are items before this page
+          example: true
+
+    CacheInvalidateRequest:
+      type: object
+      properties:
+        keys:
+          type: array
+          items:
+            type: string
+          description: Specific cache keys to invalidate
+          example: ["research:query:123", "classification:content:456"]
+        pattern:
+          type: string
+          description: Pattern to match cache keys (supports wildcards)
+          example: "research:*"
+        research_type:
+          type: string
+          description: Invalidate entries of specific research type
+          example: "troubleshooting"
+        tags:
+          type: array
+          items:
+            type: string
+          description: Invalidate entries with specific tags
+          example: ["rust", "async"]
+        max_age_seconds:
+          type: integer
+          minimum: 0
+          description: Invalidate entries older than this many seconds
+          example: 86400
+        min_quality:
+          type: number
+          minimum: 0.0
+          maximum: 1.0
+          description: Invalidate entries with quality below this threshold
+          example: 0.5
+        dry_run:
+          type: boolean
+          description: If true, show what would be invalidated without actually doing it
+          default: false
+
+    CacheInvalidateResponse:
+      type: object
+      required:
+        - invalidated_count
+        - invalidated_keys
+        - dry_run
+        - criteria
+      properties:
+        invalidated_count:
+          type: integer
+          minimum: 0
+          description: Number of cache entries invalidated
+          example: 15
+        invalidated_keys:
+          type: array
+          items:
+            type: string
+          description: List of cache keys that were invalidated
+          example: ["research:query:123", "research:query:456"]
+        dry_run:
+          type: boolean
+          description: Whether this was a dry run (no actual invalidation)
+          example: false
+        criteria:
+          $ref: '#/components/schemas/CacheInvalidationCriteria'
+
+    CacheInvalidationCriteria:
+      type: object
+      required:
+        - total_candidates
+        - filters_applied
+      properties:
+        total_candidates:
+          type: integer
+          minimum: 0
+          description: Total number of entries considered for invalidation
+          example: 45
+        filters_applied:
+          type: array
+          items:
+            type: string
+          description: List of criteria that were applied
+          example: ["max_age", "research_type"]
+
+    CacheCleanupResponse:
+      type: object
+      required:
+        - status
+        - cleaned_count
+        - cleanup_summary
+      properties:
+        status:
+          type: string
+          description: Cleanup operation status
+          enum: [success, partial, failed]
+          example: "success"
+        cleaned_count:
+          type: integer
+          minimum: 0
+          description: Number of entries cleaned up
+          example: 23
+        cleanup_summary:
+          $ref: '#/components/schemas/CleanupSummary'
+
+    CleanupSummary:
+      type: object
+      required:
+        - expired_entries
+        - low_quality_entries
+        - orphaned_entries
+        - space_freed_bytes
+      properties:
+        expired_entries:
+          type: integer
+          minimum: 0
+          description: Number of expired entries removed
+          example: 12
+        low_quality_entries:
+          type: integer
+          minimum: 0
+          description: Number of low quality entries removed
+          example: 7
+        orphaned_entries:
+          type: integer
+          minimum: 0
+          description: Number of orphaned entries removed
+          example: 4
+        space_freed_bytes:
+          type: integer
+          minimum: 0
+          description: Amount of storage space freed in bytes
+          example: 1048576
+
+    CacheStats:
+      type: object
+      required:
+        - total_keys
+        - hit_rate
+        - memory_usage_bytes
+      properties:
+        total_keys:
+          type: integer
+          minimum: 0
+          description: Total keys in cache
+          example: 1523
+        hit_rate:
+          type: number
+          minimum: 0.0
+          maximum: 1.0
+          description: Cache hit rate
+          example: 0.78
+        memory_usage_bytes:
+          type: integer
+          minimum: 0
+          description: Memory usage in bytes
+          example: 2048576
+
+    HealthResponse:
+      type: object
+      required:
+        - status
+        - version
+        - uptime_seconds
+        - components
+      properties:
+        status:
+          type: string
+          description: Overall service status
+          enum: [healthy, unhealthy, degraded]
+          example: "healthy"
+        version:
+          type: string
+          description: Service version
+          example: "0.1.0"
+        uptime_seconds:
+          type: integer
+          minimum: 0
+          description: Uptime in seconds
+          example: 3600
+        components:
+          type: object
+          additionalProperties:
+            $ref: '#/components/schemas/ComponentHealth'
+          description: Component health status map
+
+    ComponentHealth:
+      type: object
+      required:
+        - status
+        - last_check
+      properties:
+        status:
+          type: string
+          description: Component status
+          enum: [healthy, unhealthy, unknown]
+          example: "healthy"
+        last_check:
+          type: string
+          format: date-time
+          description: Last health check timestamp
+        details:
+          type: string
+          description: Additional status details
+          example: "Connected to Redis cluster"
+
+tags:
+  - name: Health
+    description: Health monitoring and status endpoints
+  - name: Research
+    description: AI-powered research and analysis operations
+  - name: Classification
+    description: Content classification and categorization
+  - name: Cache
+    description: Cache management and statistics

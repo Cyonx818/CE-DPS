@@ -1,0 +1,38 @@
+[package]
+name = "quality-gates"
+version.workspace = true
+edition.workspace = true
+authors.workspace = true
+license.workspace = true
+repository.workspace = true
+description = "CE-DPS Quality Gates validation tool"
+keywords.workspace = true
+categories.workspace = true
+
+[[bin]]
+name = "quality-gates"
+path = "src/main.rs"
+
+[dependencies]
+tokio = { workspace = true }
+clap = { workspace = true }
+serde = { workspace = true }
+serde_json = { workspace = true }
+anyhow = { workspace = true }
+thiserror = { workspace = true }
+tracing = { workspace = true }
+tracing-subscriber = { workspace = true }
+colored = { workspace = true }
+indicatif = { workspace = true }
+chrono = { workspace = true }
+regex = { workspace = true }
+git2 = { workspace = true }
+
+# Fortitude integration
+fortitude-types = { path = "../../fortitude/crates/fortitude-types" }
+fortitude-core = { path = "../../fortitude/crates/fortitude-core" }
+
+[dev-dependencies]
+tempfile = { workspace = true }
+assert_cmd = { workspace = true }
+predicates = { workspace = true }

@@ -1,0 +1,31 @@
+[package]
+name = "fortitude-cli"
+version = "0.1.0"
+edition = "2021"
+description = "CLI application for the Fortitude research system"
+authors = ["Concordia Team"]
+
+[[bin]]
+name = "fortitude-cli"
+path = "src/main.rs"
+
+[dependencies]
+fortitude-types = { path = "../fortitude-types" }
+fortitude-core = { path = "../fortitude-core" }
+tokio = { workspace = true }
+clap = { workspace = true }
+serde = { workspace = true }
+serde_json = { workspace = true }
+thiserror = { workspace = true }
+anyhow = { workspace = true }
+tracing = { workspace = true }
+tracing-subscriber = { workspace = true }
+
+[dev-dependencies]
+fortitude-test-utils = { path = "../fortitude-test-utils" }
+tokio-test = { workspace = true }
+assert_cmd = { workspace = true }
+assert_fs = { workspace = true }
+predicates = { workspace = true }
+tempfile = { workspace = true }
+chrono = { workspace = true }

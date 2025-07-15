@@ -1,0 +1,111 @@
+# Rust Build Artifacts
+target/
+Cargo.lock
+*.orig
+*.bk
+
+# IDE Files
+.vscode/
+.idea/
+*.swp
+*.swo
+*.tmp
+*.temp
+.DS_Store
+Thumbs.db
+
+# Logs and Monitoring
+*.log
+monitoring_data/
+logs/
+
+# Sensitive Data
+*.key
+*.secret
+.env
+.env.local
+.env.production
+.env.staging
+
+# Build Artifacts
+coordination/
+reference_library/cache/
+reference_library/index/
+*.flag
+*.json
+
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+build/
+develop-eggs/
+dist/
+downloads/
+eggs/
+.eggs/
+lib/
+lib64/
+parts/
+sdist/
+var/
+wheels/
+*.egg-info/
+.installed.cfg
+*.egg
+
+# Testing
+.pytest_cache/
+.coverage
+htmlcov/
+.tox/
+.coverage.*
+.cache
+nosetests.xml
+coverage.xml
+*.cover
+.hypothesis/
+
+# Documentation
+docs/_build/
+docs/build/
+.readthedocs.yml
+
+# OS Files
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+Thumbs.db
+
+# Temporary Files
+*.tmp
+*.temp
+*.swp
+*.swo
+*~
+
+# Backup Files
+*.bak
+*.backup
+
+# Editor Files
+*.sublime-*
+*.atom-*
+
+# Node.js (if used for documentation)
+node_modules/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# Fortitude Specific
+fortitude/monitoring_data/
+fortitude/reference_library/cache/
+fortitude/reference_library/index/
+fortitude/coordination/
+fortitude/test_hash.rs

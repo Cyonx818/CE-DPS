@@ -1,0 +1,19 @@
+[package]
+name = "fortitude-test-utils"
+version = "0.1.0"
+edition = "2021"
+description = "Shared testing utilities for the Fortitude research system"
+authors = ["Concordia Team"]
+
+[dependencies]
+fortitude-types = { path = "../fortitude-types" }
+tokio = { workspace = true }
+serde = { workspace = true }
+serde_json = { workspace = true }
+tempfile = { workspace = true }
+uuid = { workspace = true }
+chrono = { workspace = true }
+async-trait = { workspace = true }
+
+[dev-dependencies]
+tokio-test = { workspace = true }

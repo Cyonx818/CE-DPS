@@ -1,0 +1,64 @@
+[package]
+name = "fortitude-api-client-examples"
+version = "0.1.0"
+edition = "2021"
+description = "Rust client examples for the Fortitude API"
+
+[[bin]]
+name = "basic_example"
+path = "src/basic_example.rs"
+
+[[bin]]
+name = "research_examples"
+path = "src/research_examples.rs"
+
+[[bin]]
+name = "classification_examples"
+path = "src/classification_examples.rs"
+
+[[bin]]
+name = "cache_examples"
+path = "src/cache_examples.rs"
+
+[[bin]]
+name = "performance_test"
+path = "src/performance_test.rs"
+
+[[bin]]
+name = "integration_examples"
+path = "src/integration_examples.rs"
+
+[dependencies]
+# HTTP client
+reqwest = { version = "0.11", features = ["json", "rustls-tls"], default-features = false }
+
+# Async runtime
+tokio = { version = "1.0", features = ["full"] }
+
+# JSON handling
+serde = { version = "1.0", features = ["derive"] }
+serde_json = "1.0"
+
+# Error handling
+anyhow = "1.0"
+thiserror = "1.0"
+
+# UUID support
+uuid = { version = "1.0", features = ["v4", "serde"] }
+
+# Time handling
+chrono = { version = "0.4", features = ["serde"] }
+
+# Environment variables
+dotenv = "0.15"
+
+# Logging
+tracing = "0.1"
+tracing-subscriber = { version = "0.3", features = ["env-filter"] }
+
+# Performance testing
+futures = "0.3"
+clap = { version = "4.0", features = ["derive"] }
+
+# Statistics for performance testing
+statistical = "1.0"

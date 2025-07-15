@@ -1,0 +1,180 @@
+[workspace]
+resolver = "2"
+members = [
+    ".",
+    "crates/fortitude-types",
+    "crates/fortitude-core", 
+    "crates/fortitude-cli",
+    "crates/fortitude-test-utils",
+    "crates/fortitude-mcp-server",
+    "crates/fortitude-api-server"
+]
+
+[workspace.dependencies]
+# Async runtime
+tokio = { version = "1.0", features = ["full"] }
+
+# HTTP client for API calls
+reqwest = { version = "0.11", features = ["json", "rustls-tls"], default-features = false }
+
+# CLI interface
+clap = { version = "4.0", features = ["derive"] }
+
+# Error handling
+thiserror = "1.0"
+anyhow = "1.0"
+
+# Serialization
+serde = { version = "1.0", features = ["derive"] }
+serde_json = "1.0"
+serde_yaml = "0.9"
+toml = "0.8"
+
+# Configuration validation
+validator = { version = "0.18", features = ["derive"] }
+
+# Logging
+tracing = "0.1"
+tracing-subscriber = { version = "0.3", features = ["env-filter"] }
+
+# New dependencies for classification
+regex = "1.10"
+async-trait = "0.1"
+uuid = { version = "1.0", features = ["v4", "serde"] }
+chrono = { version = "0.4", features = ["serde"] }
+
+# Vector database
+qdrant-client = { version = "1.7", features = ["default"] }
+
+# Embedding generation (mock implementation - replace with candle-core, tokenizers, hf-hub for production)
+# candle-core = "0.3"
+# candle-nn = "0.3" 
+# candle-transformers = "0.3"
+# tokenizers = "0.15"
+# hf-hub = "0.3"
+
+# File system monitoring
+notify = { version = "8.0.0", features = ["serde"] }
+notify-debouncer-mini = "0.6.0"
+
+# MCP server dependencies
+rmcp = { version = "0.2.0", features = ["server", "transport-io"] }
+
+# Web server framework
+axum = { version = "0.8", features = ["macros", "tokio", "tower-log"] }
+tower = { version = "0.5", features = ["util", "timeout", "load-shed", "limit"] }
+tower-http = { version = "0.6", features = ["cors", "trace", "compression-br", "compression-gzip", "request-id", "limit", "catch-panic"] }
+hyper = { version = "1.0", features = ["full"] }
+
+# Development dependencies
+tokio-test = "0.4"
+assert_cmd = "2.0"
+assert_fs = "1.0"
+predicates = "3.0"
+tempfile = "3.8"
+proptest = "1.0"
+mockall = "0.11"
+rand = "0.8"
+futures = "0.3"
+tracing-test = "0.2"
+
+[package]
+name = "fortitude"
+version = "0.1.0"
+edition = "2021"
+description = "AI-powered research pipeline and knowledge management system"
+repository = "https://github.com/your-org/fortitude"
+license = "MIT OR Apache-2.0"
+
+[dependencies]
+# Workspace dependencies
+tokio = { workspace = true }
+serde = { workspace = true }
+serde_json = { workspace = true }
+thiserror = { workspace = true }
+anyhow = { workspace = true }
+tracing = { workspace = true }
+tracing-subscriber = { workspace = true }
+clap = { workspace = true }
+
+# File system monitoring
+notify = { workspace = true }
+notify-debouncer-mini = { workspace = true }
+
+# Task scheduling
+tokio-cron-scheduler = "0.9"
+
+# Text processing and NLP
+regex = { workspace = true }
+
+# Natural Language Processing and Machine Learning
+unicode-segmentation = "1.10"  # For better text tokenization
+
+# Time and date
+chrono = { workspace = true }
+
+# Async traits
+async-trait = { workspace = true }
+
+# UUID generation
+uuid = { workspace = true }
+
+# HTTP client for notifications and provider APIs
+reqwest = { workspace = true }
+
+# Rate limiting utilities
+tokio-util = { version = "0.7", features = ["time"] }
+
+# Mock data generation for testing
+rand = { workspace = true }
+
+# Configuration management
+toml = { workspace = true }
+validator = { workspace = true }
+serde_yaml = { workspace = true }
+
+# Environment file support
+dotenv = "0.15"
+
+# Local crates
+fortitude-types = { path = "crates/fortitude-types" }
+fortitude-core = { path = "crates/fortitude-core" }
+fortitude-mcp-server = { path = "crates/fortitude-mcp-server" }
+fortitude-api-server = { path = "crates/fortitude-api-server" }
+
+[dev-dependencies]
+tokio-test = { workspace = true }
+tempfile = { workspace = true }
+assert_fs = { workspace = true }
+assert_cmd = { workspace = true }
+predicates = { workspace = true }
+mockall = { workspace = true }
+tracing-test = { workspace = true }
+futures = "0.3"
+criterion = { version = "0.5", features = ["html_reports", "async_tokio"] }
+
+# Integration test dependencies
+rmcp = { workspace = true }
+axum = { workspace = true }
+tower = { workspace = true }
+hyper = { workspace = true }
+
+[[bench]]
+name = "sprint_008_performance_validation"
+harness = false
+
+[[bench]]
+name = "sprint_008_task_6_5_manual_lookup_time_validation"
+harness = false
+
+[[bench]]
+name = "sprint_008_task_6_5_workflow_efficiency_validation"
+harness = false
+
+[[bench]]
+name = "quality_scoring_benchmarks"
+harness = false
+
+[[bench]]
+name = "quality_optimization_performance"
+harness = false

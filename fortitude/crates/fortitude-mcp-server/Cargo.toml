@@ -1,0 +1,44 @@
+[package]
+name = "fortitude-mcp-server"
+version = "0.1.0"
+edition = "2021"
+description = "MCP server for Fortitude AI research assistant"
+license = "MIT OR Apache-2.0"
+authors = ["Fortitude Team"]
+
+[dependencies]
+# Workspace dependencies
+fortitude-types = { path = "../fortitude-types" }
+fortitude-core = { path = "../fortitude-core" }
+tokio = { workspace = true }
+anyhow = { workspace = true }
+thiserror = { workspace = true }
+serde = { workspace = true }
+serde_json = { workspace = true }
+tracing = { workspace = true }
+tracing-subscriber = { workspace = true }
+clap = { workspace = true }
+uuid = { workspace = true }
+chrono = { workspace = true }
+
+# MCP dependencies
+rmcp = { version = "0.2.0", features = ["server", "transport-io"] }
+rust-mcp-schema = "0.2.0"
+
+# Security and validation
+jsonwebtoken = "9.0"
+bcrypt = "0.15"
+validator = { version = "0.18", features = ["derive"] }
+
+# Configuration formats
+toml = "0.8"
+
+# Observability
+metrics = "0.22"
+async-trait = "0.1"
+
+[dev-dependencies]
+tokio-test = { workspace = true }
+tempfile = { workspace = true }
+mockall = { workspace = true }
+futures = "0.3"

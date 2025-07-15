@@ -1,0 +1,38 @@
+[package]
+name = "fortitude-integration"
+version.workspace = true
+edition.workspace = true
+authors.workspace = true
+license.workspace = true
+repository.workspace = true
+description = "CE-DPS Fortitude integration management tool"
+keywords.workspace = true
+categories.workspace = true
+
+[[bin]]
+name = "fortitude-integration"
+path = "src/main.rs"
+
+[dependencies]
+tokio = { workspace = true }
+clap = { workspace = true }
+serde = { workspace = true }
+serde_json = { workspace = true }
+anyhow = { workspace = true }
+thiserror = { workspace = true }
+tracing = { workspace = true }
+tracing-subscriber = { workspace = true }
+colored = { workspace = true }
+indicatif = { workspace = true }
+chrono = { workspace = true }
+toml = { workspace = true }
+dirs = { workspace = true }
+
+# Fortitude integration
+fortitude-types = { path = "../../fortitude/crates/fortitude-types" }
+fortitude-core = { path = "../../fortitude/crates/fortitude-core" }
+
+[dev-dependencies]
+tempfile = { workspace = true }
+assert_cmd = { workspace = true }
+predicates = { workspace = true }
