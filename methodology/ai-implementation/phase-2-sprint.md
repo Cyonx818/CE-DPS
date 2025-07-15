@@ -6,7 +6,7 @@
 
 **Human Oversight**: Humans select features, approve sprint scope, and validate implementation approaches.
 
-**Duration**: 15-30 minutes with parallel research for knowledge gaps
+**Research Approach**: Parallel research for comprehensive knowledge gap analysis
 
 **Documentation Standards**: Sprint documentation must follow [LLM Documentation Guidelines](llm-documentation-guidelines.md) with emphasis on token efficiency
 
@@ -27,7 +27,7 @@
     <feature id="auth-system" complexity="8/10">
       <description>JWT-based authentication with role management</description>
       <dependencies>Database schema, password hashing, session management</dependencies>
-      <effort-estimate>12-16 hours</effort-estimate>
+      <complexity-assessment>High complexity - authentication flows and security requirements</complexity-assessment>
       <risk-factors>Token security, session persistence, role validation</risk-factors>
     </feature>
   </selected-features>

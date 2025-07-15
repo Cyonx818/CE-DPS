@@ -43,38 +43,38 @@ cargo run --bin quality-gates
 
 Getting started with CE-DPS is simple with the slash command interface:
 
-1. **Initialize Your Project** (1 minute)
+1. **Initialize Your Project**
    ```bash
    /cedps-init
    ```
    This creates the project structure and prepares the environment.
 
-2. **Check Status and Next Steps** (1 minute)
+2. **Check Status and Next Steps**
    ```bash
    /cedps-status
    ```
    Shows current phase and exactly what to do next.
 
-3. **Start Phase 1: Strategic Planning** (5 minutes)
+3. **Start Phase 1: Strategic Planning**
    ```bash
    /cedps-phase1-setup
    ```
    Creates business requirements template at `docs/phases/phase-1-planning.md`.
 
-4. **Define Your Vision** (15 minutes)
+4. **Define Your Vision**
    Fill out the template with:
    - What business problem are you solving?
    - Who are your target users?
    - What does success look like?
    - Technical requirements and constraints
 
-5. **Get AI Analysis** (30 minutes)
+5. **Get AI Analysis**
    ```bash
    /cedps-phase1-analyze
    ```
    AI performs comprehensive architectural analysis based on your requirements.
 
-6. **Review and Approve** (10 minutes)
+6. **Review and Approve**
    - Review AI-proposed architecture and implementation plan
    - Approve or request changes to the approach
    - Run `/cedps-phase1-validate` when ready
@@ -90,7 +90,6 @@ Getting started with CE-DPS is simple with the slash command interface:
 ### The Three-Phase Approach
 
 #### Phase 1: Strategic Planning (Human-Led)
-**Duration**: 30-60 minutes  
 **Focus**: Business requirements and architectural decisions
 
 **Slash Commands**:
@@ -113,7 +112,6 @@ Getting started with CE-DPS is simple with the slash command interface:
 - Identify risks and propose mitigation strategies
 
 #### Phase 2: Sprint Planning (AI-Led with Human Approval)
-**Duration**: 15-30 minutes  
 **Focus**: Detailed implementation planning
 
 **Slash Commands**:
@@ -136,7 +134,6 @@ Getting started with CE-DPS is simple with the slash command interface:
 - Estimate effort and identify dependencies
 
 #### Phase 3: Implementation (AI-Led with Human Validation)
-**Duration**: 60-180 minutes  
 **Focus**: Code implementation and business validation
 
 **Slash Commands**:
@@ -161,16 +158,12 @@ Getting started with CE-DPS is simple with the slash command interface:
 ## Success Stories
 
 ### Authentication System Implementation
-- **Timeline**: 12 days (target: 14 days)
 - **Quality**: 97% test coverage, 0 security vulnerabilities
 - **Business Impact**: 65% reduction in password-related support tickets
-- **Human Time**: 8 hours strategic oversight, 76 hours AI implementation
 
 ### REST API Development
-- **Timeline**: 16 days (target: 20 days)
 - **Quality**: 97.2% test coverage, 45ms average response time
 - **Business Impact**: 40% faster partner onboarding, 25% data accuracy improvement
-- **Human Time**: 12 hours strategic oversight, 94 hours AI implementation
 
 ## Core Principles
 
