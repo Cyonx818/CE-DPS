@@ -521,7 +521,7 @@ mod tests {
 
     #[tokio::test]
     async fn test_health_check_request_processing() {
-        let config = create_test_config();
+        let _config = create_test_config();
 
         // Test processing health check request
         let request = VectorRequest {
@@ -538,7 +538,7 @@ mod tests {
 
     #[tokio::test]
     async fn test_create_collection_request_processing() {
-        let config = create_test_config();
+        let _config = create_test_config();
 
         let request = VectorRequest {
             operation: VectorOperation::CreateCollection,

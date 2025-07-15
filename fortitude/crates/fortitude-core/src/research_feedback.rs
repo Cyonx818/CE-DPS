@@ -694,18 +694,27 @@ mod tests {
         
         let vector_storage = Arc::new(VectorStorage::new(Arc::new(qdrant_client), embedding_service.clone()));
         
-        // Create hybrid search service  
-        let semantic_service = Arc::new(SemanticSearchService::new(vector_storage.clone()));
+        // Create hybrid search service with config
+        let search_config = crate::vector::search::SemanticSearchConfig {
+            default_limit: 10,
+            default_threshold: 0.7,
+            max_limit: 100,
+            enable_analytics: true,
+            cache_results: true,
+            cache_ttl_seconds: 300,
+            enable_query_optimization: true,
+            max_query_length: 8192,
+        };
+        let semantic_service = Arc::new(SemanticSearchService::new(vector_storage.clone(), search_config));
         let keyword_searcher = Arc::new(KeywordSearcher::new());
         let hybrid_search = Arc::new(HybridSearchService::with_defaults(semantic_service, keyword_searcher));
         
         // Create test config
         let config = FeedbackConfig {
-            min_quality_rating: 1,
-            max_quality_rating: 5,
-            require_feedback_text: false,
-            auto_process_feedback: true,
-            feedback_retention_days: 30,
+            min_feedback_threshold: 3,
+            user_feedback_weight: 0.7,
+            enable_relevance_tuning: true,
+            aggregation_window_days: 30,
         };
         
         ResearchFeedbackProcessor::new(hybrid_search, vector_storage, config)
