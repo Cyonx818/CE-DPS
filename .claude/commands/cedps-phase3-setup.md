@@ -15,12 +15,12 @@ Initialize Phase 3 implementation environment with quality gates, testing framew
 
 # Validate Phase 2 completion
 !if [ ! -f "docs/ce-dps-state.json" ]; then
-    echo "❌ Error: CE-DPS project not initialized. Run '/cedps init' first."
+    echo "❌ Error: CE-DPS project not initialized. Run '/cedps-init' first."
     exit 1
 fi
 
 !if ! jq -e '.phases_completed | contains([1, 2])' docs/ce-dps-state.json >/dev/null 2>&1; then
-    echo "❌ Error: Phases 1 and 2 not completed. Run '/cedps phase2 validate' first."
+    echo "❌ Error: Phases 1 and 2 not completed. Run '/cedps-phase2-validate' first."
     exit 1
 fi
 
@@ -206,7 +206,7 @@ git status
 ### <ready-to-implement>
 **When environment is validated and ready**:
 ```bash
-/cedps phase3 implement
+/cedps-phase3-implement
 ```
 
 This will trigger Claude Code to begin systematic implementation of the approved sprint features using test-driven development.

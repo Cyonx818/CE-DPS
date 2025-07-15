@@ -15,7 +15,7 @@ Trigger comprehensive AI analysis of business requirements to produce architectu
 
 # Validate Phase 1 setup
 !if [ ! -f "docs/phases/phase-1-planning.md" ]; then 
-    echo "❌ Error: Phase 1 not set up. Run '/cedps phase1 setup' first."
+    echo "❌ Error: Phase 1 not set up. Run '/cedps-phase1-setup' first."
     exit 1
 fi
 
@@ -166,7 +166,7 @@ Claude Code is now performing comprehensive Phase 1 analysis including:
 2. **Evaluate technology recommendations** for organizational fit
 3. **Assess implementation timeline** for feasibility
 4. **Approve or request changes** to strategic decisions
-5. **Run `/cedps phase1 validate`** when ready to proceed
+5. **Run `/cedps-phase1-validate`** when ready to proceed
 
 ### <approval-process>
 **You will approve/reject each section**:
@@ -186,7 +186,7 @@ Claude Code is now performing comprehensive Phase 1 analysis including:
 
 ## <troubleshooting>
 ### <common-errors>
-- **"Phase 1 not set up"**: Run `/cedps phase1 setup` first
+- **"Phase 1 not set up"**: Run `/cedps-phase1-setup` first
 - **"Template not completed"**: Fill out all [Enter...] sections in phase-1-planning.md
 - **"Requirements too vague"**: Provide specific, measurable requirements
 - **Analysis incomplete**: Claude Code may need clarification on requirements

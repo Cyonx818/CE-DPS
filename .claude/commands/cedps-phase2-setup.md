@@ -15,12 +15,12 @@ Initialize Phase 2 sprint planning with feature selection template, implementati
 
 # Validate Phase 1 completion
 !if [ ! -f "docs/ce-dps-state.json" ]; then
-    echo "❌ Error: CE-DPS project not initialized. Run '/cedps init' first."
+    echo "❌ Error: CE-DPS project not initialized. Run '/cedps-init' first."
     exit 1
 fi
 
 !if ! jq -e '.phases_completed | contains([1])' docs/ce-dps-state.json >/dev/null 2>&1; then
-    echo "❌ Error: Phase 1 not completed. Run '/cedps phase1 validate' first."
+    echo "❌ Error: Phase 1 not completed. Run '/cedps-phase1-validate' first."
     exit 1
 fi
 
@@ -152,7 +152,7 @@ Example:
 ### <ready-to-proceed>
 **When feature selection is complete, run**:
 ```bash
-/cedps phase2 plan
+/cedps-phase2-plan
 ```
 
 This will trigger Claude Code to perform detailed implementation planning for your selected features.
@@ -161,7 +161,7 @@ This will trigger Claude Code to perform detailed implementation planning for yo
 
 ## <troubleshooting>
 ### <common-errors>
-- **"Phase 1 not completed"**: Run `/cedps phase1 validate` first
+- **"Phase 1 not completed"**: Run `/cedps-phase1-validate` first
 - **"Phase 2 template not found"**: Ensure you're in CE-DPS project root
 - **"Permission denied"**: Check docs/ directory write permissions
 - **"jq: command not found"**: Install jq for JSON processing

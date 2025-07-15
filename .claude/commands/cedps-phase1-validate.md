@@ -15,13 +15,13 @@ Validate Phase 1 strategic planning completion, verify human approvals, and prep
 
 # Validate Phase 1 setup exists
 !if [ ! -f "docs/phases/phase-1-planning.md" ]; then
-    echo "❌ Error: Phase 1 not found. Run '/cedps phase1 setup' first."
+    echo "❌ Error: Phase 1 not found. Run '/cedps-phase1-setup' first."
     exit 1
 fi
 
 # Check for AI analysis completion
 !if ! grep -q "Architecture Analysis" docs/phases/phase-1-planning.md; then
-    echo "❌ Error: AI analysis not completed. Run '/cedps phase1 analyze' first."
+    echo "❌ Error: AI analysis not completed. Run '/cedps-phase1-analyze' first."
     exit 1
 fi
 
@@ -155,7 +155,7 @@ EOF
 cat docs/phases/phase-1-completion-report.md
 
 # Start Phase 2 when ready
-/cedps phase2 setup
+/cedps-phase2-setup
 ```
 
 ### <success-criteria-met>
@@ -178,8 +178,8 @@ cat docs/phases/phase-1-completion-report.md
 
 ## <troubleshooting>
 ### <common-errors>
-- **"Phase 1 not found"**: Run `/cedps phase1 setup` first
-- **"AI analysis not completed"**: Run `/cedps phase1 analyze` first
+- **"Phase 1 not found"**: Run `/cedps-phase1-setup` first
+- **"AI analysis not completed"**: Run `/cedps-phase1-analyze` first
 - **"Missing approval sections"**: Ensure Claude Code provided all required approval sections
 - **"No human approvals found"**: Review and approve architectural decisions in planning document
 - **"Phase validation tool failed"**: Address specific validation issues reported

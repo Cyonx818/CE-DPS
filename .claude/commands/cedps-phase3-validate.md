@@ -15,7 +15,7 @@ Validate Phase 3 implementation completion, verify comprehensive quality gates, 
 
 # Validate Phase 3 setup exists
 !if [ ! -f "docs/phases/phase-3-implementation.md" ]; then
-    echo "❌ Error: Phase 3 not found. Run '/cedps phase3 setup' first."
+    echo "❌ Error: Phase 3 not found. Run '/cedps-phase3-setup' first."
     exit 1
 fi
 
@@ -29,7 +29,7 @@ fi
 
 # Check for implementation completion indicators
 !if ! grep -q "Implementation Results" docs/phases/phase-3-implementation.md; then
-    echo "❌ Error: Implementation not completed. Run '/cedps phase3 implement' first."
+    echo "❌ Error: Implementation not completed. Run '/cedps-phase3-implement' first."
     exit 1
 fi
 
@@ -354,8 +354,8 @@ For additional features, repeat the process:
 
 ## <troubleshooting>
 ### <common-errors>
-- **"Phase 3 not found"**: Run `/cedps phase3 setup` first
-- **"Implementation not completed"**: Run `/cedps phase3 implement` first
+- **"Phase 3 not found"**: Run `/cedps-phase3-setup` first
+- **"Implementation not completed"**: Run `/cedps-phase3-implement` first
 - **"Not on implementation branch"**: Switch to sprint-001-implementation branch
 - **"Missing validation sections"**: Ensure all human validation sections are complete
 - **"No human validations found"**: Complete business validation in implementation document

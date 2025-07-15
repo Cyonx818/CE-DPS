@@ -17,7 +17,7 @@ Execute comprehensive CE-DPS quality gates including testing, security validatio
 # Check if project is initialized
 !if [ ! -f "docs/ce-dps-state.json" ]; then
     echo "❌ CE-DPS project not initialized"
-    echo "💡 Run '/cedps init' to initialize the project"
+    echo "💡 Run '/cedps-init' to initialize the project"
     exit 1
 fi
 
@@ -355,7 +355,7 @@ cargo doc --open
 
 ## <troubleshooting>
 ### <common-issues>
-- **"Project not initialized"**: Run `/cedps init` first
+- **"Project not initialized"**: Run `/cedps-init` first
 - **"Cargo not found"**: Install Rust toolchain
 - **"Tool not available"**: Install missing tools as suggested
 - **"Quality gates failed"**: Address specific issues reported
