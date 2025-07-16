@@ -163,11 +163,12 @@ pub struct VectorStorageStats {
 }
 
 /// High-level vector storage service combining Qdrant and embedding generation
+#[derive(Clone)]
 pub struct VectorStorage {
     /// Qdrant client for vector database operations
-    qdrant_client: Arc<QdrantClient>,
+    pub qdrant_client: Arc<QdrantClient>,
     /// Embedding service for text-to-vector conversion
-    embedding_service: Arc<LocalEmbeddingService>,
+    pub embedding_service: Arc<LocalEmbeddingService>,
     /// Default collection name
     default_collection: String,
     /// Service statistics
@@ -338,7 +339,7 @@ impl VectorStorage {
 
     /// Search by pre-computed vector
     #[instrument(skip(self, query_vector))]
-    async fn search_by_vector(
+    pub async fn search_by_vector(
         &self,
         query_vector: &[f32],
         config: SearchConfig,
