@@ -189,6 +189,35 @@ mod tests {
 - Deployment + configuration guides
 - Troubleshooting + error resolution guides
 
+### <llm-documentation>LLM Documentation Requirements</llm-documentation>
+**All documentation (.md files) generated must follow the [LLM Documentation Guidelines](methodology/ai-implementation/llm-documentation-guidelines.md) unless explicitly specified otherwise by human oversight.**
+
+```xml
+<llm-documentation-framework>
+  <semantic-markup>
+    <requirement>Use XML-style tags for structured content</requirement>
+    <requirement>Apply progressive disclosure (summary → evidence → implementation)</requirement>
+    <requirement>Include priority indicators for hierarchical information</requirement>
+    <requirement>Use consistent metadata schemas across documents</requirement>
+  </semantic-markup>
+  
+  <token-optimization>
+    <requirement>Maintain >92% parsing accuracy for AI consumption</requirement>
+    <requirement>Balance clarity, traversability, and compression</requirement>
+    <requirement>Include working code examples with realistic data where applicable</requirement>
+  </token-optimization>
+  
+  <ce-dps-integration>
+    <requirement>Align with CE-DPS quality standards (>95% test coverage)</requirement>
+    <requirement>Include security-first implementation patterns</requirement>
+    <requirement>Integrate with quality gates validation</requirement>
+    <requirement>Document anchor tests for critical functionality</requirement>
+  </ce-dps-integration>
+</llm-documentation-framework>
+```
+
+**Documentation Validation**: All LLM-generated documentation must pass comprehension testing with >85% accuracy and demonstrate clear integration with CE-DPS methodology phases.
+
 ## <communication>Escalation Framework</communication>
 
 ### <escalation>When to Escalate</escalation>
