@@ -46,7 +46,7 @@ fn create_test_research_result(query: &str, research_type: ResearchType) -> Rese
         processing_time_ms: 1000,
         sources_consulted: vec!["test_source".to_string()],
         quality_score: 0.9,
-        cache_key: "test-key".to_string(),
+        cache_key: String::new(), // Let storage generate the cache key
         tags: HashMap::new(),
     };
 
@@ -132,8 +132,7 @@ mod comprehensive_fallback_tests {
 
             assert!(
                 retrieved.is_some(),
-                "ENHANCED REQUIREMENT: {} should succeed with comprehensive fallback logic",
-                description
+                "ENHANCED REQUIREMENT: {description} should succeed with comprehensive fallback logic"
             );
         }
     }
@@ -148,7 +147,7 @@ mod comprehensive_fallback_tests {
         let storage = FileStorage::new(config).await.unwrap();
 
         // Create test contexts with different characteristics
-        let contexts = vec![
+        let contexts = [
             create_test_context_result(0.9),
             ContextDetectionResult::new(
                 AudienceLevel::Advanced,
@@ -161,7 +160,7 @@ mod comprehensive_fallback_tests {
             ContextDetectionResult::new(
                 AudienceLevel::Beginner,
                 TechnicalDomain::Web,
-                UrgencyLevel::Research,
+                UrgencyLevel::Planned,
                 vec![],
                 50,
                 false,
@@ -169,7 +168,7 @@ mod comprehensive_fallback_tests {
         ];
 
         let mut stored_keys = Vec::new();
-        let research_types = vec![
+        let research_types = [
             ResearchType::Learning,
             ResearchType::Implementation,
             ResearchType::Troubleshooting,
@@ -178,8 +177,8 @@ mod comprehensive_fallback_tests {
         // Store items in various locations using different context combinations
         for (i, context) in contexts.iter().enumerate() {
             for (j, research_type) in research_types.iter().enumerate() {
-                let query = format!("query {} type {}", i, j);
-                let result = create_test_research_result(&query, *research_type);
+                let query = format!("query {i} type {j}");
+                let result = create_test_research_result(&query, research_type.clone());
 
                 // Store some with context, some without
                 let key = if i % 2 == 0 {
@@ -191,7 +190,7 @@ mod comprehensive_fallback_tests {
                     storage.store(&result).await.unwrap()
                 };
 
-                stored_keys.push((key, context.clone(), *research_type));
+                stored_keys.push((key, context.clone(), research_type.clone()));
             }
         }
 
@@ -201,8 +200,7 @@ mod comprehensive_fallback_tests {
             let retrieved_standard = storage.retrieve(cache_key).await.unwrap();
             assert!(
                 retrieved_standard.is_some(),
-                "ENHANCED REQUIREMENT: Standard retrieval should find all cache entries via comprehensive directory scanning. Key: {}",
-                cache_key
+                "ENHANCED REQUIREMENT: Standard retrieval should find all cache entries via comprehensive directory scanning. Key: {cache_key}"
             );
 
             // Try retrieving with context method - should also find via enhanced scanning
@@ -212,8 +210,7 @@ mod comprehensive_fallback_tests {
                 .unwrap();
             assert!(
                 retrieved_context.is_some(),
-                "ENHANCED REQUIREMENT: Context retrieval should find all cache entries via comprehensive directory scanning. Key: {}",
-                cache_key
+                "ENHANCED REQUIREMENT: Context retrieval should find all cache entries via comprehensive directory scanning. Key: {cache_key}"
             );
         }
     }
@@ -250,8 +247,7 @@ mod comprehensive_fallback_tests {
         // Enhanced retrieval should be efficient even with comprehensive fallback
         assert!(
             avg_time_per_retrieval.as_millis() < 50,
-            "ENHANCED REQUIREMENT: Average retrieval time should be under 50ms even with comprehensive fallback. Actual: {:?}",
-            avg_time_per_retrieval
+            "ENHANCED REQUIREMENT: Average retrieval time should be under 50ms even with comprehensive fallback. Actual: {avg_time_per_retrieval:?}"
         );
     }
 }
@@ -284,11 +280,11 @@ mod fuzzy_matching_tests {
 
         for similar_query in similar_queries {
             // This will require enhanced fuzzy matching implementation
-            let fuzzy_result = create_test_research_result(similar_query, ResearchType::Learning);
+            let _fuzzy_result = create_test_research_result(similar_query, ResearchType::Learning);
 
             // The enhanced retrieval should find the original cache entry via fuzzy matching
             // Note: This test will initially fail until fuzzy matching is implemented
-            println!("Testing fuzzy match for: '{}'", similar_query);
+            println!("Testing fuzzy match for: '{similar_query}'");
 
             // For now, we'll test that the system doesn't crash and returns None/Some consistently
             // TODO: Implement actual fuzzy matching logic
@@ -412,8 +408,7 @@ mod cross_context_retrieval_tests {
             if should_succeed {
                 assert!(
                     retrieved.is_some(),
-                    "ENHANCED REQUIREMENT: {} retrieval should succeed with comprehensive fallback",
-                    description
+                    "ENHANCED REQUIREMENT: {description} retrieval should succeed with comprehensive fallback"
                 );
             }
         }
@@ -437,7 +432,7 @@ mod performance_regression_tests {
         let context = create_test_context_result(0.8);
 
         for i in 0..50 {
-            let query = format!("performance test query {}", i);
+            let query = format!("performance test query {i}");
             let result = create_test_research_result(&query, ResearchType::Learning);
 
             let key = if i % 2 == 0 {
@@ -475,8 +470,7 @@ mod performance_regression_tests {
 
         assert!(
             avg_time_per_retrieval.as_millis() < 100,
-            "Enhanced retrieval should maintain good performance. Average time: {:?}",
-            avg_time_per_retrieval
+            "Enhanced retrieval should maintain good performance. Average time: {avg_time_per_retrieval:?}"
         );
 
         println!(

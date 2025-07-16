@@ -5,14 +5,13 @@ use fortitude_core::vector::{
     config::{ConnectionPoolConfig, DistanceMetric, HealthCheckConfig, VectorConfig},
     embeddings::{CacheKeyStrategy, DeviceType, EmbeddingCacheConfig, EmbeddingConfig},
 };
-use serde_json;
 use std::fs;
 use std::process::Command;
 use std::time::Duration;
 use tempfile::TempDir;
-use tokio;
 
 /// Test configuration helper for CLI integration tests
+#[allow(dead_code)]
 fn create_test_cli_config() -> VectorConfig {
     VectorConfig {
         url: "http://localhost:6334".to_string(),
@@ -121,6 +120,7 @@ fn test_anchor_cli_basic_commands() {
     // Test help command
     let output = Command::new("cargo")
         .args(["run", "-p", "fortitude-cli", "--", "--help"])
+        .current_dir("../../../fortitude")
         .output()
         .expect("Failed to execute help command");
 
@@ -128,7 +128,7 @@ fn test_anchor_cli_basic_commands() {
 
     let stdout = String::from_utf8(output.stdout).expect("Invalid UTF-8 in help output");
     assert!(
-        stdout.contains("Automated research system"),
+        stdout.contains("AI-powered research system"),
         "Should contain main description"
     );
     assert!(stdout.contains("research"), "Should list research command");
@@ -141,6 +141,7 @@ fn test_anchor_cli_basic_commands() {
     // Test version command
     let output = Command::new("cargo")
         .args(["run", "-p", "fortitude-cli", "--", "--version"])
+        .current_dir("../../../fortitude")
         .output()
         .expect("Failed to execute version command");
 
@@ -161,7 +162,7 @@ fn test_anchor_cli_configuration_commands() {
     let output = Command::new("cargo")
         .args([
             "run",
-            "-p",
+            "--bin",
             "fortitude-cli",
             "--",
             "config",
@@ -170,6 +171,7 @@ fn test_anchor_cli_configuration_commands() {
             config_path.to_str().unwrap(),
             "--force",
         ])
+        .current_dir("../../../fortitude")
         .output()
         .expect("Failed to execute config generate command");
 
@@ -184,7 +186,7 @@ fn test_anchor_cli_configuration_commands() {
     // Test config show command
     let output = Command::new("cargo")
         .args(["run", "-p", "fortitude-cli", "--", "config", "show"])
-        .current_dir(temp_dir.path())
+        .current_dir("../../../fortitude")
         .output()
         .expect("Failed to execute config show command");
 
@@ -195,7 +197,7 @@ fn test_anchor_cli_configuration_commands() {
     let output = Command::new("cargo")
         .args([
             "run",
-            "-p",
+            "--bin",
             "fortitude-cli",
             "--",
             "config",
@@ -222,7 +224,7 @@ async fn test_anchor_cli_research_commands() {
     let output = Command::new("cargo")
         .args([
             "run",
-            "-p",
+            "--bin",
             "fortitude-cli",
             "--",
             "research",
@@ -235,12 +237,12 @@ async fn test_anchor_cli_research_commands() {
             "json",
             "--no-cache",
         ])
-        .current_dir(temp_dir.path())
+        .current_dir("../../../fortitude")
         .output()
         .expect("Failed to execute research command");
 
     // Should succeed or fail gracefully without Claude API key
-    let stdout = String::from_utf8(output.stdout).unwrap_or_default();
+    let _stdout = String::from_utf8(output.stdout).unwrap_or_default();
     let stderr = String::from_utf8(output.stderr).unwrap_or_default();
 
     // Check that command was parsed correctly
@@ -255,7 +257,7 @@ async fn test_anchor_cli_research_commands() {
     let output = Command::new("cargo")
         .args([
             "run",
-            "-p",
+            "--bin",
             "fortitude-cli",
             "--",
             "research",
@@ -268,7 +270,7 @@ async fn test_anchor_cli_research_commands() {
             "--format",
             "markdown",
         ])
-        .current_dir(temp_dir.path())
+        .current_dir("../../../fortitude")
         .output()
         .expect("Failed to execute advanced research command");
 
@@ -285,7 +287,7 @@ async fn test_anchor_cli_research_commands() {
     let output = Command::new("cargo")
         .args([
             "run",
-            "-p",
+            "--bin",
             "fortitude-cli",
             "--",
             "research",
@@ -299,7 +301,7 @@ async fn test_anchor_cli_research_commands() {
             "--tags",
             "api,rest,microservices",
         ])
-        .current_dir(temp_dir.path())
+        .current_dir("../../../fortitude")
         .output()
         .expect("Failed to execute research with tags command");
 
@@ -323,14 +325,14 @@ async fn test_anchor_cli_cache_commands() {
     let output = Command::new("cargo")
         .args([
             "run",
-            "-p",
+            "--bin",
             "fortitude-cli",
             "--",
             "cache-status",
             "--format",
             "json",
         ])
-        .current_dir(temp_dir.path())
+        .current_dir("../../../fortitude")
         .output()
         .expect("Failed to execute cache status command");
 
@@ -344,7 +346,7 @@ async fn test_anchor_cli_cache_commands() {
     let output = Command::new("cargo")
         .args([
             "run",
-            "-p",
+            "--bin",
             "fortitude-cli",
             "--",
             "cache-status",
@@ -352,7 +354,7 @@ async fn test_anchor_cli_cache_commands() {
             "--format",
             "table",
         ])
-        .current_dir(temp_dir.path())
+        .current_dir("../../../fortitude")
         .output()
         .expect("Failed to execute detailed cache status command");
 
@@ -365,7 +367,7 @@ async fn test_anchor_cli_cache_commands() {
     let output = Command::new("cargo")
         .args([
             "run",
-            "-p",
+            "--bin",
             "fortitude-cli",
             "--",
             "list",
@@ -374,7 +376,7 @@ async fn test_anchor_cli_cache_commands() {
             "--limit",
             "5",
         ])
-        .current_dir(temp_dir.path())
+        .current_dir("../../../fortitude")
         .output()
         .expect("Failed to execute list command");
 
@@ -384,7 +386,7 @@ async fn test_anchor_cli_cache_commands() {
     let output = Command::new("cargo")
         .args([
             "run",
-            "-p",
+            "--bin",
             "fortitude-cli",
             "--",
             "search",
@@ -394,7 +396,7 @@ async fn test_anchor_cli_cache_commands() {
             "--limit",
             "3",
         ])
-        .current_dir(temp_dir.path())
+        .current_dir("../../../fortitude")
         .output()
         .expect("Failed to execute search command");
 
@@ -403,7 +405,7 @@ async fn test_anchor_cli_cache_commands() {
     // Test cleanup with dry run
     let output = Command::new("cargo")
         .args(["run", "-p", "fortitude-cli", "--", "cleanup", "--dry-run"])
-        .current_dir(temp_dir.path())
+        .current_dir("../../../fortitude")
         .output()
         .expect("Failed to execute cleanup dry run command");
 
@@ -423,14 +425,14 @@ async fn test_anchor_cli_vector_commands() {
     let output = Command::new("cargo")
         .args([
             "run",
-            "-p",
+            "--bin",
             "fortitude-cli",
             "--",
             "vector",
             "config",
             "--show",
         ])
-        .current_dir(temp_dir.path())
+        .current_dir("../../../fortitude")
         .output()
         .expect("Failed to execute vector config show command");
 
@@ -441,7 +443,7 @@ async fn test_anchor_cli_vector_commands() {
     let output = Command::new("cargo")
         .args([
             "run",
-            "-p",
+            "--bin",
             "fortitude-cli",
             "--",
             "vector",
@@ -449,7 +451,7 @@ async fn test_anchor_cli_vector_commands() {
             "--format",
             "json",
         ])
-        .current_dir(temp_dir.path())
+        .current_dir("../../../fortitude")
         .output()
         .expect("Failed to execute vector health command");
 
@@ -466,7 +468,7 @@ async fn test_anchor_cli_vector_commands() {
     let output = Command::new("cargo")
         .args([
             "run",
-            "-p",
+            "--bin",
             "fortitude-cli",
             "--",
             "vector",
@@ -474,7 +476,7 @@ async fn test_anchor_cli_vector_commands() {
             "--format",
             "table",
         ])
-        .current_dir(temp_dir.path())
+        .current_dir("../../../fortitude")
         .output()
         .expect("Failed to execute vector stats command");
 
@@ -491,7 +493,7 @@ async fn test_anchor_cli_vector_commands() {
     let output = Command::new("cargo")
         .args([
             "run",
-            "-p",
+            "--bin",
             "fortitude-cli",
             "--",
             "vector",
@@ -503,7 +505,7 @@ async fn test_anchor_cli_vector_commands() {
             "--metric",
             "cosine",
         ])
-        .current_dir(temp_dir.path())
+        .current_dir("../../../fortitude")
         .output()
         .expect("Failed to execute vector setup command");
 
@@ -529,7 +531,7 @@ async fn test_anchor_cli_migration_commands() {
     let output = Command::new("cargo")
         .args([
             "run",
-            "-p",
+            "--bin",
             "fortitude-cli",
             "--",
             "vector",
@@ -543,7 +545,7 @@ async fn test_anchor_cli_migration_commands() {
             "moderate",
             "--dry-run",
         ])
-        .current_dir(temp_dir.path())
+        .current_dir("../../../fortitude")
         .output()
         .expect("Failed to execute migration dry run command");
 
@@ -564,7 +566,7 @@ async fn test_anchor_cli_migration_commands() {
     let output = Command::new("cargo")
         .args([
             "run",
-            "-p",
+            "--bin",
             "fortitude-cli",
             "--",
             "vector",
@@ -573,7 +575,7 @@ async fn test_anchor_cli_migration_commands() {
             "--format",
             "table",
         ])
-        .current_dir(temp_dir.path())
+        .current_dir("../../../fortitude")
         .output()
         .expect("Failed to execute migration status command");
 
@@ -590,7 +592,7 @@ async fn test_anchor_cli_migration_commands() {
     let output = Command::new("cargo")
         .args([
             "run",
-            "-p",
+            "--bin",
             "fortitude-cli",
             "--",
             "vector",
@@ -598,7 +600,7 @@ async fn test_anchor_cli_migration_commands() {
             "--format",
             "json",
         ])
-        .current_dir(temp_dir.path())
+        .current_dir("../../../fortitude")
         .output()
         .expect("Failed to execute migration list command");
 
@@ -622,7 +624,7 @@ async fn test_anchor_cli_search_commands() {
     let output = Command::new("cargo")
         .args([
             "run",
-            "-p",
+            "--bin",
             "fortitude-cli",
             "--",
             "semantic-search",
@@ -637,7 +639,7 @@ async fn test_anchor_cli_search_commands() {
             "table",
             "--explain",
         ])
-        .current_dir(temp_dir.path())
+        .current_dir("../../../fortitude")
         .output()
         .expect("Failed to execute semantic search command");
 
@@ -654,7 +656,7 @@ async fn test_anchor_cli_search_commands() {
     let output = Command::new("cargo")
         .args([
             "run",
-            "-p",
+            "--bin",
             "fortitude-cli",
             "--",
             "hybrid-search",
@@ -671,7 +673,7 @@ async fn test_anchor_cli_search_commands() {
             "json",
             "--explain",
         ])
-        .current_dir(temp_dir.path())
+        .current_dir("../../../fortitude")
         .output()
         .expect("Failed to execute hybrid search command");
 
@@ -688,7 +690,7 @@ async fn test_anchor_cli_search_commands() {
     let output = Command::new("cargo")
         .args([
             "run",
-            "-p",
+            "--bin",
             "fortitude-cli",
             "--",
             "find-similar",
@@ -700,7 +702,7 @@ async fn test_anchor_cli_search_commands() {
             "--format",
             "detailed",
         ])
-        .current_dir(temp_dir.path())
+        .current_dir("../../../fortitude")
         .output()
         .expect("Failed to execute find similar command");
 
@@ -724,7 +726,7 @@ async fn test_anchor_cli_analytics_commands() {
     let output = Command::new("cargo")
         .args([
             "run",
-            "-p",
+            "--bin",
             "fortitude-cli",
             "--",
             "vector",
@@ -737,7 +739,7 @@ async fn test_anchor_cli_analytics_commands() {
             "json",
             "--performance",
         ])
-        .current_dir(temp_dir.path())
+        .current_dir("../../../fortitude")
         .output()
         .expect("Failed to execute vector analytics command");
 
@@ -756,7 +758,7 @@ async fn test_anchor_cli_analytics_commands() {
     let output = Command::new("cargo")
         .args([
             "run",
-            "-p",
+            "--bin",
             "fortitude-cli",
             "--",
             "vector",
@@ -767,7 +769,7 @@ async fn test_anchor_cli_analytics_commands() {
             "--format",
             "table",
         ])
-        .current_dir(temp_dir.path())
+        .current_dir("../../../fortitude")
         .output()
         .expect("Failed to execute index status command");
 
@@ -790,6 +792,7 @@ fn test_anchor_cli_error_handling() {
     // Test invalid command
     let output = Command::new("cargo")
         .args(["run", "-p", "fortitude-cli", "--", "invalid-command"])
+        .current_dir("../../../fortitude")
         .output()
         .expect("Failed to execute invalid command");
 
@@ -804,6 +807,7 @@ fn test_anchor_cli_error_handling() {
     // Test missing required arguments
     let output = Command::new("cargo")
         .args(["run", "-p", "fortitude-cli", "--", "research"])
+        .current_dir("../../../fortitude")
         .output()
         .expect("Failed to execute research without topic");
 
@@ -822,7 +826,7 @@ fn test_anchor_cli_error_handling() {
     let output = Command::new("cargo")
         .args([
             "run",
-            "-p",
+            "--bin",
             "fortitude-cli",
             "--",
             "research",
@@ -830,6 +834,7 @@ fn test_anchor_cli_error_handling() {
             "--context-threshold",
             "invalid_number",
         ])
+        .current_dir("../../../fortitude")
         .output()
         .expect("Failed to execute research with invalid threshold");
 
@@ -848,7 +853,7 @@ fn test_anchor_cli_error_handling() {
     let output = Command::new("cargo")
         .args([
             "run",
-            "-p",
+            "--bin",
             "fortitude-cli",
             "--",
             "vector",
@@ -857,6 +862,7 @@ fn test_anchor_cli_error_handling() {
             "--batch-size",
             "invalid_size",
         ])
+        .current_dir("../../../fortitude")
         .output()
         .expect("Failed to execute migration with invalid batch size");
 
@@ -879,14 +885,14 @@ async fn test_anchor_cli_output_formatting() {
     let output = Command::new("cargo")
         .args([
             "run",
-            "-p",
+            "--bin",
             "fortitude-cli",
             "--",
             "cache-status",
             "--format",
             "json",
         ])
-        .current_dir(temp_dir.path())
+        .current_dir("../../../fortitude")
         .output()
         .expect("Failed to execute cache status with JSON format");
 
@@ -903,7 +909,7 @@ async fn test_anchor_cli_output_formatting() {
     let output = Command::new("cargo")
         .args([
             "run",
-            "-p",
+            "--bin",
             "fortitude-cli",
             "--",
             "list",
@@ -912,7 +918,7 @@ async fn test_anchor_cli_output_formatting() {
             "--limit",
             "3",
         ])
-        .current_dir(temp_dir.path())
+        .current_dir("../../../fortitude")
         .output()
         .expect("Failed to execute list with table format");
 
@@ -922,13 +928,13 @@ async fn test_anchor_cli_output_formatting() {
     let output = Command::new("cargo")
         .args([
             "run",
-            "-p",
+            "--bin",
             "fortitude-cli",
             "--",
             "--verbose",
             "cache-status",
         ])
-        .current_dir(temp_dir.path())
+        .current_dir("../../../fortitude")
         .output()
         .expect("Failed to execute command with verbose flag");
 
@@ -941,13 +947,14 @@ async fn test_anchor_cli_output_formatting() {
     let output = Command::new("cargo")
         .args([
             "run",
-            "-p",
+            "--bin",
             "fortitude-cli",
             "--",
             "--data-dir",
             custom_data_dir.to_str().unwrap(),
             "cache-status",
         ])
+        .current_dir("../../../fortitude")
         .output()
         .expect("Failed to execute command with custom data directory");
 
@@ -957,7 +964,7 @@ async fn test_anchor_cli_output_formatting() {
 /// ANCHOR: Test CLI integration with mock vector services
 /// Tests: End-to-end CLI workflows with simulated vector operations
 #[tokio::test]
-async fn test_anchor_cli_mock_vector_integration() {
+async fn test_anchor_cli_mock_vector_integration() -> Result<(), Box<dyn std::error::Error>> {
     let temp_dir = setup_test_data_directory().expect("Failed to setup test data");
 
     // Create a more complete test configuration
@@ -1002,7 +1009,7 @@ async fn test_anchor_cli_mock_vector_integration() {
     let output = Command::new("cargo")
         .args([
             "run",
-            "-p",
+            "--bin",
             "fortitude-cli",
             "--",
             "--data-dir",
@@ -1030,6 +1037,7 @@ async fn test_anchor_cli_mock_vector_integration() {
             "--format",
             "json",
         ])
+        .current_dir("../../../fortitude")
         .output()
         .expect("Failed to execute comprehensive research command");
 
@@ -1042,8 +1050,7 @@ async fn test_anchor_cli_mock_vector_integration() {
                 || stderr.contains("configuration")
                 || stderr.contains("not configured")
                 || stderr.contains("placeholder"),
-            "Should provide clear guidance when services unavailable: {}",
-            stderr
+            "Should provide clear guidance when services unavailable: {stderr}"
         );
     }
 
@@ -1064,13 +1071,13 @@ async fn test_anchor_cli_mock_vector_integration() {
 
     for cmd_args in commands {
         let mut full_args = vec!["run", "-p", "fortitude-cli", "--"];
-        full_args.extend(cmd_args);
+        full_args.extend(cmd_args.clone());
 
         let output = Command::new("cargo")
             .args(&full_args)
-            .current_dir(temp_dir.path())
+            .current_dir("../../../fortitude")
             .output()
-            .expect(&format!("Failed to execute vector command: {:?}", cmd_args));
+            .unwrap_or_else(|_| panic!("Failed to execute vector command: {cmd_args:?}"));
 
         // Commands should either succeed or fail with clear messages
         if !output.status.success() {
@@ -1079,9 +1086,7 @@ async fn test_anchor_cli_mock_vector_integration() {
                 stderr.contains("not available")
                     || stderr.contains("not configured")
                     || stderr.contains("not yet implemented"),
-                "Vector command should provide clear error message: {:?} -> {}",
-                cmd_args,
-                stderr
+                "Vector command should provide clear error message: {cmd_args:?} -> {stderr}"
             );
         }
     }
@@ -1114,23 +1119,23 @@ async fn test_anchor_cli_mock_vector_integration() {
 
     for cmd_args in search_commands {
         let mut full_args = vec!["run", "-p", "fortitude-cli", "--"];
-        full_args.extend(cmd_args);
+        full_args.extend(cmd_args.clone());
 
         let output = Command::new("cargo")
             .args(&full_args)
-            .current_dir(temp_dir.path())
+            .current_dir("../../../fortitude")
             .output()
-            .expect(&format!("Failed to execute search command: {:?}", cmd_args));
+            .unwrap_or_else(|_| panic!("Failed to execute search command: {cmd_args:?}"));
 
         // Search commands should handle absence of vector services gracefully
         if !output.status.success() {
             let stderr = String::from_utf8(output.stderr).unwrap_or_default();
             assert!(
                 stderr.contains("not available") || stderr.contains("not configured"),
-                "Search command should provide clear error message: {:?} -> {}",
-                cmd_args,
-                stderr
+                "Search command should provide clear error message: {cmd_args:?} -> {stderr}"
             );
         }
     }
+
+    Ok(())
 }

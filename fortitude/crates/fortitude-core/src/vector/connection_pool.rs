@@ -666,10 +666,11 @@ mod tests {
 
         // Note: This test will fail if Qdrant is not running
         // In a real test environment, you would use a mock or test container
+        let max_connections = pool_config.max_connections;
         let _pool_result = ConnectionPool::new(pool_config, vector_config, monitor).await;
 
         // For now, just test that we can create the structs
-        assert!(true);
+        assert!(max_connections > 0);
     }
 
     #[test]

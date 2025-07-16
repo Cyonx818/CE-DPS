@@ -8,7 +8,7 @@
 
 **Research Approach**: Parallel research for comprehensive knowledge gap analysis
 
-**Documentation Standards**: Sprint documentation must follow [LLM Documentation Guidelines](llm-documentation-guidelines.md) with emphasis on token efficiency
+**Documentation Standards**: Sprint documentation must follow [LLM Documentation Guidelines](llm-style-guidelines.md) with emphasis on token efficiency
 
 ## <method>AI Sprint Planning Process</method>
 

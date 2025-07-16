@@ -185,7 +185,7 @@ async fn test_anchor_embedding_generation_workflow() {
     );
 
     // Test text samples for embedding validation
-    let test_texts = vec![
+    let test_texts = [
         "How to implement async programming in Rust with tokio",
         "Vector databases provide semantic search capabilities",
         "Machine learning models require careful deployment strategies",
@@ -567,10 +567,12 @@ async fn test_anchor_research_pipeline_integration_workflow() {
     ];
 
     // Test context document structure and validation
-    let context_documents = ["Rust async programming patterns and best practices for concurrent applications",
+    let context_documents = [
+        "Rust async programming patterns and best practices for concurrent applications",
         "Vector database optimization strategies for semantic search performance",
         "Research methodology for software engineering and system design",
-        "Machine learning integration patterns in production environments"];
+        "Machine learning integration patterns in production environments",
+    ];
 
     for (i, doc) in context_documents.iter().enumerate() {
         assert!(!doc.is_empty(), "Context document should not be empty");
@@ -745,9 +747,7 @@ async fn test_anchor_configuration_validation_workflow() {
         };
 
         if invalid_url.is_empty() {
-            eprintln!(
-                "Test case '{test_name}': URL validation would catch empty URL"
-            );
+            eprintln!("Test case '{test_name}': URL validation would catch empty URL");
         } else {
             eprintln!(
                 "Test case '{test_name}': URL validation would catch invalid URL: {invalid_url}"
@@ -761,9 +761,7 @@ async fn test_anchor_configuration_validation_workflow() {
         if dimensions == 0 {
             eprintln!("Dimension validation would reject zero dimensions");
         } else if dimensions > 10000 {
-            eprintln!(
-                "Dimension validation might warn about very large dimensions: {dimensions}"
-            );
+            eprintln!("Dimension validation might warn about very large dimensions: {dimensions}");
         } else {
             eprintln!("Dimension {dimensions} would be accepted as valid");
         }
@@ -847,6 +845,7 @@ async fn test_anchor_configuration_validation_workflow() {
 }
 
 // Helper function for cosine similarity calculation
+#[allow(dead_code)]
 fn calculate_cosine_similarity(a: &[f32], b: &[f32]) -> f32 {
     if a.len() != b.len() {
         return 0.0;

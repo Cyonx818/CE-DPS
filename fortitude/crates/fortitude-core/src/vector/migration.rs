@@ -2437,9 +2437,7 @@ mod tests {
             }
             Err(e) => {
                 // If it fails, it might be due to state persistence issues, which is also valid for error handling test
-                eprintln!(
-                    "Migration failed as expected for error handling test: {e:?}"
-                );
+                eprintln!("Migration failed as expected for error handling test: {e:?}");
             }
         }
     }

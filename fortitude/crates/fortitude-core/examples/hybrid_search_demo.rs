@@ -14,7 +14,6 @@ use fortitude_core::vector::{
     storage::{DocumentMetadata, VectorDocument, VectorStorage},
 };
 use std::sync::Arc;
-use tokio;
 
 #[tokio::main]
 async fn main() -> Result<(), Box<dyn std::error::Error>> {
@@ -68,14 +67,14 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
         SearchStrategy::KeywordOnly,
     ];
 
-    println!("\n📋 Comparing strategies for query: '{}'", query);
+    println!("\n📋 Comparing strategies for query: '{query}'");
     let comparison_results = hybrid_service
         .compare_strategies(query, strategies, search_options.clone())
         .await?;
 
     for result_set in comparison_results {
         if let Some(strategy) = &result_set.request.strategy {
-            println!("\n🔧 Strategy: {:?}", strategy);
+            println!("\n🔧 Strategy: {strategy:?}");
             println!("   Results: {} found", result_set.results.len());
             println!(
                 "   Execution time: {:.2}ms",
@@ -107,7 +106,7 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
     let adaptive_result = hybrid_service
         .adaptive_search(query, search_options.clone())
         .await?;
-    println!("Query: '{}'", query);
+    println!("Query: '{query}'");
     println!(
         "Recommended strategy: {:?}",
         adaptive_result.query_analysis.recommended_strategy
@@ -140,7 +139,7 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
             .search_with_fusion(query, fusion_method.clone(), search_options.clone())
             .await?;
 
-        println!("\n🔗 Fusion method: {:?}", fusion_method);
+        println!("\n🔗 Fusion method: {fusion_method:?}");
         println!("   Results: {} found", result.results.len());
         println!(
             "   Fusion time: {:.2}ms",
@@ -178,10 +177,7 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
             )
             .await?;
 
-        println!(
-            "\n⚖️  Weights: Vector {:.1}, Keyword {:.1}",
-            vector_weight, keyword_weight
-        );
+        println!("\n⚖️  Weights: Vector {vector_weight:.1}, Keyword {keyword_weight:.1}");
         println!("   Results: {} found", result.results.len());
 
         if let Some(top_result) = result.results.first() {
@@ -218,7 +214,7 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
 
     println!("\nStrategy usage:");
     for (strategy, count) in &metrics.strategy_distribution {
-        println!("  {}: {} times", strategy, count);
+        println!("  {strategy}: {count} times");
     }
 
     println!("\n✅ Hybrid Search Demo Complete!");

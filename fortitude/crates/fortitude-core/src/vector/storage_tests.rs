@@ -405,9 +405,7 @@ async fn test_batch_performance() {
         let store_duration = start_time.elapsed();
 
         assert_eq!(store_result.successful.len(), batch_size);
-        println!(
-            "Batch store of {batch_size} documents took: {store_duration:?}"
-        );
+        println!("Batch store of {batch_size} documents took: {store_duration:?}");
 
         let stored_ids: Vec<String> = store_result
             .successful
@@ -421,9 +419,7 @@ async fn test_batch_performance() {
         let retrieve_duration = start_time.elapsed();
 
         assert_eq!(retrieve_result.successful.len(), batch_size);
-        println!(
-            "Batch retrieve of {batch_size} documents took: {retrieve_duration:?}"
-        );
+        println!("Batch retrieve of {batch_size} documents took: {retrieve_duration:?}");
 
         // Clean up
         let _delete_result = storage.delete_batch(stored_ids).await.unwrap();

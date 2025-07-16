@@ -70,7 +70,7 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
     info!("Starting performance demonstration...");
 
     // Test 1: Single embedding generation with caching
-    let test_texts = vec![
+    let test_texts = [
         "performance optimization",
         "vector database operations",
         "semantic search capabilities",

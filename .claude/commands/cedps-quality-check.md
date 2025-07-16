@@ -1,413 +1,200 @@
-# <context>CE-DPS Comprehensive Quality Validation</context>
+# <context>CE-DPS Quality Validation Command</context>
 
 <meta>
-  <title>CE-DPS Quality Check</title>
-  <type>quality-validation</type>
+  <title>CE-DPS Quality Validation Command</title>
+  <type>quality-command</type>
   <audience>ai_assistant</audience>
-  <complexity>advanced</complexity>
+  <complexity>intermediate</complexity>
   <updated>2025-07-16</updated>
 </meta>
 
-## <summary priority="critical">TL;DR</summary>
-- **Purpose**: Run complete CI/CD test suite matching `.github/workflows/ci.yml`
-- **Capability**: Auto-fix issues according to quality-framework.md guidelines
-- **Coverage**: Rust formatting, linting, tests, security audit, documentation, integration tests
-- **Authority**: AI implements fixes maintaining all technical quality standards
+## <summary priority="critical">Quality Gate Execution</summary>
 
-## <implementation>Comprehensive Quality Validation</implementation>
+- **Purpose**: Comprehensive CI/CD test suite with auto-fix capability
+- **Authority**: AI must fix ALL failures using optimal solutions for software health
+- **Scope**: Code formatting → linting → build → tests → security → documentation
+- **Success Criteria**: ALL quality gates pass cleanly in back-to-back runs
+- **Non-Negotiable**: Fix broken tests or broken code using best architectural solutions
 
-### <action priority="critical">Run Complete Test Suite</action>
+## <implementation priority="critical">Quality Validation Pipeline</implementation>
 
-```bash
-echo "🔍 CE-DPS COMPREHENSIVE QUALITY CHECK"
-echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
-echo "📊 Running complete CI/CD test suite with auto-fix capability..."
-echo ""
-
-# Initialize quality check state
-QUALITY_FAILURES=0
-AUTOFIX_APPLIED=false
-
-# Function to track failures
-track_failure() {
-    QUALITY_FAILURES=$((QUALITY_FAILURES + 1))
-    echo "❌ $1"
-}
-
-# Function to track success
-track_success() {
-    echo "✅ $1"
-}
-
-# Function to apply auto-fix
-apply_autofix() {
-    AUTOFIX_APPLIED=true
-    echo "🔧 Auto-fixing: $1"
-}
-```
-
-### <validation layer="1">1. Rust Code Formatting</validation>
+### <phase>Phase 1: Code Quality Foundation</phase>
 
 ```bash
-echo "1️⃣ RUST CODE FORMATTING CHECK"
-echo "─────────────────────────────────────────────────────────────────────────────────────"
-
-# Check formatting
-if cargo fmt --all -- --check; then
-    track_success "Rust code formatting is correct"
-else
-    apply_autofix "Rust code formatting issues"
-    cargo fmt --all
-    
-    # Verify fix
-    if cargo fmt --all -- --check; then
-        track_success "Rust code formatting auto-fixed successfully"
-    else
-        track_failure "Rust code formatting auto-fix failed"
-    fi
-fi
-echo ""
+# ANCHOR: Rust formatting validation
+cargo fmt --all -- --check
 ```
 
-### <validation layer="2">2. Clippy Linting</validation>
+**Auto-fix if failed:**
+```bash
+cargo fmt --all
+```
+
+**Success Criteria**: Zero formatting violations
+
+### <phase>Phase 2: Linting Validation</phase>
 
 ```bash
-echo "2️⃣ CLIPPY LINTING CHECK"
-echo "─────────────────────────────────────────────────────────────────────────────────────"
-
-# Run clippy with warnings as errors
-if cargo clippy --workspace --all-targets --all-features -- -D warnings; then
-    track_success "Clippy linting passed with no warnings"
-else
-    apply_autofix "Clippy linting issues"
-    
-    # Apply automatic fixes
-    cargo clippy --workspace --all-targets --all-features --fix --allow-dirty --allow-staged
-    
-    # Verify fix
-    if cargo clippy --workspace --all-targets --all-features -- -D warnings; then
-        track_success "Clippy linting auto-fixed successfully"
-    else
-        track_failure "Clippy linting issues require manual intervention"
-        echo "🔍 Remaining clippy issues require code review and manual fixes"
-    fi
-fi
-echo ""
+# ANCHOR: Clippy linting with warnings as errors
+cargo clippy --workspace --all-targets --all-features -- -D warnings
 ```
 
-### <validation layer="3">3. Workspace Build</validation>
+**Auto-fix if failed:**
+```bash
+cargo clippy --workspace --all-targets --all-features --fix --allow-dirty --allow-staged
+```
+
+**Success Criteria**: Zero clippy warnings or errors
+
+### <phase>Phase 3: Build Validation</phase>
 
 ```bash
-echo "3️⃣ WORKSPACE BUILD CHECK"
-echo "─────────────────────────────────────────────────────────────────────────────────────"
-
-if cargo build --workspace --verbose; then
-    track_success "Workspace builds successfully"
-else
-    track_failure "Workspace build failed - requires manual code fixes"
-    echo "🔍 Build errors require manual intervention and code fixes"
-fi
-echo ""
+# ANCHOR: Workspace build verification
+cargo build --workspace --verbose
 ```
 
-### <validation layer="4">4. Rust Test Suite</validation>
+**Success Criteria**: Clean build with no compilation errors
+
+### <phase>Phase 4: Test Suite Validation</phase>
 
 ```bash
-echo "4️⃣ RUST TEST SUITE CHECK"
-echo "─────────────────────────────────────────────────────────────────────────────────────"
-
-if cargo test --workspace --verbose; then
-    track_success "All Rust tests pass"
-else
-    track_failure "Rust tests failing - requires code fixes or test updates"
-    echo "🔍 Test failures require code review and manual fixes"
-    
-    # Attempt to get test coverage if available
-    if command -v cargo-tarpaulin &> /dev/null; then
-        echo "📊 Generating test coverage report..."
-        cargo tarpaulin --workspace --out Xml --out Html || echo "⚠️ Coverage report generation failed"
-    fi
-fi
-echo ""
+# ANCHOR: Comprehensive test execution
+cargo test --workspace --verbose
 ```
 
-### <validation layer="5">5. Python Test Suite</validation>
+**Success Criteria**: All tests pass, >95% coverage maintained
+
+### <phase>Phase 5: Security Validation</phase>
 
 ```bash
-echo "5️⃣ PYTHON TEST SUITE CHECK"
-echo "─────────────────────────────────────────────────────────────────────────────────────"
-
-if command -v python3 &> /dev/null; then
-    # Check if pytest is available
-    if python3 -c "import pytest" 2>/dev/null; then
-        if python3 -m pytest tools/phase-validator.py --doctest-modules -v; then
-            track_success "Python tests pass"
-        else
-            track_failure "Python tests failing - requires manual fixes"
-        fi
-    else
-        echo "⚠️ pytest not available - installing..."
-        pip install pytest || echo "⚠️ Could not install pytest"
-        
-        if python3 -m pytest tools/phase-validator.py --doctest-modules -v 2>/dev/null; then
-            track_success "Python tests pass"
-        else
-            echo "⚠️ Python tests skipped (no test files found or pytest unavailable)"
-        fi
-    fi
-else
-    echo "⚠️ Python not available - skipping Python tests"
-fi
-echo ""
+# ANCHOR: Security audit validation
+cargo audit
 ```
 
-### <validation layer="6">6. Quality Gates Tool</validation>
+**Success Criteria**: No critical security vulnerabilities
+
+### <phase>Phase 6: Documentation Validation</phase>
 
 ```bash
-echo "6️⃣ QUALITY GATES VALIDATION"
-echo "─────────────────────────────────────────────────────────────────────────────────────"
-
-# Build quality gates tool if not already built
-if [[ ! -f "target/debug/quality-gates" ]] && [[ ! -f "target/release/quality-gates" ]]; then
-    echo "🔧 Building quality gates tool..."
-    cargo build --bin quality-gates
-fi
-
-# Run quality gates on current project
-if [[ -f "target/debug/quality-gates" ]]; then
-    if ./target/debug/quality-gates --project-path .; then
-        track_success "Quality gates validation passed"
-    else
-        track_failure "Quality gates validation failed"
-        echo "🔍 Quality gate failures require code improvements"
-    fi
-elif [[ -f "target/release/quality-gates" ]]; then
-    if ./target/release/quality-gates --project-path .; then
-        track_success "Quality gates validation passed"
-    else
-        track_failure "Quality gates validation failed"
-        echo "🔍 Quality gate failures require code improvements"
-    fi
-else
-    echo "⚠️ Quality gates tool not available - building workspace instead"
-    if cargo build --workspace; then
-        track_success "Workspace build passed (quality gates alternative)"
-    else
-        track_failure "Workspace build failed"
-    fi
-fi
-echo ""
+# ANCHOR: Documentation build validation
+cargo doc --workspace --no-deps
 ```
 
-### <validation layer="7">7. Security Audit</validation>
+**Success Criteria**: Documentation builds without errors
+
+## <validation priority="high">Extended Quality Gates</validation>
+
+### <tool>Quality Gates Tool</tool>
 
 ```bash
-echo "7️⃣ SECURITY AUDIT CHECK"
-echo "─────────────────────────────────────────────────────────────────────────────────────"
-
-# Install cargo-audit if not present
-if ! command -v cargo-audit &> /dev/null; then
-    echo "🔧 Installing cargo-audit..."
-    cargo install cargo-audit
-fi
-
-if cargo audit; then
-    track_success "Security audit passed - no vulnerabilities found"
-else
-    track_failure "Security vulnerabilities detected"
-    echo "🔍 Security issues require dependency updates or manual review"
-    
-    # Attempt to update dependencies
-    apply_autofix "Updating dependencies to address security issues"
-    cargo update
-    
-    # Re-run audit
-    if cargo audit; then
-        track_success "Security audit passed after dependency updates"
-    else
-        track_failure "Security issues persist after dependency updates"
-        echo "🔍 Manual security review required"
-    fi
-fi
-echo ""
+# ANCHOR: Quality gates validation
+cargo build --bin quality-gates
+./target/debug/quality-gates --project-path .
 ```
 
-### <validation layer="8">8. Documentation Build</validation>
+**Purpose**: CE-DPS-specific quality validation
+
+### <tool>Python Integration Tests</tool>
 
 ```bash
-echo "8️⃣ DOCUMENTATION BUILD CHECK"
-echo "─────────────────────────────────────────────────────────────────────────────────────"
-
-if cargo doc --workspace --no-deps; then
-    track_success "Documentation builds successfully"
-    
-    # Check for key documentation files
-    DOC_FILES=(
-        "README.md"
-        "CLAUDE.md"
-        "methodology/ai-implementation/quality-framework.md"
-        "methodology/human-oversight/strategic-direction.md"
-    )
-    
-    MISSING_DOCS=0
-    for doc_file in "${DOC_FILES[@]}"; do
-        if [[ -f "$doc_file" ]]; then
-            echo "  ✅ $doc_file exists"
-        else
-            echo "  ❌ $doc_file missing"
-            MISSING_DOCS=$((MISSING_DOCS + 1))
-        fi
-    done
-    
-    if [[ $MISSING_DOCS -eq 0 ]]; then
-        track_success "All key documentation files present"
-    else
-        track_failure "$MISSING_DOCS key documentation files missing"
-    fi
-else
-    track_failure "Documentation build failed"
-    echo "🔍 Documentation errors require manual fixes"
-fi
-echo ""
+# ANCHOR: Python test validation with forced venv activation
+source .venv/bin/activate
+python -m pytest tools/phase-validator.py --doctest-modules -v
 ```
 
-### <validation layer="9">9. Integration Tests</validation>
+**Purpose**: Phase validation tool testing
+
+### <tool>Fortitude Integration</tool>
 
 ```bash
-echo "9️⃣ INTEGRATION TESTS CHECK"
-echo "─────────────────────────────────────────────────────────────────────────────────────"
-
-# Test Fortitude integration if available
-if [[ -f "target/debug/fortitude-integration" ]] || [[ -f "target/release/fortitude-integration" ]]; then
-    echo "🔧 Testing Fortitude integration..."
-    
-    if cargo run --bin fortitude-integration -- check; then
-        track_success "Fortitude integration check passed"
-    else
-        track_failure "Fortitude integration check failed"
-    fi
-else
-    echo "⚠️ Fortitude integration tool not built - skipping integration test"
-fi
-
-# Test phase validator if available
-if [[ -f "tools/phase-validator.py" ]]; then
-    echo "🔧 Testing phase validator..."
-    
-    # Create minimal test structure
-    mkdir -p test-project/docs
-    echo "# Test Project" > test-project/README.md
-    echo "## Business Requirements" > test-project/docs/requirements.md
-    
-    cd test-project || exit 1
-    git init --quiet
-    git config user.name "Quality Check"
-    git config user.email "quality@cedps.test"
-    git add . --quiet
-    git commit -m "Test commit" --quiet
-    
-    if python3 ../tools/phase-validator.py --phase 1 --project-path . 2>/dev/null; then
-        track_success "Phase validator integration test passed"
-    else
-        echo "⚠️ Phase validator test completed (validation expected for minimal project)"
-    fi
-    
-    cd ..
-    rm -rf test-project
-else
-    echo "⚠️ Phase validator not available - skipping integration test"
-fi
-echo ""
+# ANCHOR: Fortitude integration validation
+cargo run --bin fortitude-integration -- check
 ```
 
-### <results>Quality Check Results</results>
+**Purpose**: Knowledge management system validation
+
+## <constraints priority="critical">Non-Negotiable Requirements</constraints>
+
+### <constraint>Intelligent Fix Requirement</constraint>
+
+**AI Authority**: You MUST fix ALL failures using the best possible solution for software health and longevity
+- **Test Failure**: Fix broken test OR fix broken code (choose optimal solution)
+- **Build Failure**: Resolve compilation errors with sound architectural decisions
+- **Lint Failure**: Address warnings/errors unless fixing degrades architecture
+- **Security Failure**: Resolve all critical vulnerabilities with secure patterns
+
+**Fix Definition**: "Fix" means implementing the best possible solution for the software's health and longevity, which may involve:
+- Correcting existing code when the issue is implementation-level
+- Architecting and implementing new code when current design is fundamentally flawed
+- Refactoring to improve architectural soundness
+- Choosing architectural improvements over quick patches
+
+**Exception Protocol**: If fixing a test/warning would degrade architecture, implement better architecture instead of band-aid fixes
+
+### <constraint>Back-to-Back Validation</constraint>
+
+**Success Definition**: 
+1. Run complete quality pipeline
+2. Achieve 100% pass rate
+3. Run pipeline second time
+4. Achieve 100% pass rate again
+
+**Purpose**: Ensure stability and repeatability
+
+## <troubleshooting priority="medium">Common Fix Patterns</troubleshooting>
+
+### <pattern>Formatting Issues</pattern>
 
 ```bash
-echo "📊 QUALITY CHECK RESULTS"
-echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
-
-if [[ $QUALITY_FAILURES -eq 0 ]]; then
-    echo "🎉 ALL QUALITY CHECKS PASSED!"
-    echo "✅ Code is ready for deployment"
-    echo "✅ All technical quality standards met"
-    echo "✅ Security validation passed"
-    echo "✅ Documentation complete"
-    
-    if [[ "$AUTOFIX_APPLIED" == "true" ]]; then
-        echo "🔧 Auto-fixes were applied during validation"
-        echo "📝 Review applied changes before committing"
-    fi
-    
-    echo ""
-    echo "🚀 NEXT STEPS:"
-    if [[ "$SKYNET" == "true" ]]; then
-        echo "   • Skynet mode: Continuing to next phase automatically"
-        echo "   • Quality gates satisfied for autonomous progression"
-    else
-        echo "   • Human oversight: Ready for business value validation"
-        echo "   • Consider running /cedps-phase3-validate to complete current phase"
-    fi
-    
-    exit 0
-else
-    echo "⚠️ QUALITY ISSUES DETECTED: $QUALITY_FAILURES failures"
-    echo "🔍 Manual intervention required for remaining issues"
-    echo "📋 Review failed checks above for specific remediation steps"
-    
-    if [[ "$AUTOFIX_APPLIED" == "true" ]]; then
-        echo "🔧 Some auto-fixes were applied - re-run quality check after manual fixes"
-    fi
-    
-    echo ""
-    echo "🛠️ REMEDIATION STEPS:"
-    echo "   1. Address failed quality checks manually"
-    echo "   2. Re-run /cedps-quality-check to verify fixes"
-    echo "   3. Commit changes when all checks pass"
-    
-    if [[ "$SKYNET" == "true" ]]; then
-        echo ""
-        echo "🤖 SKYNET MODE: Autonomous progression halted until quality gates pass"
-        echo "🔧 Manual intervention required to resolve quality issues"
-    fi
-    
-    exit 1
-fi
+# Auto-fix formatting
+cargo fmt --all
 ```
 
-## <integration>Skynet Mode Integration</integration>
+### <pattern>Clippy Warnings</pattern>
 
-### <skynet-behavior>Autonomous Operation</skynet-behavior>
-When `SKYNET=true`:
-- **Quality Failures**: Halt autonomous progression until manually resolved
-- **Quality Success**: Automatically continue to next phase or loop back to Phase 2
-- **Auto-fixes**: Applied automatically without human confirmation
-- **Documentation**: All fixes marked with "Manifested by SKYNET" where applicable
+```rust
+// Common fixes
+#[allow(clippy::too_many_arguments)]  // For complex functions
+#[allow(dead_code)]                   // For development code
+#[allow(unused_variables)]            // For placeholder variables
+```
 
-### <human-oversight>Manual Operation</human-oversight>
-When `SKYNET=false` or unset:
-- **Quality Failures**: Report issues and halt for manual resolution
-- **Quality Success**: Wait for human decision on next steps
-- **Auto-fixes**: Applied with notification for human review
-- **Documentation**: Standard CE-DPS quality validation workflow
+### <pattern>Test Failures</pattern>
 
-## <quality-framework>Quality Standards Enforced</quality-framework>
+```bash
+# Run specific test for debugging
+cargo test test_name -- --nocapture
 
-This command implements comprehensive validation matching `methodology/ai-implementation/quality-framework.md`:
+# Run tests in single thread
+cargo test -- --test-threads=1
+```
 
-### <technical-standards>Technical Quality</technical-standards>
-- **Test Coverage**: >95% requirement via cargo test and tarpaulin
-- **Security**: Vulnerability scanning via cargo audit
-- **Performance**: Build validation and integration testing
-- **Code Quality**: Formatting (rustfmt) and linting (clippy)
+### <pattern>Build Failures</pattern>
 
-### <documentation-standards>Documentation Quality</documentation-standards>
-- **API Documentation**: cargo doc build validation
-- **Key Files**: README.md, CLAUDE.md, methodology documentation
-- **Completeness**: Integration test coverage for phase validation
+```bash
+# Clean build
+cargo clean
+cargo build --workspace --verbose
+```
 
-### <integration-standards>Integration Quality</integration-standards>
-- **Fortitude**: Knowledge management system validation
-- **Phase Validation**: Python tool integration testing
-- **CI/CD Compatibility**: Matches `.github/workflows/ci.yml` exactly
+## <execution priority="critical">Command Execution Flow</execution>
 
-This quality check ensures all CE-DPS technical standards are met before progression to next development phase.
+**Sequential Execution Required:**
+1. Format check → auto-fix if needed → verify pass
+2. Clippy check → implement optimal solutions → verify pass  
+3. Build check → resolve with sound architecture → verify pass
+4. Test execution → fix with best architectural approach → verify pass
+5. Security audit → implement secure patterns → verify pass
+6. Documentation build → fix with clear documentation → verify pass
+7. Extended tools → resolve with optimal solutions → verify pass
+
+**Final Validation:**
+- Complete pipeline execution #1 → 100% pass
+- Complete pipeline execution #2 → 100% pass
+- Success: Ready for next development phase
+
+**Failure Protocol:**
+- Any failure → implement best solution for software health → re-run from failed step
+- Evaluate: Quick fix vs architectural improvement (choose architectural improvement)
+- Continue until ALL steps pass cleanly with sound architecture
+- No progression until quality gates satisfied with optimal solutions

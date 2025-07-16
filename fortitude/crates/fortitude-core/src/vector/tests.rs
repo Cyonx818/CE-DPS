@@ -1,6 +1,6 @@
 // ABOUTME: Unit tests for vector database functionality
 #[cfg(test)]
-mod tests {
+mod vector_tests {
     use crate::vector::{DistanceMetric, VectorConfig, VectorOperation, VectorRequest};
     use std::time::Duration;
 

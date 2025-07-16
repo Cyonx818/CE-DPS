@@ -679,8 +679,128 @@ I need you to verify that none of these folders, nor the files they contain, ser
         os: [ubuntu-latest, windows-latest, macos-latest]
 
 -------------------------------------------------------------------------------
+
+You are tasked with researching the latest technical guidelines and best practices for authoring markdown documents specifically optimized for consumption by Large Language Models (LLMs). This is an emerging field with active research, so prioritize recent findings, academic sources, and empirically validated approaches.
+
+## Core Research Requirements
+
+1. **Reliability and Consistency**
+    - What markdown structures and formatting patterns ensure LLMs interpret documents identically across multiple interactions?
+    - How do semantic markup patterns affect parsing consistency?
+    - What are the most effective methods for disambiguation in markdown content?
+    - Are there specific formatting conventions that reduce interpretation variance?
+
+2. **Comprehension Optimization**
+    - Which markdown structural elements improve LLM understanding accuracy?
+    - How do heading hierarchies, lists, and code blocks affect comprehension?
+    - What role do explicit semantic markers play in LLM document understanding?
+    - How should complex information be structured to maximize comprehension?
+
+3. **Traversal and Navigation**
+    - What document organization patterns enable efficient LLM information retrieval?
+    - How should cross-references and internal linking be implemented?
+    - What indexing or tagging strategies improve content discoverability?
+    - How do different markdown structural elements affect LLM search and retrieval?
+
+4. **Instruction Following**
+    - What markdown patterns most effectively signal procedural content to LLMs?
+    - How should step-by-step instructions be formatted for maximum adherence?
+    - What structural cues help LLMs distinguish between informational and instructional content?
+    - How can sequential dependencies and conditional logic be clearly expressed?
+
+5. **Token Economy**
+    - What are the most token-efficient approaches to markdown authoring without compromising clarity?
+    - How do different formatting choices affect token consumption vs. comprehension trade-offs?
+    - What compression techniques maintain semantic integrity while reducing token usage?
+    - How should repetitive or boilerplate content be handled efficiently?
+
+## Required Evidence and Sources
+
+Please prioritize findings from:
+- **Academic research papers** on LLM document comprehension and markdown parsing
+- **Empirical studies** with quantitative metrics on LLM performance with different markdown structures
+- **Industry research** from AI companies on document formatting for LLM consumption
+- **Technical benchmarks** measuring parsing accuracy, comprehension rates, and instruction following
+- **Recent publications** (2024-2025) on prompt engineering and document optimization
+
+## Specific Technical Details Needed
+
+1. **Quantitative Metrics**
+    - Parsing accuracy improvements from specific formatting approaches
+    - Comprehension rate differences between structural patterns
+    - Token efficiency ratios for different markdown styles
+    - Instruction following success rates by formatting method
+
+2. **Concrete Implementation Guidelines**
+    - Specific markdown syntax recommendations with empirical backing
+    - Document structure templates with proven effectiveness
+    - Formatting patterns that consistently improve LLM performance
+    - Anti-patterns that demonstrably reduce comprehension or reliability
+
+3. **Emerging Standards and Frameworks**
+    - Any proposed or emerging standards for LLM-optimized markdown
+    - Frameworks or methodologies for document optimization
+    - Tools or validators for assessing markdown LLM-readiness
+    - Industry initiatives around LLM document formatting
+
+## Research Context
+
+Focus on technical approaches that would be valuable for:
+- Technical documentation teams optimizing for AI consumption
+- Developers creating LLM-friendly content management systems
+- Researchers working on human-AI collaborative documentation
+- Organizations standardizing documentation for LLM integration
+
+## Quality Criteria
+
+Prioritize research that includes:
+- Controlled experiments with measurable outcomes
+- Reproducible methodologies
+- Statistical significance testing
+- Peer review or industry validation
+- Real-world implementation case studies
+
+Please provide specific citations, quantitative results, and actionable technical recommendations based on empirical evidence rather
+than theoretical speculation.
+
+
 -------------------------------------------------------------------------------
+
+I want to set up a formal project to complete and polish fortitude, The CE-DPS deveopment methodology's RAG solution and knowledge management platform. 
+
+First, you need to understand Fortitude.
+Read:
+- `/home/cyonx/Documents/GitHub/CE-DPS/fortitude/docs/fortitude-vision-statement.md` in order to understand what fortitude is trying to be.
+- `/home/cyonx/Documents/GitHub/CE-DPS/fortitude/docs/fortitude-domain-principles.md` in order to understand how fortitude wants to achieve its goals
+- `/home/cyonx/Documents/GitHub/CE-DPS/fortitude/docs/fortitude-technical-integration-model.md` in order to understand how fortitude expects to communicate with the rest of CE-DPS and LLM APIs.
+
+Note that those documents do not describe fortitude as it is, but rather as it aspires to be.
+
+Here is an analysis of what is currently working, not working, and broken in fortitude as it is today:
+- `/home/cyonx/Documents/GitHub/CE-DPS/fortitude-state-analysis_LLM-readable.md`
+
 -------------------------------------------------------------------------------
+
+We need to update our `/home/cyonx/Documents/GitHub/CE-DPS/methodology/ai-implementation/llm-style-guidelines.md` to optimize the guidelines with newest research into the topic of "how to write markdown that is intended to be read by an LLM".
+
+The research is located in 3 seperate document in the `/home/cyonx/Documents/GitHub/CE-DPS/methodology/ai-implementation/style_research` folder. Read all 3. They are quite large, so determine if it would be worthwhile to your context window preservation to use subtasks to analyze and report back results. Make sure that subagents have ample context to do their jobs correctly. Have them read the existing llm-style-guidelines.md as part of their context window so they understand what they're trying to improve by reading the research papers. Do not sacrifice context quality to use subagents however. We need the best possible style guidelines since the style guideline is a foundational document for the entire project. It is of critical importance.
+
+llm-style-guidelines.md already works. Our goal is to enhance/improve it, not replace it. Keep what is working, add what is new and useful from the 3 research documents where it fits into the existing guidelines. 
+
+When different ideas, guidelines, or recommendations from the research papers conflict with each other or the existing guidelines, follow the core goal priority list below for choosing what information to put in the new llm-style-guidelines.
+
+Core goals for both the llm-style-guidelines, as well as the documentation that will be produced as a result of following the llm-style-guideline's style guidelines are:
+1. Reliability and consistency: The LLM should understand the document the same way each time.
+2. Comprehension: The LLM should understand the document as easily as possible, with as few ambiguities as possible.
+3. Traversal: The LLM should be able to locate the instructions and topics it needs to reference in a given document.
+4. Reliably following steps/instructions: The LLM should understand when it is being given a list of instructions to follow, and not deviate from those instructions.
+5. High Quality and easily digestible patterns and examples: LLMs need contextually accurate patterns and examples to understand concepts. We need to provide those when it will assist in comprehension. 
+6. Token economy. The writing shuld be economical as possible with token usage, without losing context or undermining any of the other core goals.
+
+You will place the new style guidelines here: `CE-DPS/llm-style-guidelines-new.md`
+
+Do you understand these instructions?
+
 -------------------------------------------------------------------------------
 -------------------------------------------------------------------------------
 -------------------------------------------------------------------------------

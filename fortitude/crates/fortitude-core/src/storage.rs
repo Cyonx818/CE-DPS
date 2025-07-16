@@ -116,7 +116,9 @@ impl FileStorage {
         // Normalize query for better cache key effectiveness
         let normalized_query = self.normalize_query(&result.request.original_query);
         normalized_query.hash(&mut hasher);
-        result.request.research_type.hash(&mut hasher);
+
+        // Include research type with explicit prefix to ensure distinct hashing
+        format!("research_type:{:?}", result.request.research_type).hash(&mut hasher);
         result.request.audience_context.level.hash(&mut hasher);
         result.request.domain_context.technology.hash(&mut hasher);
 
@@ -163,7 +165,8 @@ impl FileStorage {
         let normalized_query = self.normalize_query(&result.request.original_query);
         normalized_query.hash(&mut hasher);
 
-        result.request.research_type.hash(&mut hasher);
+        // Include research type with explicit prefix to ensure distinct hashing
+        format!("research_type:{:?}", result.request.research_type).hash(&mut hasher);
         result.request.audience_context.level.hash(&mut hasher);
         result.request.domain_context.technology.hash(&mut hasher);
 
@@ -241,15 +244,13 @@ impl FileStorage {
 
     /// Apply semantic normalization for enhanced fuzzy matching
     fn apply_semantic_normalization(&self, query: &str) -> String {
-        let mut words: Vec<String> = query
+        let words: Vec<String> = query
             .split_whitespace()
             .map(|word| self.normalize_technical_term(word))
             .collect();
 
-        // Sort words alphabetically for consistent ordering
-        // This helps "implement async rust" and "rust async implement" generate same key
-        words.sort();
-
+        // DO NOT sort words to preserve semantic meaning and avoid collisions
+        // "rust async programming" and "python async programming" must remain distinct
         words.join(" ")
     }
 

@@ -8,7 +8,7 @@
 
 **Implementation Approach**: Sequential subagent coordination for optimal context management
 
-**Documentation Standards**: All generated documentation must follow [LLM Documentation Guidelines](llm-documentation-guidelines.md) for optimal AI comprehension
+**Documentation Standards**: All generated documentation must follow [LLM Documentation Guidelines](llm-style-guidelines.md) for optimal AI comprehension
 
 ## <method>AI Implementation Process</method>
 

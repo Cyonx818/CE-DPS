@@ -4,11 +4,11 @@
 
 use criterion::{black_box, criterion_group, criterion_main, BenchmarkId, Criterion, Throughput};
 use fortitude_core::{
-    ApiClient,
     vector::{
         EmbeddingConfig, EmbeddingGenerator, LocalEmbeddingService, QdrantClient, VectorConfig,
         VectorOperation, VectorRequest,
     },
+    ApiClient,
 };
 use std::time::Duration;
 use tokio::runtime::Runtime;

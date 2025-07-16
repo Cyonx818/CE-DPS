@@ -109,3 +109,6 @@ fortitude/reference_library/cache/
 fortitude/reference_library/index/
 fortitude/coordination/
 fortitude/test_hash.rs
+
+# Human Oversight - Private Notes
+methodology/human-oversight/prompt_scratchpad.md

@@ -40,7 +40,7 @@ fn create_basic_research_result(query: &str, research_type: ResearchType) -> Res
         processing_time_ms: 1000,
         sources_consulted: vec!["test_source".to_string()],
         quality_score: 0.9,
-        cache_key: "test-key".to_string(),
+        cache_key: String::new(), // Let storage generate the cache key
         tags: HashMap::new(),
     };
 
@@ -116,7 +116,7 @@ mod cache_key_determinism_tests {
         let query = "rust async programming";
 
         // Test confidence values within the same band (0.8-1.0 = "very_high")
-        let confidence_values = vec![
+        let confidence_values = [
             0.8,
             0.85,
             0.8500000000000001, // Floating-point precision issue
@@ -163,11 +163,13 @@ mod cache_key_determinism_tests {
         let query = "rust async programming";
 
         // Test different research types
-        let research_types = [ResearchType::Learning,
+        let research_types = [
+            ResearchType::Learning,
             ResearchType::Implementation,
             ResearchType::Troubleshooting,
             ResearchType::Decision,
-            ResearchType::Validation];
+            ResearchType::Validation,
+        ];
 
         let mut cache_keys = Vec::new();
         for research_type in research_types.iter() {
@@ -241,9 +243,7 @@ mod query_normalization_comprehensive_tests {
             println!("  Query: \"{query}\" -> Key: {key}");
         }
         println!("  Unique keys: {}/{}", unique_keys.len(), cache_keys.len());
-        println!(
-            "  Normalization effectiveness: {normalization_effectiveness:.2}"
-        );
+        println!("  Normalization effectiveness: {normalization_effectiveness:.2}");
 
         // We expect high normalization effectiveness (ideally 1 unique key)
         assert!(
@@ -374,7 +374,7 @@ mod context_aware_cache_key_tests {
 
         let mut cache_keys = Vec::new();
         for (time_ms, expected_category) in processing_times {
-            let context = create_context_result_with_confidence(0.8);
+            let _context = create_context_result_with_confidence(0.8);
             // Update processing time using reflection - this is a simplified approach
             let dimension_confidences = vec![DimensionConfidence {
                 dimension: ClassificationDimension::AudienceLevel,
@@ -404,9 +404,7 @@ mod context_aware_cache_key_tests {
 
         println!("Processing time categorization test:");
         for (time_ms, category, key) in &cache_keys {
-            println!(
-                "  Time: {time_ms}ms (category: {category}) -> Key: {key}"
-            );
+            println!("  Time: {time_ms}ms (category: {category}) -> Key: {key}");
         }
         println!("  Unique keys: {}", unique_keys.len());
 
@@ -453,9 +451,7 @@ mod cache_key_collision_tests {
 
         println!("Cache key collision avoidance test:");
         for (query, research_type, key) in &cache_keys {
-            println!(
-                "  Query: \"{query}\" (type: {research_type:?}) -> Key: {key}"
-            );
+            println!("  Query: \"{query}\" (type: {research_type:?}) -> Key: {key}");
         }
         println!("  Unique keys: {}/{}", unique_keys.len(), cache_keys.len());
 

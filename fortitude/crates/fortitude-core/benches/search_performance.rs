@@ -1,619 +1,256 @@
-// ABOUTME: Search operations performance benchmarks
-//! This benchmark suite measures the performance of semantic search, hybrid search,
-//! query processing, filtering, and result ranking operations.
-
 use criterion::{black_box, criterion_group, criterion_main, BenchmarkId, Criterion, Throughput};
 use fortitude_core::vector::{
-    EmbeddingConfig, EmbeddingGenerator, FilterOperation, FusionMethod, HybridSearchConfig,
-    HybridSearchRequest, HybridSearchService, LocalEmbeddingService, SearchFilter, SearchOptions,
-    SearchStrategy, SemanticSearchConfig, SemanticSearchService, VectorConfig,
+    HybridSearchConfig, SearchOptions, SearchStrategy, SemanticSearchConfig, VectorConfig,
+    SemanticSearchFilter, SemanticFilterOperation, FusionMethod
 };
 use std::collections::HashMap;
-use std::sync::Arc;
 use std::time::Duration;
 use tokio::runtime::Runtime;
 
-/// Helper function to create test vector config
 fn create_test_vector_config() -> VectorConfig {
     VectorConfig {
         url: "http://localhost:6334".to_string(),
-        api_key: None,
-        timeout: Duration::from_secs(30),
-        default_collection: "test_collection".to_string(),
-        vector_dimensions: 384,
-        distance_metric: fortitude_core::vector::DistanceMetric::Cosine,
-        health_check: fortitude_core::vector::HealthCheckConfig {
-            enabled: true,
-            interval: Duration::from_secs(30),
-            timeout: Duration::from_secs(5),
-            max_failures: 3,
-        },
-        connection_pool: fortitude_core::vector::ConnectionPoolConfig::default(),
-        embedding: fortitude_core::vector::EmbeddingConfig::default(),
+        collection_name: "test_collection".to_string(),
+        embedding_dimension: 384,
+        ..Default::default()
     }
 }
 
-/// Helper function to create semantic search config
-fn create_semantic_config() -> SemanticSearchConfig {
-    SemanticSearchConfig {
-        default_limit: 10,
-        max_limit: 100,
-        default_threshold: 0.7,
-        enable_explanations: true,
-        enable_analytics: true,
-        result_diversification: true,
-        temporal_boost_decay: 0.1,
-        quality_boost_factor: 1.5,
-        cache_enabled: true,
-        cache_ttl: Duration::from_secs(300),
-        max_cache_size: 1000,
-    }
-}
-
-/// Helper function to create hybrid search config
-fn create_hybrid_config() -> HybridSearchConfig {
-    HybridSearchConfig {
-        semantic_weight: 0.7,
-        keyword_weight: 0.3,
-        fusion_method: FusionMethod::RankFusion,
-        min_semantic_score: 0.5,
-        min_keyword_score: 0.1,
-        result_limit: 50,
-        enable_query_analysis: true,
-        enable_spell_correction: false,
-        enable_synonym_expansion: false,
-        performance_mode: true,
-    }
-}
-
-/// Create test search options with different configurations
-fn create_search_options(
-    limit: usize,
-    threshold: Option<f64>,
-    filters: Vec<SearchFilter>,
-    diversify: bool,
-) -> SearchOptions {
+fn create_search_config(limit: usize, threshold: f32) -> SearchOptions {
     SearchOptions {
         limit,
-        threshold,
-        collection: None,
-        filters,
-        diversify_results: diversify,
-        temporal_boost: Some(0.1),
-        quality_boost: Some(1.2),
-        include_explanations: true,
-        min_content_length: Some(50),
-        max_content_length: None,
-        fuzzy_matching: false,
+        threshold: Some(threshold),
+        filters: vec![],
+        explain: false,
+        timeout: Some(Duration::from_secs(30)),
+        strategy: SearchStrategy::Auto,
     }
 }
 
-/// Generate test search filters
-fn create_test_filters() -> Vec<Vec<SearchFilter>> {
-    vec![
-        // No filters
-        vec![],
-        // Single equality filter
-        vec![SearchFilter {
-            field: "category".to_string(),
-            operation: FilterOperation::Equals,
-            value: serde_json::json!("research"),
-        }],
-        // Multiple filters
-        vec![
-            SearchFilter {
-                field: "category".to_string(),
-                operation: FilterOperation::Equals,
-                value: serde_json::json!("research"),
-            },
-            SearchFilter {
-                field: "priority".to_string(),
-                operation: FilterOperation::GreaterThan,
-                value: serde_json::json!(5),
-            },
-        ],
-        // Complex filters
-        vec![
-            SearchFilter {
-                field: "tags".to_string(),
-                operation: FilterOperation::Contains,
-                value: serde_json::json!("important"),
-            },
-            SearchFilter {
-                field: "date".to_string(),
-                operation: FilterOperation::After,
-                value: serde_json::json!("2024-01-01"),
-            },
-            SearchFilter {
-                field: "status".to_string(),
-                operation: FilterOperation::In,
-                value: serde_json::json!(["active", "pending"]),
-            },
-        ],
-    ]
-}
-
-/// Benchmark semantic search configuration validation
-fn bench_search_config_validation(c: &mut Criterion) {
-    c.bench_function("semantic_config_validation", |b| {
-        b.iter(|| {
-            let config = create_semantic_config();
-            let _result = config.validate();
-        });
-    });
-
-    c.bench_function("hybrid_config_validation", |b| {
-        b.iter(|| {
-            let config = create_hybrid_config();
-            let _result = config.validate();
-        });
-    });
-}
-
-/// Benchmark search options creation and validation
-fn bench_search_options(c: &mut Criterion) {
-    let filter_sets = create_test_filters();
-
-    let mut group = c.benchmark_group("search_options");
-
-    for (i, filters) in filter_sets.iter().enumerate() {
-        group.throughput(Throughput::Elements(filters.len() as u64));
-        group.bench_with_input(
-            BenchmarkId::new("create_options", i),
-            filters,
-            |b, filters| {
-                b.iter(|| {
-                    let options = create_search_options(
-                        black_box(20),
-                        black_box(Some(0.8)),
-                        black_box(filters.clone()),
-                        black_box(true),
-                    );
-                    black_box(options);
-                });
-            },
-        );
+fn create_hybrid_search_config() -> HybridSearchConfig {
+    HybridSearchConfig {
+        semantic_config: SemanticSearchConfig {
+            collection_name: "test_collection".to_string(),
+            embedding_dimension: 384,
+            similarity_threshold: 0.7,
+            top_k: 20,
+        },
+        keyword_weight: 0.3,
+        semantic_weight: 0.7,
+        fusion_method: FusionMethod::RankFusion,
+        keyword_boost_factor: 1.2,
+        min_keyword_score: 0.1,
+        enable_reranking: true,
+        max_results: 100,
     }
+}
+
+fn benchmark_semantic_search_performance(c: &mut Criterion) {
+    let rt = Runtime::new().unwrap();
+    let _config = create_test_vector_config();
+
+    let mut group = c.benchmark_group("semantic_search");
+    group.sample_size(50);
+    group.measurement_time(Duration::from_secs(30));
+
+    let queries = vec![
+        "simple query",
+        "complex multi-word query with technical terms",
+        "query with specific domain knowledge requirements",
+    ];
+
+    let limits = [5, 10, 20, 50];
+
+    for query in &queries {
+        for &limit in &limits {
+            let search_config = create_search_config(limit, 0.7);
+            
+            group.throughput(Throughput::Elements(limit as u64));
+            group.bench_with_input(
+                BenchmarkId::new(format!("query_limit_{limit}"), query),
+                &(query, search_config),
+                |b, (query, config)| {
+                    b.to_async(&rt).iter(|| async {
+                        // Mock search operation
+                        let _results = mock_semantic_search(black_box(query), black_box(config)).await;
+                        black_box(_results);
+                    });
+                },
+            );
+        }
+    }
+
     group.finish();
 }
 
-/// Benchmark search filter validation
-fn bench_filter_validation(c: &mut Criterion) {
+fn benchmark_filter_performance(c: &mut Criterion) {
     let rt = Runtime::new().unwrap();
 
-    let mut group = c.benchmark_group("filter_validation");
-
-    let test_filters = vec![
-        SearchFilter {
-            field: "simple_field".to_string(),
-            operation: FilterOperation::Equals,
-            value: serde_json::json!("value"),
-        },
-        SearchFilter {
-            field: "numeric_field".to_string(),
-            operation: FilterOperation::GreaterThan,
-            value: serde_json::json!(42),
-        },
-        SearchFilter {
-            field: "array_field".to_string(),
-            operation: FilterOperation::In,
-            value: serde_json::json!(["a", "b", "c", "d", "e"]),
-        },
-        SearchFilter {
-            field: "complex_field".to_string(),
-            operation: FilterOperation::Contains,
-            value: serde_json::json!({"nested": {"value": "test"}}),
-        },
+    let mut group = c.benchmark_group("filter_performance");
+    
+    let filter_scenarios = vec![
+        ("no_filters", vec![]),
+        ("single_filter", vec![SemanticSearchFilter {
+            field: "category".to_string(),
+            operation: SemanticFilterOperation::Equals,
+            value: serde_json::Value::String("test".to_string()),
+        }]),
+        ("multiple_filters", vec![
+            SemanticSearchFilter {
+                field: "category".to_string(),
+                operation: SemanticFilterOperation::Equals,
+                value: serde_json::Value::String("test".to_string()),
+            },
+            SemanticSearchFilter {
+                field: "score".to_string(),
+                operation: SemanticFilterOperation::GreaterThan,
+                value: serde_json::Value::Number(serde_json::Number::from(50)),
+            },
+            SemanticSearchFilter {
+                field: "tags".to_string(),
+                operation: SemanticFilterOperation::Contains,
+                value: serde_json::Value::String("important".to_string()),
+            },
+            SemanticSearchFilter {
+                field: "status".to_string(),
+                operation: SemanticFilterOperation::In,
+                value: serde_json::Value::Array(vec![
+                    serde_json::Value::String("active".to_string()),
+                    serde_json::Value::String("pending".to_string()),
+                ]),
+            },
+        ]),
     ];
 
-    for (i, filter) in test_filters.iter().enumerate() {
+    for (scenario_name, filters) in filter_scenarios {
+        let mut options = create_search_config(20, 0.7);
+        options.filters = filters.clone();
+        
         group.bench_with_input(
-            BenchmarkId::new("validate_filter", i),
-            filter,
-            |b, filter| {
+            BenchmarkId::new("filter_validation", scenario_name),
+            &options,
+            |b, options| {
                 b.to_async(&rt).iter(|| async {
                     // Simulate filter validation logic
-                    let _validated = match &filter.operation {
-                        FilterOperation::Equals | FilterOperation::NotEquals => true,
-                        FilterOperation::GreaterThan | FilterOperation::LessThan => {
-                            filter.value.is_number()
-                        }
-                        FilterOperation::Contains | FilterOperation::NotContains => true,
-                        FilterOperation::In | FilterOperation::NotIn => filter.value.is_array(),
-                        FilterOperation::After | FilterOperation::Before => {
-                            filter.value.is_string()
-                        }
-                        _ => true,
-                    };
-                    black_box(_validated);
-                });
-            },
-        );
-    }
-    group.finish();
-}
-
-/// Benchmark query preprocessing and analysis
-fn bench_query_processing(c: &mut Criterion) {
-    let rt = Runtime::new().unwrap();
-
-    let mut group = c.benchmark_group("query_processing");
-
-    let test_queries = vec![
-        "simple query",
-        "multi word query with more terms",
-        "Complex query with special characters!@#$%^&*()",
-        "Very long query that simulates real user input with multiple concepts and detailed requirements for research purposes".repeat(3),
-        "Query with numbers 123 and dates 2024-01-01",
-    ];
-
-    for (i, query) in test_queries.iter().enumerate() {
-        group.throughput(Throughput::Bytes(query.len() as u64));
-        group.bench_with_input(
-            BenchmarkId::new("preprocess_query", i),
-            query,
-            |b, query| {
-                b.to_async(&rt).iter(|| async {
-                    // Simulate query preprocessing
-                    let processed = query
-                        .trim()
-                        .to_lowercase()
-                        .split_whitespace()
-                        .collect::<Vec<_>>()
-                        .join(" ");
-
-                    // Simulate query analysis
-                    let word_count = processed.split_whitespace().count();
-                    let char_count = processed.len();
-                    let has_special_chars = processed
-                        .chars()
-                        .any(|c| !c.is_alphanumeric() && !c.is_whitespace());
-
-                    black_box((processed, word_count, char_count, has_special_chars));
-                });
-            },
-        );
-    }
-    group.finish();
-}
-
-/// Benchmark vector similarity calculations
-fn bench_similarity_calculations(c: &mut Criterion) {
-    let mut group = c.benchmark_group("similarity_calculations");
-
-    // Test different vector sizes
-    for size in [128, 256, 384, 512, 768, 1024].iter() {
-        group.throughput(Throughput::Elements(*size as u64));
-        group.bench_with_input(
-            BenchmarkId::new("cosine_similarity", size),
-            size,
-            |b, &size| {
-                b.iter(|| {
-                    let vec1 = vec![0.5f32; size];
-                    let vec2 = vec![0.3f32; size];
-
-                    // Calculate cosine similarity
-                    let dot_product: f32 = vec1.iter().zip(vec2.iter()).map(|(a, b)| a * b).sum();
-                    let norm1: f32 = vec1.iter().map(|x| x * x).sum::<f32>().sqrt();
-                    let norm2: f32 = vec2.iter().map(|x| x * x).sum::<f32>().sqrt();
-
-                    let similarity = if norm1 > 0.0 && norm2 > 0.0 {
-                        dot_product / (norm1 * norm2)
-                    } else {
-                        0.0
-                    };
-
-                    black_box(similarity);
-                });
-            },
-        );
-    }
-    group.finish();
-}
-
-/// Benchmark result ranking and scoring
-fn bench_result_ranking(c: &mut Criterion) {
-    let mut group = c.benchmark_group("result_ranking");
-
-    // Test different result set sizes
-    for count in [10, 50, 100, 500, 1000].iter() {
-        group.throughput(Throughput::Elements(*count as u64));
-        group.bench_with_input(
-            BenchmarkId::new("rank_results", count),
-            count,
-            |b, &count| {
-                b.iter(|| {
-                    // Create mock search results
-                    let mut results: Vec<(f32, String)> = (0..count)
-                        .map(|i| (rand::random::<f32>(), format!("result_{}", i)))
-                        .collect();
-
-                    // Sort by similarity score (descending)
-                    results.sort_by(|a, b| b.0.partial_cmp(&a.0).unwrap());
-
-                    // Apply additional scoring factors
-                    for (score, _) in &mut results {
-                        *score *= 1.0 + rand::random::<f32>() * 0.2; // Quality boost
-                        *score *= 1.0 - rand::random::<f32>() * 0.1; // Temporal decay
+                    for filter in &options.filters {
+                        let _validated = match &filter.operation {
+                            SemanticFilterOperation::Equals | SemanticFilterOperation::NotEquals => true,
+                            SemanticFilterOperation::GreaterThan | SemanticFilterOperation::LessThan => {
+                                filter.value.is_number()
+                            }
+                            SemanticFilterOperation::Contains | SemanticFilterOperation::NotContains => true,
+                            SemanticFilterOperation::In | SemanticFilterOperation::NotIn => {
+                                filter.value.is_array()
+                            }
+                        };
+                        black_box(_validated);
                     }
-
-                    black_box(results);
                 });
             },
         );
     }
+
     group.finish();
 }
 
-/// Benchmark result diversification
-fn bench_result_diversification(c: &mut Criterion) {
-    let mut group = c.benchmark_group("result_diversification");
+fn benchmark_hybrid_search_performance(c: &mut Criterion) {
+    let rt = Runtime::new().unwrap();
+    let hybrid_config = create_hybrid_search_config();
 
-    for count in [10, 20, 50, 100].iter() {
-        group.throughput(Throughput::Elements(*count as u64));
-        group.bench_with_input(BenchmarkId::new("diversify", count), count, |b, &count| {
-            b.iter(|| {
-                // Create mock results with embeddings
-                let results: Vec<(f32, Vec<f32>)> = (0..count)
-                    .map(|_| (rand::random::<f32>(), vec![rand::random::<f32>(); 384]))
-                    .collect();
+    let mut group = c.benchmark_group("hybrid_search");
+    
+    let queries = vec![
+        "technical documentation",
+        "machine learning algorithms",
+        "database optimization techniques",
+    ];
 
-                // Simple diversification algorithm
-                let mut diversified = Vec::new();
-                let mut remaining = results;
-
-                while !remaining.is_empty() && diversified.len() < count / 2 {
-                    // Find the best remaining result
-                    let best_idx = remaining
-                        .iter()
-                        .enumerate()
-                        .max_by(|(_, a), (_, b)| a.0.partial_cmp(&b.0).unwrap())
-                        .map(|(idx, _)| idx)
-                        .unwrap();
-
-                    let best_result = remaining.remove(best_idx);
-                    diversified.push(best_result);
-
-                    // Remove similar results (simplified)
-                    remaining.retain(|(_, vec)| {
-                        let similarity = diversified
-                            .last()
-                            .unwrap()
-                            .1
-                            .iter()
-                            .zip(vec.iter())
-                            .map(|(a, b)| (a - b).abs())
-                            .sum::<f32>()
-                            / vec.len() as f32;
-                        similarity > 0.1 // Keep if not too similar
-                    });
-                }
-
-                black_box(diversified);
-            });
-        });
+    for query in &queries {
+        group.bench_with_input(
+            BenchmarkId::new("hybrid", query),
+            &(query, &hybrid_config),
+            |b, (query, config)| {
+                b.to_async(&rt).iter(|| async {
+                    let _results = mock_hybrid_search(black_box(query), black_box(config)).await;
+                    black_box(_results);
+                });
+            },
+        );
     }
+
     group.finish();
 }
 
-/// Benchmark search caching operations
-fn bench_search_caching(c: &mut Criterion) {
+fn benchmark_concurrent_search(c: &mut Criterion) {
     let rt = Runtime::new().unwrap();
-
-    let mut group = c.benchmark_group("search_caching");
-
-    group.bench_function("cache_key_generation", |b| {
-        b.to_async(&rt).iter(|| async {
-            let query = "test search query";
-            let options = create_search_options(10, Some(0.8), vec![], false);
-
-            // Generate cache key (simplified)
-            use std::collections::hash_map::DefaultHasher;
-            use std::hash::{Hash, Hasher};
-
-            let mut hasher = DefaultHasher::new();
-            query.hash(&mut hasher);
-            options.limit.hash(&mut hasher);
-
-            let cache_key = format!("search_{:x}", hasher.finish());
-            black_box(cache_key);
-        });
-    });
-
-    group.bench_function("cache_lookup", |b| {
-        b.to_async(&rt).iter(|| async {
-            use std::collections::HashMap;
-
-            // Simulate cache lookup
-            let mut cache: HashMap<String, Vec<String>> = HashMap::new();
-            cache.insert("key1".to_string(), vec!["result1".to_string()]);
-            cache.insert("key2".to_string(), vec!["result2".to_string()]);
-
-            let lookup_key = "key1";
-            let _result = cache.get(black_box(lookup_key));
-        });
-    });
-
-    group.finish();
-}
-
-/// Benchmark hybrid search fusion methods
-fn bench_fusion_methods(c: &mut Criterion) {
-    let mut group = c.benchmark_group("fusion_methods");
-
-    let semantic_results = vec![
-        (0.9, "doc1"),
-        (0.8, "doc2"),
-        (0.7, "doc3"),
-        (0.6, "doc4"),
-        (0.5, "doc5"),
-    ];
-    let keyword_results = vec![
-        (0.8, "doc2"),
-        (0.7, "doc1"),
-        (0.6, "doc5"),
-        (0.5, "doc6"),
-        (0.4, "doc3"),
-    ];
-
-    group.bench_function("rank_fusion", |b| {
-        b.iter(|| {
-            // Reciprocal Rank Fusion
-            let mut combined_scores = HashMap::new();
-
-            for (rank, (_, doc)) in semantic_results.iter().enumerate() {
-                let score = 1.0 / (rank + 1) as f32;
-                *combined_scores.entry(doc).or_insert(0.0) += score * 0.7; // semantic weight
-            }
-
-            for (rank, (_, doc)) in keyword_results.iter().enumerate() {
-                let score = 1.0 / (rank + 1) as f32;
-                *combined_scores.entry(doc).or_insert(0.0) += score * 0.3; // keyword weight
-            }
-
-            let mut final_results: Vec<_> = combined_scores.into_iter().collect();
-            final_results.sort_by(|a, b| b.1.partial_cmp(&a.1).unwrap());
-
-            black_box(final_results);
-        });
-    });
-
-    group.bench_function("score_fusion", |b| {
-        b.iter(|| {
-            // Weighted Score Fusion
-            let mut combined_scores = HashMap::new();
-
-            for (score, doc) in &semantic_results {
-                *combined_scores.entry(doc).or_insert(0.0) += score * 0.7;
-            }
-
-            for (score, doc) in &keyword_results {
-                *combined_scores.entry(doc).or_insert(0.0) += score * 0.3;
-            }
-
-            let mut final_results: Vec<_> = combined_scores.into_iter().collect();
-            final_results.sort_by(|a, b| b.1.partial_cmp(&a.1).unwrap());
-
-            black_box(final_results);
-        });
-    });
-
-    group.finish();
-}
-
-/// Benchmark concurrent search operations
-fn bench_concurrent_search(c: &mut Criterion) {
-    let rt = Runtime::new().unwrap();
+    let search_config = create_search_config(20, 0.7);
 
     let mut group = c.benchmark_group("concurrent_search");
-
-    for concurrency in [1, 2, 4, 8, 16].iter() {
-        group.throughput(Throughput::Elements(*concurrency as u64));
+    
+    let concurrency_levels = [1, 2, 4, 8, 16];
+    
+    for &concurrency in &concurrency_levels {
         group.bench_with_input(
-            BenchmarkId::new("concurrent_queries", concurrency),
-            concurrency,
+            BenchmarkId::new("concurrent", concurrency),
+            &concurrency,
             |b, &concurrency| {
                 b.to_async(&rt).iter(|| async {
-                    let mut handles = Vec::new();
-
-                    for i in 0..concurrency {
-                        let handle = tokio::spawn(async move {
-                            let query = format!("concurrent query {}", i);
-                            let options = create_search_options(10, Some(0.8), vec![], false);
-
-                            // Simulate search operation
-                            tokio::time::sleep(Duration::from_millis(10)).await;
-
-                            black_box((query, options));
-                        });
-                        handles.push(handle);
-                    }
-
-                    for handle in handles {
-                        let _ = handle.await;
-                    }
+                    let tasks: Vec<_> = (0..concurrency)
+                        .map(|i| {
+                            let config = &search_config;
+                            async move {
+                                let query = format!("test query {i}");
+                                let _results = mock_semantic_search(black_box(&query), black_box(config)).await;
+                                black_box(_results);
+                            }
+                        })
+                        .collect();
+                    
+                    futures::future::join_all(tasks).await;
                 });
             },
         );
     }
+
     group.finish();
 }
 
-/// Performance regression detection for search
-fn bench_search_regression_detection(c: &mut Criterion) {
-    let rt = Runtime::new().unwrap();
+// Mock functions for benchmarking
+async fn mock_semantic_search(query: &str, options: &SearchOptions) -> Vec<String> {
+    // Simulate search processing time
+    tokio::time::sleep(Duration::from_millis(1)).await;
+    
+    // Simulate filter processing
+    for filter in &options.filters {
+        let _valid = match filter.operation {
+            SemanticFilterOperation::Equals => true,
+            SemanticFilterOperation::GreaterThan => filter.value.is_number(),
+            SemanticFilterOperation::Contains => true,
+            _ => true,
+        };
+    }
+    
+    // Return mock results
+    (0..options.limit)
+        .map(|i| format!("result_{i}_for_{query}"))
+        .collect()
+}
 
-    c.bench_function("search_performance_baseline", |b| {
-        b.to_async(&rt).iter(|| async {
-            let start = std::time::Instant::now();
-
-            // Simulate complete search workflow
-            let query = "comprehensive search performance test";
-            let filters = create_test_filters()[2].clone(); // Complex filters
-            let options = create_search_options(20, Some(0.7), filters, true);
-
-            // Query preprocessing
-            let processed_query = query.trim().to_lowercase();
-
-            // Filter validation
-            for filter in &options.filters {
-                let _valid = match filter.operation {
-                    FilterOperation::Equals => true,
-                    FilterOperation::GreaterThan => filter.value.is_number(),
-                    FilterOperation::Contains => true,
-                    _ => true,
-                };
-            }
-
-            // Similarity calculation simulation
-            let query_vector = vec![0.5f32; 384];
-            let doc_vectors = vec![vec![0.3f32; 384]; 100];
-
-            let mut similarities = Vec::new();
-            for doc_vec in &doc_vectors {
-                let dot_product: f32 = query_vector
-                    .iter()
-                    .zip(doc_vec.iter())
-                    .map(|(a, b)| a * b)
-                    .sum();
-                let norm1: f32 = query_vector.iter().map(|x| x * x).sum::<f32>().sqrt();
-                let norm2: f32 = doc_vec.iter().map(|x| x * x).sum::<f32>().sqrt();
-
-                let similarity = if norm1 > 0.0 && norm2 > 0.0 {
-                    dot_product / (norm1 * norm2)
-                } else {
-                    0.0
-                };
-                similarities.push(similarity);
-            }
-
-            // Result ranking
-            similarities.sort_by(|a, b| b.partial_cmp(a).unwrap());
-
-            // Result diversification
-            if options.diversify_results {
-                let _diversified = similarities.into_iter().take(10).collect::<Vec<_>>();
-            }
-
-            let elapsed = start.elapsed();
-            black_box(elapsed);
-        });
-    });
+async fn mock_hybrid_search(query: &str, _config: &HybridSearchConfig) -> Vec<String> {
+    // Simulate hybrid search processing time
+    tokio::time::sleep(Duration::from_millis(2)).await;
+    
+    // Return mock results
+    (0..10)
+        .map(|i| format!("hybrid_result_{i}_for_{query}"))
+        .collect()
 }
 
 criterion_group!(
     benches,
-    bench_search_config_validation,
-    bench_search_options,
-    bench_filter_validation,
-    bench_query_processing,
-    bench_similarity_calculations,
-    bench_result_ranking,
-    bench_result_diversification,
-    bench_search_caching,
-    bench_fusion_methods,
-    bench_concurrent_search,
-    bench_search_regression_detection
+    benchmark_semantic_search_performance,
+    benchmark_filter_performance,
+    benchmark_hybrid_search_performance,
+    benchmark_concurrent_search
 );
-
 criterion_main!(benches);
