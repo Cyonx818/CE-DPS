@@ -3,15 +3,15 @@
 //! ANCHOR: Critical cache key generation tests that protect against regressions
 //! Tests: cache key determinism, floating-point stability, query normalization
 
+use chrono::Utc;
+use fortitude_core::classification::context_detector::ContextDetectionResult;
 use fortitude_core::storage::FileStorage;
 use fortitude_types::{
-    AudienceLevel, TechnicalDomain, UrgencyLevel, ResearchResult, ResearchType, StorageConfig, 
-    AudienceContext, DomainContext, ClassifiedRequest, ResearchMetadata, Storage,
-    DimensionConfidence, ClassificationDimension,
+    AudienceContext, AudienceLevel, ClassificationDimension, ClassifiedRequest,
+    DimensionConfidence, DomainContext, ResearchMetadata, ResearchResult, ResearchType, Storage,
+    StorageConfig, TechnicalDomain, UrgencyLevel,
 };
-use fortitude_core::classification::context_detector::ContextDetectionResult;
 use std::collections::{HashMap, HashSet};
-use chrono::Utc;
 use tempfile::TempDir;
 
 // Test utilities
@@ -34,7 +34,7 @@ fn create_basic_research_result(query: &str, research_type: ResearchType) -> Res
         0.8,
         vec!["test".to_string()],
     );
-    
+
     let metadata = ResearchMetadata {
         completed_at: Utc::now(),
         processing_time_ms: 1000,
@@ -44,31 +44,23 @@ fn create_basic_research_result(query: &str, research_type: ResearchType) -> Res
         tags: HashMap::new(),
     };
 
-    ResearchResult::new(
-        request,
-        "Test answer".to_string(),
-        vec![],
-        vec![],
-        metadata,
-    )
+    ResearchResult::new(request, "Test answer".to_string(), vec![], vec![], metadata)
 }
 
 fn create_context_result_with_confidence(confidence: f64) -> ContextDetectionResult {
-    let dimension_confidences = vec![
-        DimensionConfidence {
-            dimension: ClassificationDimension::AudienceLevel,
-            confidence,
-            matched_keywords: vec!["test".to_string()],
-            reasoning: "test evidence".to_string(),
-        },
-    ];
+    let dimension_confidences = vec![DimensionConfidence {
+        dimension: ClassificationDimension::AudienceLevel,
+        confidence,
+        matched_keywords: vec!["test".to_string()],
+        reasoning: "test evidence".to_string(),
+    }];
 
     ContextDetectionResult::new(
         AudienceLevel::Intermediate,
         TechnicalDomain::Rust,
         UrgencyLevel::Planned,
         dimension_confidences,
-        100, // processing_time_ms
+        100,   // processing_time_ms
         false, // fallback_used
     )
 }
@@ -99,12 +91,17 @@ mod cache_key_determinism_tests {
         // All keys should be identical
         let unique_keys: HashSet<_> = cache_keys.iter().collect();
         assert_eq!(
-            unique_keys.len(), 1,
+            unique_keys.len(),
+            1,
             "Cache keys should be deterministic. Got {} unique keys: {:?}",
-            unique_keys.len(), cache_keys
+            unique_keys.len(),
+            cache_keys
         );
 
-        println!("✅ Determinism test passed: {} identical cache keys generated", cache_keys.len());
+        println!(
+            "✅ Determinism test passed: {} identical cache keys generated",
+            cache_keys.len()
+        );
         println!("   Cache key: {}", cache_keys[0]);
     }
 
@@ -117,7 +114,7 @@ mod cache_key_determinism_tests {
         let storage = FileStorage::new(config).await.unwrap();
 
         let query = "rust async programming";
-        
+
         // Test confidence values within the same band (0.8-1.0 = "very_high")
         let confidence_values = vec![
             0.8,
@@ -138,7 +135,7 @@ mod cache_key_determinism_tests {
 
         // Analyze cache key stability within the same confidence band
         let unique_keys: HashSet<_> = cache_keys.iter().map(|(_, key)| key).collect();
-        
+
         println!("Confidence banding test results:");
         for (confidence, key) in &cache_keys {
             println!("  Confidence: {:.16} -> Key: {}", confidence, key);
@@ -164,7 +161,7 @@ mod cache_key_determinism_tests {
         let storage = FileStorage::new(config).await.unwrap();
 
         let query = "rust async programming";
-        
+
         // Test different research types
         let research_types = vec![
             ResearchType::Learning,
@@ -183,19 +180,23 @@ mod cache_key_determinism_tests {
 
         // Different research types should produce different cache keys
         let unique_keys: HashSet<_> = cache_keys.iter().map(|(_, key)| key).collect();
-        
+
         println!("Research type differentiation test results:");
         for (research_type, key) in &cache_keys {
             println!("  Research type: {:?} -> Key: {}", research_type, key);
         }
-        
+
         assert_eq!(
             unique_keys.len(), research_types.len(),
             "Different research types should produce different cache keys. Got {} unique keys for {} types",
             unique_keys.len(), research_types.len()
         );
 
-        println!("✅ Research type differentiation test passed: {} distinct cache keys for {} types", unique_keys.len(), research_types.len());
+        println!(
+            "✅ Research type differentiation test passed: {} distinct cache keys for {} types",
+            unique_keys.len(),
+            research_types.len()
+        );
     }
 }
 
@@ -216,9 +217,9 @@ mod query_normalization_comprehensive_tests {
             "How to use Rust async programming?",
             "how to use rust async programming?",
             "How    to   use   Rust   async   programming?",
-            "How to use Rust async programming",  // No question mark
-            "How to use Rust async programming.",  // Period instead
-            "How to use Rust async programming!",  // Exclamation
+            "How to use Rust async programming", // No question mark
+            "How to use Rust async programming.", // Period instead
+            "How to use Rust async programming!", // Exclamation
             "How to use Rust: async programming?", // Colon
             "How to use Rust, async programming?", // Comma
             "How to use Rust (async) programming?", // Parentheses
@@ -234,14 +235,18 @@ mod query_normalization_comprehensive_tests {
 
         // Analyze normalization effectiveness
         let unique_keys: HashSet<_> = cache_keys.iter().map(|(_, key)| key).collect();
-        let normalization_effectiveness = 1.0 - (unique_keys.len() as f64 / cache_keys.len() as f64);
+        let normalization_effectiveness =
+            1.0 - (unique_keys.len() as f64 / cache_keys.len() as f64);
 
         println!("Comprehensive query normalization test results:");
         for (query, key) in &cache_keys {
             println!("  Query: \"{}\" -> Key: {}", query, key);
         }
         println!("  Unique keys: {}/{}", unique_keys.len(), cache_keys.len());
-        println!("  Normalization effectiveness: {:.2}", normalization_effectiveness);
+        println!(
+            "  Normalization effectiveness: {:.2}",
+            normalization_effectiveness
+        );
 
         // We expect high normalization effectiveness (ideally 1 unique key)
         assert!(
@@ -254,7 +259,11 @@ mod query_normalization_comprehensive_tests {
         if unique_keys.len() == 1 {
             println!("✅ Perfect normalization: all query variants produce identical cache keys");
         } else {
-            println!("⚠️  Partial normalization: {} unique keys for {} variants", unique_keys.len(), cache_keys.len());
+            println!(
+                "⚠️  Partial normalization: {} unique keys for {} variants",
+                unique_keys.len(),
+                cache_keys.len()
+            );
         }
     }
 
@@ -270,29 +279,29 @@ mod query_normalization_comprehensive_tests {
         let query_pairs = vec![
             (
                 "How to implement async programming in Rust",
-                "implement async programming Rust" // Stop words removed
+                "implement async programming Rust", // Stop words removed
             ),
             (
                 "What is the best way to handle errors in Rust",
-                "best way handle errors Rust"
+                "best way handle errors Rust",
             ),
             (
-                "Where can I find documentation for the tokio library", 
-                "find documentation tokio library"
+                "Where can I find documentation for the tokio library",
+                "find documentation tokio library",
             ),
         ];
 
         for (full_query, minimal_query) in query_pairs {
             let result1 = create_basic_research_result(full_query, ResearchType::Learning);
             let result2 = create_basic_research_result(minimal_query, ResearchType::Learning);
-            
+
             let key1 = storage.store(&result1).await.unwrap();
             let key2 = storage.store(&result2).await.unwrap();
 
             println!("Stop word removal test:");
             println!("  Full query: \"{}\" -> Key: {}", full_query, key1);
             println!("  Minimal query: \"{}\" -> Key: {}", minimal_query, key2);
-            
+
             assert_eq!(
                 key1, key2,
                 "Queries with and without stop words should produce identical cache keys"
@@ -323,7 +332,10 @@ mod context_aware_cache_key_tests {
 
         for confidence in context_confidences {
             let context = create_context_result_with_confidence(confidence);
-            let key = storage.store_with_context(&result, Some(&context)).await.unwrap();
+            let key = storage
+                .store_with_context(&result, Some(&context))
+                .await
+                .unwrap();
             cache_keys.push((confidence, key));
         }
 
@@ -337,7 +349,8 @@ mod context_aware_cache_key_tests {
         println!("  Unique keys: {}", unique_keys.len());
 
         assert_eq!(
-            unique_keys.len(), 1,
+            unique_keys.len(),
+            1,
             "Context results with similar confidence should produce identical cache keys"
         );
 
@@ -357,9 +370,9 @@ mod context_aware_cache_key_tests {
 
         // Test different processing time categories
         let processing_times = vec![
-            (50, "fast"),      // 0-100ms
-            (250, "medium"),   // 101-500ms
-            (1000, "slow"),    // 501-2000ms
+            (50, "fast"),        // 0-100ms
+            (250, "medium"),     // 101-500ms
+            (1000, "slow"),      // 501-2000ms
             (3000, "very_slow"), // >2000ms
         ];
 
@@ -367,14 +380,12 @@ mod context_aware_cache_key_tests {
         for (time_ms, expected_category) in processing_times {
             let mut context = create_context_result_with_confidence(0.8);
             // Update processing time using reflection - this is a simplified approach
-            let dimension_confidences = vec![
-                DimensionConfidence {
-                    dimension: ClassificationDimension::AudienceLevel,
-                    confidence: 0.8,
-                    matched_keywords: vec!["test".to_string()],
-                    reasoning: "test evidence".to_string(),
-                },
-            ];
+            let dimension_confidences = vec![DimensionConfidence {
+                dimension: ClassificationDimension::AudienceLevel,
+                confidence: 0.8,
+                matched_keywords: vec!["test".to_string()],
+                reasoning: "test evidence".to_string(),
+            }];
 
             let context_with_time = ContextDetectionResult::new(
                 AudienceLevel::Intermediate,
@@ -385,7 +396,10 @@ mod context_aware_cache_key_tests {
                 false,
             );
 
-            let key = storage.store_with_context(&result, Some(&context_with_time)).await.unwrap();
+            let key = storage
+                .store_with_context(&result, Some(&context_with_time))
+                .await
+                .unwrap();
             cache_keys.push((time_ms, expected_category, key));
         }
 
@@ -394,12 +408,16 @@ mod context_aware_cache_key_tests {
 
         println!("Processing time categorization test:");
         for (time_ms, category, key) in &cache_keys {
-            println!("  Time: {}ms (category: {}) -> Key: {}", time_ms, category, key);
+            println!(
+                "  Time: {}ms (category: {}) -> Key: {}",
+                time_ms, category, key
+            );
         }
         println!("  Unique keys: {}", unique_keys.len());
 
         assert_eq!(
-            unique_keys.len(), 4,
+            unique_keys.len(),
+            4,
             "Different processing time categories should produce different cache keys"
         );
 
@@ -424,8 +442,8 @@ mod cache_key_collision_tests {
             ("rust async programming", ResearchType::Learning),
             ("rust error handling", ResearchType::Learning),
             ("rust async programming", ResearchType::Implementation), // Same query, different type
-            ("python async programming", ResearchType::Learning), // Different language
-            ("rust async debugging", ResearchType::Troubleshooting), // Different domain
+            ("python async programming", ResearchType::Learning),     // Different language
+            ("rust async debugging", ResearchType::Troubleshooting),  // Different domain
         ];
 
         let mut cache_keys = Vec::new();
@@ -440,15 +458,23 @@ mod cache_key_collision_tests {
 
         println!("Cache key collision avoidance test:");
         for (query, research_type, key) in &cache_keys {
-            println!("  Query: \"{}\" (type: {:?}) -> Key: {}", query, research_type, key);
+            println!(
+                "  Query: \"{}\" (type: {:?}) -> Key: {}",
+                query, research_type, key
+            );
         }
         println!("  Unique keys: {}/{}", unique_keys.len(), cache_keys.len());
 
         assert_eq!(
-            unique_keys.len(), cache_keys.len(),
+            unique_keys.len(),
+            cache_keys.len(),
             "Different inputs should produce different cache keys (no collisions)"
         );
 
-        println!("✅ Cache key collision avoidance test passed: {} unique keys for {} inputs", unique_keys.len(), cache_keys.len());
+        println!(
+            "✅ Cache key collision avoidance test passed: {} unique keys for {} inputs",
+            unique_keys.len(),
+            cache_keys.len()
+        );
     }
 }

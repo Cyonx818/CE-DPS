@@ -30,7 +30,12 @@ fi
 !export CE_DPS_HUMAN_APPROVAL_REQUIRED=true
 
 # Update project state
-!jq '.current_phase = 1 | .last_updated = now | .phase_1_started = now' docs/ce-dps-state.json > docs/ce-dps-state.tmp && mv docs/ce-dps-state.tmp docs/ce-dps-state.json
+!if command -v jq >/dev/null 2>&1; then
+    jq '.current_phase = 1 | .last_updated = now | .phase_1_started = now' docs/ce-dps-state.json > docs/ce-dps-state.tmp && mv docs/ce-dps-state.tmp docs/ce-dps-state.json
+else
+    echo "⚠️ Warning: jq not found. State update skipped."
+    echo "💡 Install jq for automatic state management"
+fi
 
 # Copy Phase 1 template
 !if [ ! -f "methodology/templates/phase-1-template.md" ]; then

@@ -4,14 +4,14 @@
 //! These tests must never be deleted and should be updated carefully to maintain
 //! protection against cache key generation bugs and performance degradation.
 
+use chrono::Utc;
+use fortitude_core::classification::context_detector::ContextDetectionResult;
 use fortitude_core::storage::FileStorage;
 use fortitude_types::{
-    ResearchResult, ResearchType, StorageConfig, AudienceContext, DomainContext, 
-    ClassifiedRequest, ResearchMetadata, Storage,
+    AudienceContext, ClassifiedRequest, DomainContext, ResearchMetadata, ResearchResult,
+    ResearchType, Storage, StorageConfig,
 };
-use fortitude_core::classification::context_detector::ContextDetectionResult;
 use std::collections::{HashMap, HashSet};
-use chrono::Utc;
 use tempfile::TempDir;
 
 // Test utilities
@@ -34,7 +34,7 @@ fn create_test_research_result(query: &str, research_type: ResearchType) -> Rese
         0.8,
         vec!["test".to_string()],
     );
-    
+
     let metadata = ResearchMetadata {
         completed_at: Utc::now(),
         processing_time_ms: 1000,
@@ -44,13 +44,7 @@ fn create_test_research_result(query: &str, research_type: ResearchType) -> Rese
         tags: HashMap::new(),
     };
 
-    ResearchResult::new(
-        request,
-        "Test answer".to_string(),
-        vec![],
-        vec![],
-        metadata,
-    )
+    ResearchResult::new(request, "Test answer".to_string(), vec![], vec![], metadata)
 }
 
 #[cfg(test)]
@@ -80,9 +74,11 @@ mod anchor_tests {
         // All keys must be identical for determinism
         let unique_keys: HashSet<_> = cache_keys.iter().collect();
         assert_eq!(
-            unique_keys.len(), 1,
+            unique_keys.len(),
+            1,
             "REGRESSION: Cache keys are not deterministic. Expected 1 unique key, got {}: {:?}",
-            unique_keys.len(), cache_keys
+            unique_keys.len(),
+            cache_keys
         );
     }
 
@@ -100,7 +96,7 @@ mod anchor_tests {
             "How to use Rust async programming?",
             "how to use rust async programming?",
             "How    to   use   Rust   async   programming?",
-            "How to use Rust async programming",  // No question mark
+            "How to use Rust async programming", // No question mark
         ];
 
         let mut cache_keys = Vec::new();
@@ -111,7 +107,8 @@ mod anchor_tests {
         }
 
         let unique_keys: HashSet<_> = cache_keys.iter().collect();
-        let normalization_effectiveness = 1.0 - (unique_keys.len() as f64 / cache_keys.len() as f64);
+        let normalization_effectiveness =
+            1.0 - (unique_keys.len() as f64 / cache_keys.len() as f64);
 
         // Normalization effectiveness must be at least 75%
         assert!(
@@ -135,7 +132,7 @@ mod anchor_tests {
             ("rust async programming", ResearchType::Learning),
             ("rust error handling", ResearchType::Learning),
             ("rust async programming", ResearchType::Implementation), // Same query, different type
-            ("python async programming", ResearchType::Learning), // Different language
+            ("python async programming", ResearchType::Learning),     // Different language
         ];
 
         let mut cache_keys = Vec::new();
@@ -146,7 +143,7 @@ mod anchor_tests {
         }
 
         let unique_keys: HashSet<_> = cache_keys.iter().collect();
-        
+
         // All different inputs must produce different cache keys (no collisions)
         assert_eq!(
             unique_keys.len(), cache_keys.len(),
@@ -169,7 +166,8 @@ mod anchor_tests {
         let key1 = storage.store(&result1).await.unwrap();
 
         // Store with context method
-        let result2 = create_test_research_result("test query context", ResearchType::Implementation);
+        let result2 =
+            create_test_research_result("test query context", ResearchType::Implementation);
         let context = ContextDetectionResult::new(
             fortitude_types::AudienceLevel::Intermediate,
             fortitude_types::TechnicalDomain::Rust,
@@ -178,13 +176,16 @@ mod anchor_tests {
             100,
             false,
         );
-        let key2 = storage.store_with_context(&result2, Some(&context)).await.unwrap();
+        let key2 = storage
+            .store_with_context(&result2, Some(&context))
+            .await
+            .unwrap();
 
         // Test all retrieval combinations - all must succeed
         let test_cases = vec![
             ("Standard->Standard", &key1, None),
             ("Standard->Context", &key1, Some(&context)),
-            ("Context->Standard", &key2, None),  // This was the bug
+            ("Context->Standard", &key2, None), // This was the bug
             ("Context->Context", &key2, Some(&context)),
         ];
 
@@ -220,25 +221,25 @@ mod anchor_tests {
         // Measure store performance
         let store_start = std::time::Instant::now();
         let mut stored_keys = Vec::new();
-        
+
         for (query, research_type) in &test_queries {
             let result = create_test_research_result(query, research_type.clone());
             let key = storage.store(&result).await.unwrap();
             stored_keys.push(key);
         }
-        
+
         let store_duration = store_start.elapsed();
 
         // Measure retrieval performance
         let retrieval_start = std::time::Instant::now();
         let mut successful_retrievals = 0;
-        
+
         for key in &stored_keys {
             if storage.retrieve(key).await.unwrap().is_some() {
                 successful_retrievals += 1;
             }
         }
-        
+
         let retrieval_duration = retrieval_start.elapsed();
 
         // Performance assertions - these thresholds protect against major regressions

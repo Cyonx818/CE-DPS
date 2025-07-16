@@ -274,11 +274,24 @@ impl TextClassifier {
     }
 
     pub fn classify(&self, text: &str) -> String {
+        // Check more specific rules first (in priority order)
+        let priority_order = ["code", "technical", "long", "medium", "short"];
+
+        for category in priority_order {
+            if let Some(rule) = self.rules.get(category) {
+                if rule(text) {
+                    return category.to_string();
+                }
+            }
+        }
+
+        // Check remaining rules if none of the priority ones matched
         for (category, rule) in &self.rules {
-            if rule(text) {
+            if !priority_order.contains(&category.as_str()) && rule(text) {
                 return category.clone();
             }
         }
+
         "general".to_string()
     }
 }

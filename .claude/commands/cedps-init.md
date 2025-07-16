@@ -16,6 +16,48 @@ Initialize new CE-DPS project with complete environment setup, documentation str
 # Validate we're in the right location
 !if [ ! -f "CLAUDE.md" ]; then echo "❌ Error: CLAUDE.md not found. Run this command in the CE-DPS project root."; exit 1; fi
 
+# Check dependencies and provide helpful guidance
+!echo "🔍 Checking system dependencies..."
+!MISSING_DEPS=""
+
+# Check for jq (recommended for state management)
+!if ! command -v jq >/dev/null 2>&1; then
+    echo "⚠️  jq not found (recommended for automatic state management)"
+    echo "   Install: sudo apt-get install jq  # or brew install jq"
+    MISSING_DEPS="${MISSING_DEPS}jq "
+fi
+
+# Check for git (required for branch management)
+!if ! command -v git >/dev/null 2>&1; then
+    echo "❌ git not found (required for CE-DPS workflow)"
+    echo "   Install: sudo apt-get install git  # or download from https://git-scm.com/"
+    MISSING_DEPS="${MISSING_DEPS}git "
+fi
+
+# Check if we're in a git repository
+!if ! git rev-parse --git-dir >/dev/null 2>&1; then
+    echo "⚠️  Not in a git repository (recommended for CE-DPS)"
+    echo "   Initialize: git init && git add . && git commit -m 'Initial commit'"
+fi
+
+# Check for python3 (optional for phase validator)
+!if ! command -v python3 >/dev/null 2>&1; then
+    echo "⚠️  python3 not found (optional for phase validation tools)"
+    echo "   Install: sudo apt-get install python3"
+    MISSING_DEPS="${MISSING_DEPS}python3 "
+fi
+
+# Summary message
+!if [ -n "$MISSING_DEPS" ]; then
+    echo ""
+    echo "💡 Some dependencies are missing but CE-DPS will still work"
+    echo "   Missing: $MISSING_DEPS"
+    echo "   CE-DPS will provide fallback functionality where possible"
+else
+    echo "✅ All dependencies found"
+fi
+!echo ""
+
 # Create project documentation structure
 !mkdir -p docs/phases
 !mkdir -p docs/architecture

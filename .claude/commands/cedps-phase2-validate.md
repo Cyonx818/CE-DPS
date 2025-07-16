@@ -20,15 +20,16 @@ Validate Phase 2 sprint planning completion, verify human approvals for implemen
 fi
 
 # Check for AI implementation planning completion
-!if ! grep -q "Feature Breakdown" docs/phases/phase-2-sprint-planning.md; then
+!if ! grep -qi "feature breakdown" docs/phases/phase-2-sprint-planning.md; then
     echo "❌ Error: AI implementation planning not completed. Run '/cedps-phase2-plan' first."
     exit 1
 fi
 
 # Validate human approvals are present
-!APPROVAL_SECTIONS=("Feature Selection Validation" "Implementation Approach Approval" "Timeline and Resource Approval" "Sprint Approval")
-!for section in "${APPROVAL_SECTIONS[@]}"; do
-    if ! grep -q "$section" docs/phases/phase-2-sprint-planning.md; then
+!APPROVAL_SECTIONS="Feature Selection Validation,Implementation Approach Approval,Timeline and Resource Approval,Sprint Approval"
+!IFS=',' read -ra SECTIONS <<< "$APPROVAL_SECTIONS"
+!for section in "${SECTIONS[@]}"; do
+    if ! grep -qi "$section" docs/phases/phase-2-sprint-planning.md; then
         echo "❌ Error: Missing human approval section: $section"
         echo "💡 Ensure Claude Code provided all required approval sections."
         exit 1
@@ -68,12 +69,20 @@ fi
 fi
 
 # Update project state
-!jq '.phases_completed += [2] | .phase_2_completed = now | .ready_for_phase_3 = true | .current_sprint = 1' docs/ce-dps-state.json > docs/ce-dps-state.tmp && mv docs/ce-dps-state.tmp docs/ce-dps-state.json
-
-# Update sprint tracking
-!jq '.status = "approved" | .planning_completed = now | .ready_for_implementation = true' docs/sprints/sprint-001/sprint-info.json > docs/sprints/sprint-001/sprint-info.tmp && mv docs/sprints/sprint-001/sprint-info.tmp docs/sprints/sprint-001/sprint-info.json
+!if command -v jq >/dev/null 2>&1; then
+    jq '.phases_completed += [2] | .phase_2_completed = now | .ready_for_phase_3 = true | .current_sprint = 1' docs/ce-dps-state.json > docs/ce-dps-state.tmp && mv docs/ce-dps-state.tmp docs/ce-dps-state.json
+    
+    # Update sprint tracking if sprint-info.json exists
+    if [ -f "docs/sprints/sprint-001/sprint-info.json" ]; then
+        jq '.status = "approved" | .planning_completed = now | .ready_for_implementation = true' docs/sprints/sprint-001/sprint-info.json > docs/sprints/sprint-001/sprint-info.tmp && mv docs/sprints/sprint-001/sprint-info.tmp docs/sprints/sprint-001/sprint-info.json
+    fi
+else
+    echo "⚠️ Warning: jq not found. State update skipped."
+    echo "💡 Install jq for automatic state management or update state files manually"
+fi
 
 # Create Phase 2 completion report
+!mkdir -p docs/phases
 !cat > docs/phases/phase-2-completion-report.md << 'EOF'
 # Phase 2 Sprint Planning - Completion Report
 

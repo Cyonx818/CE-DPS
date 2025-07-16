@@ -19,7 +19,14 @@ Initialize Phase 3 implementation environment with quality gates, testing framew
     exit 1
 fi
 
-!if ! jq -e '.phases_completed | contains([1, 2])' docs/ce-dps-state.json >/dev/null 2>&1; then
+!if ! command -v jq >/dev/null 2>&1; then
+    echo "⚠️ Warning: jq not found. Cannot validate phase completion automatically."
+    echo "💡 Install jq or manually verify Phases 1 and 2 are complete"
+    if [ ! -f "docs/phases/phase-2-completion-report.md" ]; then
+        echo "❌ Error: Phase 2 completion report not found. Complete Phases 1 and 2 first."
+        exit 1
+    fi
+elif ! jq -e '.phases_completed | contains([1, 2])' docs/ce-dps-state.json >/dev/null 2>&1; then
     echo "❌ Error: Phases 1 and 2 not completed. Run '/cedps-phase2-validate' first."
     exit 1
 fi
@@ -38,7 +45,12 @@ fi
 !export CE_DPS_HUMAN_APPROVAL_REQUIRED=true
 
 # Update project state
-!jq '.current_phase = 3 | .last_updated = now | .phase_3_started = now' docs/ce-dps-state.json > docs/ce-dps-state.tmp && mv docs/ce-dps-state.tmp docs/ce-dps-state.json
+!if command -v jq >/dev/null 2>&1; then
+    jq '.current_phase = 3 | .last_updated = now | .phase_3_started = now' docs/ce-dps-state.json > docs/ce-dps-state.tmp && mv docs/ce-dps-state.tmp docs/ce-dps-state.json
+else
+    echo "⚠️ Warning: jq not found. State update skipped."
+    echo "💡 Install jq for automatic state management"
+fi
 
 # Copy Phase 3 template
 !if [ ! -f "methodology/templates/phase-3-template.md" ]; then
@@ -71,11 +83,16 @@ EOF
 
 # Create feature branch for implementation
 !BRANCH_NAME="sprint-001-implementation"
-!if git rev-parse --verify "$BRANCH_NAME" >/dev/null 2>&1; then
-    echo "📝 Feature branch $BRANCH_NAME already exists"
+!if git rev-parse --git-dir >/dev/null 2>&1; then
+    if git rev-parse --verify "$BRANCH_NAME" >/dev/null 2>&1; then
+        echo "📝 Feature branch $BRANCH_NAME already exists"
+    else
+        git checkout -b "$BRANCH_NAME"
+        echo "📝 Created feature branch: $BRANCH_NAME"
+    fi
 else
-    git checkout -b "$BRANCH_NAME"
-    echo "📝 Created feature branch: $BRANCH_NAME"
+    echo "⚠️  Not in a git repository. Branch management skipped."
+    echo "💡 Initialize git repository for full CE-DPS workflow"
 fi
 
 # Initialize quality gates

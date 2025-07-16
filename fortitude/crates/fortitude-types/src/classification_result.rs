@@ -380,9 +380,16 @@ mod tests {
     #[test]
     fn test_technical_domain_all() {
         let domains = TechnicalDomain::all();
-        assert_eq!(domains.len(), 8);
+        assert_eq!(domains.len(), 10);
         assert!(domains.contains(&TechnicalDomain::Rust));
+        assert!(domains.contains(&TechnicalDomain::Python));
         assert!(domains.contains(&TechnicalDomain::Web));
+        assert!(domains.contains(&TechnicalDomain::DevOps));
+        assert!(domains.contains(&TechnicalDomain::AI));
+        assert!(domains.contains(&TechnicalDomain::Database));
+        assert!(domains.contains(&TechnicalDomain::Systems));
+        assert!(domains.contains(&TechnicalDomain::Security));
+        assert!(domains.contains(&TechnicalDomain::Architecture));
         assert!(domains.contains(&TechnicalDomain::General));
     }
 

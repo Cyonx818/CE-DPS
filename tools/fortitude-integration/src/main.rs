@@ -6,7 +6,6 @@ use serde_json::Value;
 use std::path::PathBuf;
 use std::process::{Command, Stdio};
 use std::time::Duration;
-use tracing::{info};
 
 #[derive(Parser, Debug)]
 #[command(author, version, about, long_about = None)]
@@ -49,9 +48,7 @@ enum Commands {
 #[tokio::main]
 async fn main() -> Result<()> {
     // Initialize tracing
-    tracing_subscriber::fmt()
-        .with_env_filter("info")
-        .init();
+    tracing_subscriber::fmt().with_env_filter("info").init();
 
     let args = Args::parse();
 
@@ -76,39 +73,47 @@ async fn main() -> Result<()> {
 
 async fn check_fortitude() -> Result<()> {
     println!("Checking Fortitude installation...");
-    
+
     let fortitude_dir = get_fortitude_dir()?;
-    
+
     if !fortitude_dir.exists() {
-        println!("{} Fortitude directory not found: {}", "❌".red(), fortitude_dir.display());
+        println!(
+            "{} Fortitude directory not found: {}",
+            "❌".red(),
+            fortitude_dir.display()
+        );
         return Ok(());
     }
-    
+
     if !fortitude_dir.join("Cargo.toml").exists() {
         println!("{} Fortitude Cargo.toml not found", "❌".red());
         return Ok(());
     }
-    
+
     println!("{} Fortitude installation verified", "✅".green());
     Ok(())
 }
 
 async fn build_fortitude() -> Result<()> {
     println!("Building Fortitude...");
-    
+
     let pb = ProgressBar::new_spinner();
-    pb.set_style(ProgressStyle::default_spinner().template("{spinner:.blue} {msg}").unwrap());
+    pb.set_style(
+        ProgressStyle::default_spinner()
+            .template("{spinner:.blue} {msg}")
+            .unwrap(),
+    );
     pb.set_message("Building Fortitude workspace...");
     pb.enable_steady_tick(Duration::from_millis(100));
-    
+
     let output = Command::new("cargo")
-        .args(&["build", "--release"])
+        .args(["build", "--release"])
         .current_dir(&get_fortitude_dir()?)
         .output()
         .context("Failed to build Fortitude")?;
-    
+
     pb.finish_and_clear();
-    
+
     if output.status.success() {
         println!("{} Fortitude build successful", "✅".green());
     } else {
@@ -116,15 +121,15 @@ async fn build_fortitude() -> Result<()> {
         println!("Error: {}", String::from_utf8_lossy(&output.stderr));
         return Err(anyhow::anyhow!("Build failed"));
     }
-    
+
     Ok(())
 }
 
 async fn init_fortitude() -> Result<()> {
     println!("Initializing Fortitude for CE-DPS...");
-    
+
     let fortitude_dir = get_fortitude_dir()?;
-    
+
     // Create CE-DPS configuration
     let config_content = r#"[fortitude]
 name = "CE-DPS Knowledge Management"
@@ -163,40 +168,51 @@ delivery_verification = true
     let config_dir = fortitude_dir.join("config");
     std::fs::create_dir_all(&config_dir)?;
     std::fs::write(config_dir.join("ce-dps.toml"), config_content)?;
-    
+
     println!("{} CE-DPS configuration created", "✅".green());
     Ok(())
 }
 
 async fn start_fortitude() -> Result<()> {
     println!("Starting Fortitude services...");
-    
+
     let fortitude_dir = get_fortitude_dir()?;
-    
+
     // Start MCP server
     let mcp_child = Command::new("cargo")
-        .args(&["run", "--bin", "fortitude-mcp-server", "--", "--config", "config/ce-dps.toml"])
+        .args([
+            "run",
+            "--bin",
+            "fortitude-mcp-server",
+            "--",
+            "--config",
+            "config/ce-dps.toml",
+        ])
         .current_dir(&fortitude_dir)
         .stdout(Stdio::null())
         .stderr(Stdio::null())
         .spawn()
         .context("Failed to start Fortitude MCP server")?;
-    
+
     // Save PID
     let pid_file = fortitude_dir.join(".fortitude-mcp.pid");
     std::fs::write(&pid_file, mcp_child.id().to_string())?;
-    
-    println!("{} Fortitude MCP server started (PID: {})", "✅".green(), mcp_child.id());
-    
+
+    println!(
+        "{} Fortitude MCP server started (PID: {})",
+        "✅".green(),
+        mcp_child.id()
+    );
+
     Ok(())
 }
 
 async fn stop_fortitude() -> Result<()> {
     println!("Stopping Fortitude services...");
-    
+
     let fortitude_dir = get_fortitude_dir()?;
     let pid_file = fortitude_dir.join(".fortitude-mcp.pid");
-    
+
     if pid_file.exists() {
         if let Ok(pid_str) = std::fs::read_to_string(&pid_file) {
             if let Ok(pid) = pid_str.trim().parse::<u32>() {
@@ -206,32 +222,41 @@ async fn stop_fortitude() -> Result<()> {
                 }
                 #[cfg(windows)]
                 {
-                    let _ = Command::new("taskkill").args(&["/PID", &pid.to_string(), "/F"]).output();
+                    let _ = Command::new("taskkill")
+                        .args(&["/PID", &pid.to_string(), "/F"])
+                        .output();
                 }
                 println!("{} Fortitude MCP server stopped", "✅".green());
             }
         }
         std::fs::remove_file(&pid_file)?;
     }
-    
+
     Ok(())
 }
 
 async fn status_fortitude() -> Result<()> {
     println!("Checking Fortitude status...");
-    
+
     let fortitude_dir = get_fortitude_dir()?;
     let pid_file = fortitude_dir.join(".fortitude-mcp.pid");
-    
+
     if pid_file.exists() {
         if let Ok(pid_str) = std::fs::read_to_string(&pid_file) {
             if let Ok(pid) = pid_str.trim().parse::<u32>() {
                 // Check if process is running
                 let is_running = check_process_running(pid);
                 if is_running {
-                    println!("{} Fortitude MCP server: RUNNING (PID: {})", "✅".green(), pid);
+                    println!(
+                        "{} Fortitude MCP server: RUNNING (PID: {})",
+                        "✅".green(),
+                        pid
+                    );
                 } else {
-                    println!("{} Fortitude MCP server: STOPPED (stale PID file)", "❌".red());
+                    println!(
+                        "{} Fortitude MCP server: STOPPED (stale PID file)",
+                        "❌".red()
+                    );
                     std::fs::remove_file(&pid_file)?;
                 }
             }
@@ -239,7 +264,7 @@ async fn status_fortitude() -> Result<()> {
     } else {
         println!("{} Fortitude MCP server: STOPPED", "❌".red());
     }
-    
+
     Ok(())
 }
 
@@ -252,38 +277,56 @@ async fn restart_fortitude() -> Result<()> {
 
 async fn update_patterns() -> Result<()> {
     println!("Updating implementation patterns...");
-    
+
     let project_dir = std::env::current_dir()?;
     let fortitude_dir = get_fortitude_dir()?;
-    
+
     let output = Command::new("cargo")
-        .args(&["run", "--bin", "fortitude-cli", "--", "update-patterns", "--project-path", &project_dir.to_string_lossy()])
+        .args([
+            "run",
+            "--bin",
+            "fortitude-cli",
+            "--",
+            "update-patterns",
+            "--project-path",
+            &project_dir.to_string_lossy(),
+        ])
         .current_dir(&fortitude_dir)
         .output()
         .context("Failed to update patterns")?;
-    
+
     if output.status.success() {
         println!("{} Implementation patterns updated", "✅".green());
     } else {
         println!("{} Failed to update implementation patterns", "❌".red());
         println!("Error: {}", String::from_utf8_lossy(&output.stderr));
     }
-    
+
     Ok(())
 }
 
 async fn query_knowledge(query: &str) -> Result<()> {
-    println!("Querying knowledge base: {}", query);
-    
+    println!("Querying knowledge base: {query}");
+
     let project_dir = std::env::current_dir()?;
     let fortitude_dir = get_fortitude_dir()?;
-    
+
     let output = Command::new("cargo")
-        .args(&["run", "--bin", "fortitude-cli", "--", "research-query", "--query", query, "--project-path", &project_dir.to_string_lossy()])
+        .args([
+            "run",
+            "--bin",
+            "fortitude-cli",
+            "--",
+            "research-query",
+            "--query",
+            query,
+            "--project-path",
+            &project_dir.to_string_lossy(),
+        ])
         .current_dir(&fortitude_dir)
         .output()
         .context("Failed to query knowledge base")?;
-    
+
     if output.status.success() {
         println!("{} Knowledge query completed", "✅".green());
         println!("{}", String::from_utf8_lossy(&output.stdout));
@@ -291,42 +334,59 @@ async fn query_knowledge(query: &str) -> Result<()> {
         println!("{} Knowledge query failed", "❌".red());
         println!("Error: {}", String::from_utf8_lossy(&output.stderr));
     }
-    
+
     Ok(())
 }
 
 async fn generate_report() -> Result<()> {
     println!("Generating knowledge report...");
-    
+
     let project_dir = std::env::current_dir()?;
     let fortitude_dir = get_fortitude_dir()?;
-    let report_file = format!("target/fortitude-report-{}.json", chrono::Utc::now().format("%Y%m%d-%H%M%S"));
-    
+    let report_file = format!(
+        "target/fortitude-report-{}.json",
+        chrono::Utc::now().format("%Y%m%d-%H%M%S")
+    );
+
     let output = Command::new("cargo")
-        .args(&["run", "--bin", "fortitude-cli", "--", "generate-report", "--output", &report_file, "--project-path", &project_dir.to_string_lossy()])
+        .args([
+            "run",
+            "--bin",
+            "fortitude-cli",
+            "--",
+            "generate-report",
+            "--output",
+            &report_file,
+            "--project-path",
+            &project_dir.to_string_lossy(),
+        ])
         .current_dir(&fortitude_dir)
         .output()
         .context("Failed to generate report")?;
-    
+
     if output.status.success() {
-        println!("{} Knowledge report generated: {}", "✅".green(), report_file);
+        println!(
+            "{} Knowledge report generated: {}",
+            "✅".green(),
+            report_file
+        );
     } else {
         println!("{} Failed to generate knowledge report", "❌".red());
         println!("Error: {}", String::from_utf8_lossy(&output.stderr));
     }
-    
+
     Ok(())
 }
 
 async fn setup_claude_integration() -> Result<()> {
     println!("Setting up Claude Code integration...");
-    
+
     let home_dir = dirs::home_dir().context("Could not find home directory")?;
     let claude_config_dir = home_dir.join(".config/claude-code");
     let claude_config_file = claude_config_dir.join("mcp.json");
-    
+
     std::fs::create_dir_all(&claude_config_dir)?;
-    
+
     let fortitude_dir = get_fortitude_dir()?;
     let config = serde_json::json!({
         "mcpServers": {
@@ -337,13 +397,16 @@ async fn setup_claude_integration() -> Result<()> {
             }
         }
     });
-    
+
     if claude_config_file.exists() {
         // Update existing configuration
         let existing: Value = serde_json::from_str(&std::fs::read_to_string(&claude_config_file)?)?;
         let mut updated = existing;
         if let Some(servers) = updated.get_mut("mcpServers") {
-            servers.as_object_mut().unwrap().insert("fortitude".to_string(), config["mcpServers"]["fortitude"].clone());
+            servers.as_object_mut().unwrap().insert(
+                "fortitude".to_string(),
+                config["mcpServers"]["fortitude"].clone(),
+            );
         } else {
             updated["mcpServers"] = config["mcpServers"].clone();
         }
@@ -351,22 +414,25 @@ async fn setup_claude_integration() -> Result<()> {
     } else {
         std::fs::write(&claude_config_file, serde_json::to_string_pretty(&config)?)?;
     }
-    
+
     println!("{} Claude Code integration configured", "✅".green());
     Ok(())
 }
 
 async fn install_complete() -> Result<()> {
     println!("Installing complete CE-DPS Fortitude integration...");
-    
+
     check_fortitude().await?;
     build_fortitude().await?;
     init_fortitude().await?;
     setup_claude_integration().await?;
-    
-    println!("{} Fortitude integration setup complete!", "🎉".green().bold());
+
+    println!(
+        "{} Fortitude integration setup complete!",
+        "🎉".green().bold()
+    );
     println!("You can now use Fortitude with CE-DPS methodology.");
-    
+
     Ok(())
 }
 
@@ -380,7 +446,7 @@ fn check_process_running(pid: u32) -> bool {
     #[cfg(unix)]
     {
         Command::new("kill")
-            .args(&["-0", &pid.to_string()])
+            .args(["-0", &pid.to_string()])
             .output()
             .map(|output| output.status.success())
             .unwrap_or(false)

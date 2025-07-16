@@ -347,6 +347,7 @@ impl LocalEmbeddingService {
 
         let mut expired_keys = Vec::new();
 
+        // First, remove expired entries
         for entry in self.cache.iter() {
             if !self.is_cache_valid(entry.value()) {
                 expired_keys.push(entry.key().clone());
@@ -355,6 +356,26 @@ impl LocalEmbeddingService {
 
         for key in expired_keys {
             self.cache.remove(&key);
+        }
+
+        // If still over capacity, implement LRU eviction
+        while self.cache.len() >= self.config.cache_config.max_entries {
+            // Find the least recently used entry (oldest cached_at)
+            let mut oldest_key: Option<String> = None;
+            let mut oldest_time = Instant::now();
+
+            for entry in self.cache.iter() {
+                if entry.value().cached_at < oldest_time {
+                    oldest_time = entry.value().cached_at;
+                    oldest_key = Some(entry.key().clone());
+                }
+            }
+
+            if let Some(key) = oldest_key {
+                self.cache.remove(&key);
+            } else {
+                break; // Safety break in case of unexpected state
+            }
         }
 
         // Update cache size in stats
