@@ -1,6 +1,6 @@
 // ABOUTME: Comprehensive unit tests for embedding functionality
 #[cfg(test)]
-mod tests {
+mod embedding_tests {
     use super::*;
     use crate::vector::error::VectorError;
     use fortitude_types::research::{ClassifiedRequest, ResearchType, AudienceContext, DomainContext};
@@ -72,7 +72,7 @@ mod tests {
     fn test_device_type_conversion() {
         let _cpu_device: MockDevice = DeviceType::Cpu.into();
         // We can't test the actual device type easily, but we can test the conversion doesn't panic
-        assert!(true);
+        // Test that the conversion completed successfully
     }
 
     #[test]

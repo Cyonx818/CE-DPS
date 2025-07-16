@@ -1182,12 +1182,8 @@ mod tests {
         // Create content where first 100 chars are identical
         let base_content =
             "This is a test content for similarity checking and some more text to make it exactly";
-        let content1 = format!(
-            "{base_content} one hundred characters long - different ending A"
-        );
-        let content2 = format!(
-            "{base_content} one hundred characters long - different ending B"
-        );
+        let content1 = format!("{base_content} one hundred characters long - different ending A");
+        let content2 = format!("{base_content} one hundred characters long - different ending B");
         let content3 = "Completely different content here";
 
         // Verify the first 100 characters are the same

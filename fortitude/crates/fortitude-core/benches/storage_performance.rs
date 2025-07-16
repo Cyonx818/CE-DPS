@@ -4,7 +4,7 @@
 
 use criterion::{black_box, criterion_group, criterion_main, BenchmarkId, Criterion, Throughput};
 use fortitude_core::vector::{
-    DistanceMetric, EmbeddingConfig, EmbeddingGenerator, LocalEmbeddingService, MigrationConfig,
+    DistanceMetric, DocumentMetadata, EmbeddingConfig, EmbeddingGenerator, LocalEmbeddingService, MigrationConfig,
     SearchConfig, SimilaritySearchResult, VectorConfig, VectorDocument,
 };
 use std::collections::HashMap;
@@ -43,17 +43,23 @@ fn create_test_documents(count: usize, content_length: usize) -> Vec<VectorDocum
             content: format!("{}Document ID: {}", base_content.repeat(repeat_count), i),
             embedding: vec![0.5f32; 384],
             metadata: {
-                let mut meta = HashMap::new();
-                meta.insert("index".to_string(), serde_json::json!(i));
-                meta.insert("category".to_string(), serde_json::json!("test"));
-                meta.insert(
+                let mut custom_fields = HashMap::new();
+                custom_fields.insert("index".to_string(), serde_json::json!(i));
+                custom_fields.insert("category".to_string(), serde_json::json!("test"));
+                custom_fields.insert(
                     "timestamp".to_string(),
                     serde_json::json!("2024-01-01T00:00:00Z"),
                 );
-                meta
+                DocumentMetadata {
+                    research_type: None,
+                    content_type: "test".to_string(),
+                    quality_score: Some(0.8),
+                    source: Some("benchmark".to_string()),
+                    tags: vec!["test".to_string()],
+                    custom_fields,
+                }
             },
-            created_at: chrono::Utc::now(),
-            updated_at: chrono::Utc::now(),
+            stored_at: chrono::Utc::now(),
         })
         .collect()
 }
@@ -61,10 +67,10 @@ fn create_test_documents(count: usize, content_length: usize) -> Vec<VectorDocum
 /// Helper function to create search config
 fn create_search_config(limit: usize, threshold: f64) -> SearchConfig {
     SearchConfig {
-        limit: Some(limit),
+        limit,
         threshold: Some(threshold),
-        with_payload: true,
-        with_vectors: false,
+        collection: None,
+        filters: vec![],
     }
 }
 

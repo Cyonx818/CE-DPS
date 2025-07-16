@@ -40,7 +40,7 @@ fn create_test_research_result(query: &str, research_type: ResearchType) -> Rese
         processing_time_ms: 1000,
         sources_consulted: vec!["test_source".to_string()],
         quality_score: 0.9,
-        cache_key: "test-key".to_string(),
+        cache_key: String::new(), // Let storage generate the cache key
         tags: HashMap::new(),
     };
 

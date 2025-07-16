@@ -94,10 +94,12 @@ mod tests {
             .returning(|_| Ok("test-cache-key".to_string()));
 
         // Create a basic pipeline configuration with vector search enabled
-        let mut config = PipelineConfig::default();
-        config.enable_vector_search = true;
-        config.enable_context_discovery = true;
-        config.auto_index_results = true;
+        let config = PipelineConfig {
+            enable_vector_search: true,
+            enable_context_discovery: true,
+            auto_index_results: true,
+            ..Default::default()
+        };
 
         // Note: In a real test, we would create properly configured vector services
         // For now, we're testing the configuration and interface structure
@@ -126,10 +128,12 @@ mod tests {
     /// Test research engine configuration with vector search
     #[test]
     fn test_research_engine_with_vector_search_config() {
-        let mut config = ClaudeResearchConfig::default();
-        config.enable_vector_search = true;
-        config.max_context_documents = 10;
-        config.context_relevance_threshold = 0.8;
+        let config = ClaudeResearchConfig {
+            enable_vector_search: true,
+            max_context_documents: 10,
+            context_relevance_threshold: 0.8,
+            ..Default::default()
+        };
 
         assert!(config.enable_vector_search);
         assert_eq!(config.max_context_documents, 10);

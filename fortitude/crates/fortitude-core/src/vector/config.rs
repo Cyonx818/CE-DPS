@@ -237,8 +237,10 @@ mod tests {
 
     #[test]
     fn test_vector_config_validation_empty_url() {
-        let mut config = VectorConfig::default();
-        config.url = String::new();
+        let config = VectorConfig {
+            url: String::new(),
+            ..Default::default()
+        };
 
         let result = config.validate();
         assert!(result.is_err());
@@ -250,8 +252,10 @@ mod tests {
 
     #[test]
     fn test_vector_config_validation_empty_collection() {
-        let mut config = VectorConfig::default();
-        config.default_collection = String::new();
+        let config = VectorConfig {
+            default_collection: String::new(),
+            ..Default::default()
+        };
 
         let result = config.validate();
         assert!(result.is_err());
@@ -263,8 +267,10 @@ mod tests {
 
     #[test]
     fn test_vector_config_validation_zero_dimensions() {
-        let mut config = VectorConfig::default();
-        config.vector_dimensions = 0;
+        let config = VectorConfig {
+            vector_dimensions: 0,
+            ..Default::default()
+        };
 
         let result = config.validate();
         assert!(result.is_err());
@@ -276,8 +282,10 @@ mod tests {
 
     #[test]
     fn test_vector_config_validation_zero_timeout() {
-        let mut config = VectorConfig::default();
-        config.timeout = Duration::from_secs(0);
+        let config = VectorConfig {
+            timeout: Duration::from_secs(0),
+            ..Default::default()
+        };
 
         let result = config.validate();
         assert!(result.is_err());
@@ -353,8 +361,10 @@ mod tests {
 
     #[test]
     fn test_vector_config_sync_dimensions_with_embedding_unknown_model() {
-        let mut config = VectorConfig::default();
-        config.vector_dimensions = 512; // Custom dimension
+        let mut config = VectorConfig {
+            vector_dimensions: 512, // Custom dimension
+            ..Default::default()
+        };
         config.embedding.model_name = "unknown-model".to_string();
 
         config.sync_dimensions_with_embedding();
@@ -467,8 +477,10 @@ mod tests {
     #[test]
     fn test_vector_config_edge_cases() {
         // Test very large dimensions
-        let mut config = VectorConfig::default();
-        config.vector_dimensions = 10000;
+        let mut config = VectorConfig {
+            vector_dimensions: 10000,
+            ..Default::default()
+        };
         assert!(config.validate().is_ok());
 
         // Test very short timeout
@@ -506,8 +518,10 @@ mod tests {
 
     #[test]
     fn test_embedding_dimension_validation_warning() {
-        let mut config = VectorConfig::default();
-        config.vector_dimensions = 512; // Different from embedding model output
+        let mut config = VectorConfig {
+            vector_dimensions: 512, // Different from embedding model output
+            ..Default::default()
+        };
         config.embedding.max_sequence_length = 256;
 
         // Should not error but may warn (captured in logs)

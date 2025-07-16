@@ -5,14 +5,13 @@ use fortitude_core::vector::{
     config::{ConnectionPoolConfig, DistanceMetric, HealthCheckConfig, VectorConfig},
     embeddings::{CacheKeyStrategy, DeviceType, EmbeddingCacheConfig, EmbeddingConfig},
 };
-use serde_json;
 use std::fs;
 use std::process::Command;
 use std::time::Duration;
 use tempfile::TempDir;
-use tokio;
 
 /// Test configuration helper for CLI integration tests
+#[allow(dead_code)]
 fn create_test_cli_config() -> VectorConfig {
     VectorConfig {
         url: "http://localhost:6334".to_string(),
@@ -240,7 +239,7 @@ async fn test_anchor_cli_research_commands() {
         .expect("Failed to execute research command");
 
     // Should succeed or fail gracefully without Claude API key
-    let stdout = String::from_utf8(output.stdout).unwrap_or_default();
+    let _stdout = String::from_utf8(output.stdout).unwrap_or_default();
     let stderr = String::from_utf8(output.stderr).unwrap_or_default();
 
     // Check that command was parsed correctly
@@ -957,7 +956,7 @@ async fn test_anchor_cli_output_formatting() {
 /// ANCHOR: Test CLI integration with mock vector services
 /// Tests: End-to-end CLI workflows with simulated vector operations
 #[tokio::test]
-async fn test_anchor_cli_mock_vector_integration() {
+async fn test_anchor_cli_mock_vector_integration() -> Result<(), Box<dyn std::error::Error>> {
     let temp_dir = setup_test_data_directory().expect("Failed to setup test data");
 
     // Create a more complete test configuration
@@ -1042,8 +1041,7 @@ async fn test_anchor_cli_mock_vector_integration() {
                 || stderr.contains("configuration")
                 || stderr.contains("not configured")
                 || stderr.contains("placeholder"),
-            "Should provide clear guidance when services unavailable: {}",
-            stderr
+            "Should provide clear guidance when services unavailable: {stderr}"
         );
     }
 
@@ -1064,13 +1062,13 @@ async fn test_anchor_cli_mock_vector_integration() {
 
     for cmd_args in commands {
         let mut full_args = vec!["run", "-p", "fortitude-cli", "--"];
-        full_args.extend(cmd_args);
+        full_args.extend(cmd_args.clone());
 
         let output = Command::new("cargo")
             .args(&full_args)
             .current_dir(temp_dir.path())
             .output()
-            .expect(&format!("Failed to execute vector command: {:?}", cmd_args));
+            .unwrap_or_else(|_| panic!("Failed to execute vector command: {cmd_args:?}"));
 
         // Commands should either succeed or fail with clear messages
         if !output.status.success() {
@@ -1079,9 +1077,7 @@ async fn test_anchor_cli_mock_vector_integration() {
                 stderr.contains("not available")
                     || stderr.contains("not configured")
                     || stderr.contains("not yet implemented"),
-                "Vector command should provide clear error message: {:?} -> {}",
-                cmd_args,
-                stderr
+                "Vector command should provide clear error message: {cmd_args:?} -> {stderr}"
             );
         }
     }
@@ -1114,23 +1110,23 @@ async fn test_anchor_cli_mock_vector_integration() {
 
     for cmd_args in search_commands {
         let mut full_args = vec!["run", "-p", "fortitude-cli", "--"];
-        full_args.extend(cmd_args);
+        full_args.extend(cmd_args.clone());
 
         let output = Command::new("cargo")
             .args(&full_args)
             .current_dir(temp_dir.path())
             .output()
-            .expect(&format!("Failed to execute search command: {:?}", cmd_args));
+            .unwrap_or_else(|_| panic!("Failed to execute search command: {cmd_args:?}"));
 
         // Search commands should handle absence of vector services gracefully
         if !output.status.success() {
             let stderr = String::from_utf8(output.stderr).unwrap_or_default();
             assert!(
                 stderr.contains("not available") || stderr.contains("not configured"),
-                "Search command should provide clear error message: {:?} -> {}",
-                cmd_args,
-                stderr
+                "Search command should provide clear error message: {cmd_args:?} -> {stderr}"
             );
         }
     }
+
+    Ok(())
 }

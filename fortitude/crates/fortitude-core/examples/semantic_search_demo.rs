@@ -53,7 +53,7 @@ async fn main() -> Result<(), fortitude_core::vector::VectorError> {
             Arc::new(client)
         }
         Err(e) => {
-            println!("❌ Failed to connect to Qdrant: {}", e);
+            println!("❌ Failed to connect to Qdrant: {e}");
             println!("💡 Make sure Qdrant is running on localhost:6334");
             println!("   You can start it with: docker run -p 6334:6334 qdrant/qdrant");
             return Err(e);
@@ -114,7 +114,7 @@ async fn main() -> Result<(), fortitude_core::vector::VectorError> {
                 stored_docs.push(doc);
             }
             Err(e) => {
-                println!("  ❌ Failed to store document: {}", e);
+                println!("  ❌ Failed to store document: {e}");
             }
         }
     }
@@ -152,7 +152,7 @@ async fn main() -> Result<(), fortitude_core::vector::VectorError> {
                 results.execution_stats.total_time_ms
             );
         }
-        Err(e) => println!("   ❌ Search failed: {}", e),
+        Err(e) => println!("   ❌ Search failed: {e}"),
     }
 
     // Example 2: Search with quality boost
@@ -181,7 +181,7 @@ async fn main() -> Result<(), fortitude_core::vector::VectorError> {
                 );
             }
         }
-        Err(e) => println!("   ❌ Search failed: {}", e),
+        Err(e) => println!("   ❌ Search failed: {e}"),
     }
 
     // Example 3: Suggest related content
@@ -210,7 +210,7 @@ async fn main() -> Result<(), fortitude_core::vector::VectorError> {
                     );
                 }
             }
-            Err(e) => println!("   ❌ Suggestion failed: {}", e),
+            Err(e) => println!("   ❌ Suggestion failed: {e}"),
         }
     }
 
@@ -226,7 +226,7 @@ async fn main() -> Result<(), fortitude_core::vector::VectorError> {
     if !analytics.popular_terms.is_empty() {
         println!("   Popular search terms:");
         for (term, count) in &analytics.popular_terms {
-            println!("     - {}: {} times", term, count);
+            println!("     - {term}: {count} times");
         }
     }
 

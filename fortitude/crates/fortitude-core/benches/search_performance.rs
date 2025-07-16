@@ -4,12 +4,11 @@
 
 use criterion::{black_box, criterion_group, criterion_main, BenchmarkId, Criterion, Throughput};
 use fortitude_core::vector::{
-    EmbeddingConfig, EmbeddingGenerator, FilterOperation, FusionMethod, HybridSearchConfig,
-    HybridSearchRequest, HybridSearchService, LocalEmbeddingService, SearchFilter, SearchOptions,
-    SearchStrategy, SemanticSearchConfig, SemanticSearchService, VectorConfig,
+    FilterOperation, FusionMethod, HybridSearchConfig, SearchStrategy, SemanticSearchConfig,
+    SearchFilter, SearchOptions,
+    VectorConfig,
 };
 use std::collections::HashMap;
-use std::sync::Arc;
 use std::time::Duration;
 use tokio::runtime::Runtime;
 
@@ -53,16 +52,17 @@ fn create_semantic_config() -> SemanticSearchConfig {
 /// Helper function to create hybrid search config
 fn create_hybrid_config() -> HybridSearchConfig {
     HybridSearchConfig {
-        semantic_weight: 0.7,
+        default_fusion_method: FusionMethod::ReciprocalRankFusion,
+        default_strategy: SearchStrategy::Balanced,
+        vector_weight: 0.7,
         keyword_weight: 0.3,
-        fusion_method: FusionMethod::RankFusion,
-        min_semantic_score: 0.5,
-        min_keyword_score: 0.1,
-        result_limit: 50,
-        enable_query_analysis: true,
-        enable_spell_correction: false,
-        enable_synonym_expansion: false,
-        performance_mode: true,
+        min_vector_threshold: 0.5,
+        min_keyword_threshold: 0.1,
+        enable_adaptive_strategy: true,
+        max_results_per_type: 50,
+        enable_diversification: false,
+        enable_caching: true,
+        cache_ttl_seconds: 300,
     }
 }
 

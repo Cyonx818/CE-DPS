@@ -84,7 +84,7 @@ fn bench_single_embedding_generation(c: &mut Criterion) {
             |b, &length| {
                 b.to_async(&rt).iter(|| async {
                     let config = EmbeddingConfig::default();
-                    let service = LocalEmbeddingService::new(config);
+                    let _service = LocalEmbeddingService::new(config);
                     let _ = service.initialize().await;
 
                     let text = "a".repeat(length);
@@ -111,7 +111,7 @@ fn bench_batch_embedding_generation(c: &mut Criterion) {
             |b, &batch_size| {
                 b.to_async(&rt).iter(|| async {
                     let config = create_config_with_batch_size(32); // Keep internal batch size constant
-                    let service = LocalEmbeddingService::new(config);
+                    let _service = LocalEmbeddingService::new(config);
                     let _ = service.initialize().await;
 
                     let texts = generate_test_texts(batch_size, 200);
@@ -211,7 +211,7 @@ fn bench_cache_key_strategies(c: &mut Criterion) {
                         ..EmbeddingConfig::default()
                     };
 
-                    let service = LocalEmbeddingService::new(config);
+                    let _service = LocalEmbeddingService::new(config);
                     let text =
                         "test text for cache key generation benchmarking with various strategies";
 
@@ -228,12 +228,13 @@ fn bench_cache_key_strategies(c: &mut Criterion) {
 fn bench_text_preprocessing(c: &mut Criterion) {
     let mut group = c.benchmark_group("text_preprocessing");
 
+     let long_truncation_text = "Very long text that needs to be truncated because it exceeds the maximum length limit and should be cut off at some point to test the truncation functionality of the preprocessing pipeline".repeat(10);
     let test_texts = vec![
         "Simple text",
         "Text with    extra   whitespace",
         "Text WITH Mixed Case LETTERS",
         "Text with special chars!@#$%^&*()_+-=[]{}|;':\",./<>?",
-        &"Very long text that needs to be truncated because it exceeds the maximum length limit and should be cut off at some point to test the truncation functionality of the preprocessing pipeline".repeat(10),
+        &long_truncation_text,
     ];
 
     for (i, text) in test_texts.iter().enumerate() {
@@ -264,7 +265,7 @@ fn bench_cache_cleanup(c: &mut Criterion) {
             |b, &cache_size| {
                 b.to_async(&rt).iter(|| async {
                     let config = create_embedding_config_with_cache(true, cache_size);
-                    let service = LocalEmbeddingService::new(config);
+                    let _service = LocalEmbeddingService::new(config);
                     let _ = service.initialize().await;
 
                     // Fill cache with entries
@@ -357,7 +358,7 @@ fn bench_embedding_memory(c: &mut Criterion) {
             |b, &count| {
                 b.to_async(&rt).iter(|| async {
                     let config = create_embedding_config_with_cache(true, count);
-                    let service = LocalEmbeddingService::new(config);
+                    let _service = LocalEmbeddingService::new(config);
                     let _ = service.initialize().await;
 
                     // Generate embeddings to fill memory
@@ -388,10 +389,11 @@ fn bench_embedding_regression_detection(c: &mut Criterion) {
             // Initialize service
             let _ = service.initialize().await;
             // Generate embeddings for different text lengths
+            let long_text = "Very long text that simulates real-world usage with multiple sentences and complex content that might be typical of research documents or technical documentation".repeat(5);
             let texts = vec![
                 "Short text",
                 "Medium length text that contains more words and characters for testing",
-                "Very long text that simulates real-world usage with multiple sentences and complex content that might be typical of research documents or technical documentation".repeat(5),
+                &long_text,
             ];
             for text in texts {
                 let _embedding = service.generate_embedding(black_box(&text)).await;
