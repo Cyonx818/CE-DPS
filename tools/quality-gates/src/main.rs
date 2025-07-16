@@ -7,7 +7,7 @@ use serde::{Deserialize, Serialize};
 use std::path::PathBuf;
 use std::process::Command;
 use std::time::Duration;
-use tracing::{info};
+use tracing::info;
 
 #[derive(Parser, Debug)]
 #[command(author, version, about, long_about = None)]
@@ -15,23 +15,23 @@ struct Args {
     /// Project path to validate
     #[arg(short, long, default_value = ".")]
     project_path: PathBuf,
-    
+
     /// Coverage target percentage
     #[arg(short, long, default_value = "95")]
     coverage_target: u8,
-    
+
     /// Performance target in milliseconds
     #[arg(long, default_value = "200")]
     performance_target: u64,
-    
+
     /// Enable security scanning
     #[arg(long, default_value = "true")]
     security_scan: bool,
-    
+
     /// Enable Fortitude integration
     #[arg(long, default_value = "true")]
     fortitude_enabled: bool,
-    
+
     /// Output report file
     #[arg(short, long)]
     output: Option<PathBuf>,
@@ -77,14 +77,20 @@ enum GateStatus {
 #[tokio::main]
 async fn main() -> Result<()> {
     // Initialize tracing
-    tracing_subscriber::fmt()
-        .with_env_filter("info")
-        .init();
+    tracing_subscriber::fmt().with_env_filter("info").init();
 
     let args = Args::parse();
 
-    println!("{}", "🔍 CE-DPS Quality Gates - AI Implementation Validation".blue().bold());
-    println!("{}", "==================================================".blue());
+    println!(
+        "{}",
+        "🔍 CE-DPS Quality Gates - AI Implementation Validation"
+            .blue()
+            .bold()
+    );
+    println!(
+        "{}",
+        "==================================================".blue()
+    );
 
     let mut quality_gates = QualityGates {
         all_passed: true,
@@ -125,8 +131,14 @@ async fn main() -> Result<()> {
     }
 }
 
-async fn run_pre_implementation_gates(_args: &Args, quality_gates: &mut QualityGates) -> Result<()> {
-    println!("\n{}", "📋 Pre-Implementation Quality Gates".yellow().bold());
+async fn run_pre_implementation_gates(
+    _args: &Args,
+    quality_gates: &mut QualityGates,
+) -> Result<()> {
+    println!(
+        "\n{}",
+        "📋 Pre-Implementation Quality Gates".yellow().bold()
+    );
 
     let gates = vec![
         ("Branch Check", "git branch --show-current | grep -v '^main$' | grep -v '^master$' || echo 'On main/master branch'", "Ensure not on main/master branch"),
@@ -145,10 +157,26 @@ async fn run_implementation_gates(args: &Args, quality_gates: &mut QualityGates)
     println!("\n{}", "🔨 Implementation Quality Gates".yellow().bold());
 
     let gates = vec![
-        ("Code Formatting", "cargo fmt --check", "Ensure consistent code formatting"),
-        ("Linting", "cargo clippy --all-targets -- -D warnings", "Ensure code quality standards"),
-        ("Unit Tests", "cargo test --lib", "Ensure all unit tests pass"),
-        ("Integration Tests", "cargo test --test '*'", "Ensure integration tests pass"),
+        (
+            "Code Formatting",
+            "cargo fmt --check",
+            "Ensure consistent code formatting",
+        ),
+        (
+            "Linting",
+            "cargo clippy --all-targets -- -D warnings",
+            "Ensure code quality standards",
+        ),
+        (
+            "Unit Tests",
+            "cargo test --lib",
+            "Ensure all unit tests pass",
+        ),
+        (
+            "Integration Tests",
+            "cargo test --test '*'",
+            "Ensure integration tests pass",
+        ),
     ];
 
     for (name, command, description) in gates {
@@ -157,18 +185,38 @@ async fn run_implementation_gates(args: &Args, quality_gates: &mut QualityGates)
 
     // Security audit if enabled
     if args.security_scan {
-        run_gate("Security Audit", "cargo audit", "Check for security vulnerabilities", quality_gates).await?;
+        run_gate(
+            "Security Audit",
+            "cargo audit",
+            "Check for security vulnerabilities",
+            quality_gates,
+        )
+        .await?;
     }
 
     Ok(())
 }
 
-async fn run_post_implementation_gates(args: &Args, quality_gates: &mut QualityGates) -> Result<()> {
-    println!("\n{}", "🎯 Post-Implementation Quality Gates".yellow().bold());
+async fn run_post_implementation_gates(
+    args: &Args,
+    quality_gates: &mut QualityGates,
+) -> Result<()> {
+    println!(
+        "\n{}",
+        "🎯 Post-Implementation Quality Gates".yellow().bold()
+    );
 
     let gates = vec![
-        ("Final Compilation", "cargo build --release", "Ensure production build succeeds"),
-        ("Documentation Build", "cargo doc --no-deps", "Ensure documentation builds successfully"),
+        (
+            "Final Compilation",
+            "cargo build --release",
+            "Ensure production build succeeds",
+        ),
+        (
+            "Documentation Build",
+            "cargo doc --no-deps",
+            "Ensure documentation builds successfully",
+        ),
     ];
 
     for (name, command, description) in gates {
@@ -181,9 +229,18 @@ async fn run_post_implementation_gates(args: &Args, quality_gates: &mut QualityG
     Ok(())
 }
 
-async fn run_gate(name: &str, command: &str, description: &str, quality_gates: &mut QualityGates) -> Result<()> {
+async fn run_gate(
+    name: &str,
+    command: &str,
+    description: &str,
+    quality_gates: &mut QualityGates,
+) -> Result<()> {
     let pb = ProgressBar::new_spinner();
-    pb.set_style(ProgressStyle::default_spinner().template("{spinner:.blue} {msg}").unwrap());
+    pb.set_style(
+        ProgressStyle::default_spinner()
+            .template("{spinner:.blue} {msg}")
+            .unwrap(),
+    );
     pb.set_message(format!("{}: {}", name, description));
     pb.enable_steady_tick(Duration::from_millis(100));
 
@@ -196,7 +253,11 @@ async fn run_gate(name: &str, command: &str, description: &str, quality_gates: &
     pb.finish_and_clear();
 
     let success = output.status.success();
-    let status = if success { GateStatus::Passed } else { GateStatus::Failed };
+    let status = if success {
+        GateStatus::Passed
+    } else {
+        GateStatus::Failed
+    };
 
     if !success {
         quality_gates.all_passed = false;
@@ -206,8 +267,16 @@ async fn run_gate(name: &str, command: &str, description: &str, quality_gates: &
         name: name.to_string(),
         status,
         description: description.to_string(),
-        output: if output.stdout.is_empty() { None } else { Some(String::from_utf8_lossy(&output.stdout).to_string()) },
-        error: if output.stderr.is_empty() { None } else { Some(String::from_utf8_lossy(&output.stderr).to_string()) },
+        output: if output.stdout.is_empty() {
+            None
+        } else {
+            Some(String::from_utf8_lossy(&output.stdout).to_string())
+        },
+        error: if output.stderr.is_empty() {
+            None
+        } else {
+            Some(String::from_utf8_lossy(&output.stderr).to_string())
+        },
     };
 
     let status_icon = match gate.status {
@@ -241,7 +310,11 @@ async fn count_todo_comments(args: &Args, quality_gates: &mut QualityGates) -> R
         quality_gates.todo_comments = count;
 
         if count > 0 {
-            println!("{} Found {} TODO/FIXME/HACK comments - review before production", "⚠️".yellow(), count);
+            println!(
+                "{} Found {} TODO/FIXME/HACK comments - review before production",
+                "⚠️".yellow(),
+                count
+            );
         }
     }
 
@@ -264,15 +337,15 @@ async fn generate_report(args: &Args, quality_gates: &QualityGates) -> Result<Qu
     let report = QualityReport {
         timestamp: Utc::now(),
         project_path: args.project_path.to_string_lossy().to_string(),
-        branch: if branch.status.success() { 
-            String::from_utf8_lossy(&branch.stdout).trim().to_string() 
-        } else { 
-            "unknown".to_string() 
+        branch: if branch.status.success() {
+            String::from_utf8_lossy(&branch.stdout).trim().to_string()
+        } else {
+            "unknown".to_string()
         },
-        commit: if commit.status.success() { 
-            String::from_utf8_lossy(&commit.stdout).trim().to_string() 
-        } else { 
-            "unknown".to_string() 
+        commit: if commit.status.success() {
+            String::from_utf8_lossy(&commit.stdout).trim().to_string()
+        } else {
+            "unknown".to_string()
         },
         quality_gates: quality_gates.clone(),
         recommendations: vec![
@@ -288,7 +361,11 @@ async fn generate_report(args: &Args, quality_gates: &QualityGates) -> Result<Qu
 fn save_report(report: &QualityReport, output_path: &PathBuf) -> Result<()> {
     let json = serde_json::to_string_pretty(report)?;
     std::fs::write(output_path, json)?;
-    println!("{} Quality report generated: {}", "📊".blue(), output_path.display());
+    println!(
+        "{} Quality report generated: {}",
+        "📊".blue(),
+        output_path.display()
+    );
     Ok(())
 }
 
@@ -296,8 +373,16 @@ fn print_summary(quality_gates: &QualityGates) {
     println!("\n{}", "📊 Quality Gates Summary".blue().bold());
     println!("{}", "========================".blue());
 
-    let passed = quality_gates.gates.iter().filter(|g| matches!(g.status, GateStatus::Passed)).count();
-    let failed = quality_gates.gates.iter().filter(|g| matches!(g.status, GateStatus::Failed)).count();
+    let passed = quality_gates
+        .gates
+        .iter()
+        .filter(|g| matches!(g.status, GateStatus::Passed))
+        .count();
+    let failed = quality_gates
+        .gates
+        .iter()
+        .filter(|g| matches!(g.status, GateStatus::Failed))
+        .count();
     let total = quality_gates.gates.len();
 
     println!("Total Gates: {}", total);

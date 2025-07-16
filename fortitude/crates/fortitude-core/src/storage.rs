@@ -112,7 +112,7 @@ impl FileStorage {
         use std::hash::{Hash, Hasher};
 
         let mut hasher = DefaultHasher::new();
-        
+
         // Normalize query for better cache key effectiveness
         let normalized_query = self.normalize_query(&result.request.original_query);
         normalized_query.hash(&mut hasher);
@@ -139,7 +139,7 @@ impl FileStorage {
             enhanced.audience_level.display_name().hash(&mut hasher);
             enhanced.technical_domain.display_name().hash(&mut hasher);
             enhanced.urgency_level.display_name().hash(&mut hasher);
-            
+
             // Use confidence bands for better cache hits and eliminate floating-point precision issues
             let confidence_band = self.get_confidence_band(enhanced.overall_confidence);
             confidence_band.hash(&mut hasher);
@@ -204,7 +204,13 @@ impl FileStorage {
         let normalized = query
             .to_lowercase()
             .chars()
-            .map(|c| if c.is_alphanumeric() || c.is_whitespace() { c } else { ' ' })
+            .map(|c| {
+                if c.is_alphanumeric() || c.is_whitespace() {
+                    c
+                } else {
+                    ' '
+                }
+            })
             .collect::<String>()
             .split_whitespace()
             .collect::<Vec<_>>()
@@ -212,7 +218,7 @@ impl FileStorage {
 
         // Remove common stop words and normalize technical terms
         let words_removed = self.remove_stop_words(&normalized);
-        
+
         // Apply semantic normalization for better fuzzy matching
         self.apply_semantic_normalization(&words_removed)
     }
@@ -222,7 +228,8 @@ impl FileStorage {
         let stop_words = vec![
             "the", "a", "an", "and", "or", "but", "in", "on", "at", "to", "for", "of", "with",
             "by", "how", "what", "why", "when", "where", "which", "that", "this", "these", "those",
-            "do", "i", "you", "we", "they", "can", "could", "should", "would", "will", "is", "are", "was", "were",
+            "do", "i", "you", "we", "they", "can", "could", "should", "would", "will", "is", "are",
+            "was", "were",
         ];
 
         query
@@ -242,7 +249,7 @@ impl FileStorage {
         // Sort words alphabetically for consistent ordering
         // This helps "implement async rust" and "rust async implement" generate same key
         words.sort();
-        
+
         words.join(" ")
     }
 
@@ -253,19 +260,19 @@ impl FileStorage {
             "asynchronous" => "async".to_string(),
             "async" => "async".to_string(),
             "asyncio" => "async".to_string(),
-            
+
             // Implementation synonyms
             "implementation" => "implement".to_string(),
             "implementing" => "implement".to_string(),
             "implements" => "implement".to_string(),
             "implemented" => "implement".to_string(),
-            
+
             // Programming synonyms
             "programming" => "program".to_string(),
             "coding" => "program".to_string(),
             "development" => "develop".to_string(),
             "developing" => "develop".to_string(),
-            
+
             // Keep original term if no normalization needed
             _ => term.to_string(),
         }
@@ -303,18 +310,21 @@ impl FileStorage {
         }
 
         let target_filename = format!("{cache_key}.json");
-        
+
         // Use walkdir to recursively search for the file
         let mut stack = vec![base_path.to_path_buf()];
-        
+
         while let Some(current_path) = stack.pop() {
             if let Ok(mut dir_entries) = async_fs::read_dir(&current_path).await {
                 while let Ok(Some(entry)) = dir_entries.next_entry().await {
                     let entry_path = entry.path();
-                    
+
                     if entry_path.is_dir() {
                         stack.push(entry_path);
-                    } else if entry_path.file_name().is_some_and(|name| name == target_filename.as_str()) {
+                    } else if entry_path
+                        .file_name()
+                        .is_some_and(|name| name == target_filename.as_str())
+                    {
                         // Found the file, try to read and deserialize it
                         if let Ok(content) = async_fs::read_to_string(&entry_path).await {
                             if let Ok(result) = serde_json::from_str::<ResearchResult>(&content) {
@@ -325,7 +335,7 @@ impl FileStorage {
                 }
             }
         }
-        
+
         Ok(None)
     }
 
@@ -821,14 +831,14 @@ impl FileStorage {
             performance_monitor.current_hit_rate = current_hit_rate;
 
             // Update performance status based on hit rate
-            performance_monitor.status =
-                if current_hit_rate >= performance_monitor.target_hit_rate {
-                    CachePerformanceStatus::Optimal
-                } else if current_hit_rate >= performance_monitor.target_hit_rate * 0.8 {
-                    CachePerformanceStatus::Degraded
-                } else {
-                    CachePerformanceStatus::Critical
-                };
+            performance_monitor.status = if current_hit_rate >= performance_monitor.target_hit_rate
+            {
+                CachePerformanceStatus::Optimal
+            } else if current_hit_rate >= performance_monitor.target_hit_rate * 0.8 {
+                CachePerformanceStatus::Degraded
+            } else {
+                CachePerformanceStatus::Critical
+            };
 
             // Add to performance monitor's recent operations
             performance_monitor.recent_operations.push(operation);
@@ -976,7 +986,10 @@ impl Storage for FileStorage {
                 .join(research_type.to_string().to_lowercase())
                 .join("context-aware");
 
-            if let Ok(Some(found_result)) = self.scan_context_aware_directory(&context_base_path, cache_key).await {
+            if let Ok(Some(found_result)) = self
+                .scan_context_aware_directory(&context_base_path, cache_key)
+                .await
+            {
                 debug!(
                     "Found research result by optimized context-aware scanning: {}",
                     cache_key
@@ -1006,7 +1019,7 @@ impl Storage for FileStorage {
                 return Ok(());
             }
         }
-        
+
         // Try to find and delete by scanning directories
         for research_type in ResearchType::all() {
             let file_path = self.get_cache_file_path(cache_key, &research_type);
@@ -1115,10 +1128,12 @@ impl Storage for FileStorage {
                     }
 
                     // Calculate warming effectiveness and key optimization score
-                    type_stats.warming_effectiveness =
-                        self.calculate_warming_effectiveness_for_type(research_type).await;
-                    type_stats.key_optimization_score =
-                        self.calculate_key_optimization_score_for_type(research_type).await;
+                    type_stats.warming_effectiveness = self
+                        .calculate_warming_effectiveness_for_type(research_type)
+                        .await;
+                    type_stats.key_optimization_score = self
+                        .calculate_key_optimization_score_for_type(research_type)
+                        .await;
                 }
             }
         }
@@ -1251,10 +1266,8 @@ impl Storage for FileStorage {
         {
             let recent_operations = self.recent_operations.lock().await;
             if !recent_operations.is_empty() {
-                let unique_keys: std::collections::HashSet<_> = recent_operations
-                    .iter()
-                    .map(|op| &op.cache_key)
-                    .collect();
+                let unique_keys: std::collections::HashSet<_> =
+                    recent_operations.iter().map(|op| &op.cache_key).collect();
 
                 let key_diversity = unique_keys.len() as f64 / recent_operations.len() as f64;
 
@@ -1524,23 +1537,36 @@ mod tests {
         // Initially, cache should be empty
         let initial_stats = storage.get_cache_stats().await.unwrap();
         assert_eq!(initial_stats.total_entries, 0);
-        println!("Cache entries before storing: {}", initial_stats.total_entries);
+        println!(
+            "Cache entries before storing: {}",
+            initial_stats.total_entries
+        );
 
         // Store result
         let cache_key = storage.store(&result).await.unwrap();
         assert!(!cache_key.is_empty());
 
-        // Verify cache index was updated 
+        // Verify cache index was updated
         let stats_after_store = storage.get_cache_stats().await.unwrap();
-        println!("Cache entries after storing: {}", stats_after_store.total_entries);
-        
+        println!(
+            "Cache entries after storing: {}",
+            stats_after_store.total_entries
+        );
+
         // This should pass now that we fixed the immutable reference issue
-        assert_eq!(stats_after_store.total_entries, 1, "Cache index should be updated after storing");
+        assert_eq!(
+            stats_after_store.total_entries, 1,
+            "Cache index should be updated after storing"
+        );
 
         // Verify cache entry is accessible via index (not just file scan fallback)
         let cache_entries = storage.list_cache_entries().await.unwrap();
-        assert_eq!(cache_entries.len(), 1, "Cache index should contain the stored entry");
-        
+        assert_eq!(
+            cache_entries.len(),
+            1,
+            "Cache index should contain the stored entry"
+        );
+
         let entry = &cache_entries[0];
         assert_eq!(entry.key, cache_key);
         assert_eq!(entry.research_type, result.request.research_type);
@@ -1548,7 +1574,10 @@ mod tests {
 
         // Verify immediate retrieval via index works
         let retrieved = storage.retrieve(&cache_key).await.unwrap();
-        assert!(retrieved.is_some(), "Should retrieve via cache index, not file scanning");
+        assert!(
+            retrieved.is_some(),
+            "Should retrieve via cache index, not file scanning"
+        );
     }
 
     /// ANCHOR: Verifies context-aware storage properly updates cache index.
@@ -1557,25 +1586,40 @@ mod tests {
     async fn test_anchor_context_aware_indexing() {
         let (storage, _temp_dir) = create_test_storage().await;
         let mut result = create_test_result();
-        
+
         // Clear the existing cache key to force context-aware key generation
         result.metadata.cache_key = String::new();
 
         // Store with context awareness
         let cache_key = storage.store_with_context(&result, None).await.unwrap();
         assert!(!cache_key.is_empty());
-        assert!(cache_key.starts_with("enhanced-"), "Context-aware keys should have enhanced prefix");
+        assert!(
+            cache_key.starts_with("enhanced-"),
+            "Context-aware keys should have enhanced prefix"
+        );
 
-        // Verify index was properly updated 
+        // Verify index was properly updated
         let stats = storage.get_cache_stats().await.unwrap();
-        assert_eq!(stats.total_entries, 1, "Context-aware storage should update cache index");
+        assert_eq!(
+            stats.total_entries, 1,
+            "Context-aware storage should update cache index"
+        );
 
         // Verify retrieval works via index for context-aware entries
-        let retrieved = storage.retrieve_with_context(&cache_key, None).await.unwrap();
-        assert!(retrieved.is_some(), "Context-aware entries should be retrievable via index");
+        let retrieved = storage
+            .retrieve_with_context(&cache_key, None)
+            .await
+            .unwrap();
+        assert!(
+            retrieved.is_some(),
+            "Context-aware entries should be retrievable via index"
+        );
 
         let retrieved_result = retrieved.unwrap();
-        assert_eq!(retrieved_result.request.original_query, result.request.original_query);
+        assert_eq!(
+            retrieved_result.request.original_query,
+            result.request.original_query
+        );
     }
 
     /// ANCHOR: Verifies delete operations properly update cache index.
@@ -1592,17 +1636,27 @@ mod tests {
 
         // Delete and verify index is updated
         storage.delete(&cache_key).await.unwrap();
-        
+
         let stats_after_delete = storage.get_cache_stats().await.unwrap();
-        assert_eq!(stats_after_delete.total_entries, 0, "Cache index should be updated after deletion");
+        assert_eq!(
+            stats_after_delete.total_entries, 0,
+            "Cache index should be updated after deletion"
+        );
 
         // Verify entry is no longer retrievable
         let retrieved = storage.retrieve(&cache_key).await.unwrap();
-        assert!(retrieved.is_none(), "Deleted entries should not be retrievable");
+        assert!(
+            retrieved.is_none(),
+            "Deleted entries should not be retrievable"
+        );
 
         // Verify cache entries list is empty
         let cache_entries = storage.list_cache_entries().await.unwrap();
-        assert_eq!(cache_entries.len(), 0, "Cache index should be empty after deletion");
+        assert_eq!(
+            cache_entries.len(),
+            0,
+            "Cache index should be empty after deletion"
+        );
     }
 
     #[test]
@@ -1652,26 +1706,26 @@ mod tests {
     async fn test_anchor_unified_cache_key_generation() {
         let (storage, _temp_dir) = create_test_storage().await;
         let mut result = create_test_result();
-        
+
         // Simulate pipeline setting cache key in metadata (as it would in real usage)
         let expected_cache_key = "pipeline_generated_cache_key_12345";
         result.metadata.cache_key = expected_cache_key.to_string();
-        
+
         // Storage should use the metadata cache key instead of generating its own
         let storage_key = storage.store(&result).await.unwrap();
-        
+
         assert_eq!(
             storage_key, expected_cache_key,
             "Storage should use metadata.cache_key when available instead of generating new key"
         );
-        
+
         // Retrieval should find the result using the same key
         let retrieved = storage.retrieve(&storage_key).await.unwrap();
         assert!(
             retrieved.is_some(),
             "Should retrieve result using the same cache key that was used for storage"
         );
-        
+
         let retrieved_result = retrieved.unwrap();
         assert_eq!(
             retrieved_result.metadata.cache_key, expected_cache_key,
@@ -1686,24 +1740,27 @@ mod tests {
     async fn test_anchor_cache_hit_processing_time() {
         let (storage, _temp_dir) = create_test_storage().await;
         let result = create_test_result();
-        
+
         // Store the result first
         let cache_key = storage.store(&result).await.unwrap();
-        
+
         // Measure retrieval time for cache hit
         let start_time = std::time::Instant::now();
         let retrieved = storage.retrieve(&cache_key).await.unwrap();
         let retrieval_time = start_time.elapsed();
-        
-        assert!(retrieved.is_some(), "Cache hit should return the stored result");
-        
+
+        assert!(
+            retrieved.is_some(),
+            "Cache hit should return the stored result"
+        );
+
         // Cache hits should be very fast (much less than 50ms)
         assert!(
             retrieval_time.as_millis() < 50,
             "Cache hit should be fast (<50ms), got: {:?}",
             retrieval_time
         );
-        
+
         println!("Cache hit retrieval time: {:?}", retrieval_time);
     }
 
@@ -1714,42 +1771,50 @@ mod tests {
     async fn test_anchor_pipeline_storage_cache_key_integration() {
         let (storage, _temp_dir) = create_test_storage().await;
         let mut result = create_test_result();
-        
+
         // Simulate what pipeline does - generate context-aware cache key
         let pipeline_cache_key = {
             use std::collections::hash_map::DefaultHasher;
             use std::hash::{Hash, Hasher};
-            
+
             let mut hasher = DefaultHasher::new();
             result.request.original_query.hash(&mut hasher);
             result.request.research_type.hash(&mut hasher);
             result.request.audience_context.level.hash(&mut hasher);
             format!("pipeline_{:x}", hasher.finish())
         };
-        
+
         // Pipeline sets the cache key in metadata
         result.metadata.cache_key = pipeline_cache_key.clone();
-        
+
         // Storage should use the pipeline-provided cache key
         let storage_key = storage.store(&result).await.unwrap();
         assert_eq!(
             storage_key, pipeline_cache_key,
             "Storage should use pipeline-provided cache key from metadata"
         );
-        
+
         // Test multiple retrieval methods work with the same key
         let direct_retrieval = storage.retrieve(&pipeline_cache_key).await.unwrap();
-        assert!(direct_retrieval.is_some(), "Direct retrieval should work with pipeline cache key");
-        
-        let context_retrieval = storage.retrieve_with_context(&pipeline_cache_key, None).await.unwrap();
-        assert!(context_retrieval.is_some(), "Context retrieval should work with pipeline cache key");
-        
+        assert!(
+            direct_retrieval.is_some(),
+            "Direct retrieval should work with pipeline cache key"
+        );
+
+        let context_retrieval = storage
+            .retrieve_with_context(&pipeline_cache_key, None)
+            .await
+            .unwrap();
+        assert!(
+            context_retrieval.is_some(),
+            "Context retrieval should work with pipeline cache key"
+        );
+
         // Both methods should return the same result
         let direct_result = direct_retrieval.unwrap();
         let context_result = context_retrieval.unwrap();
         assert_eq!(
-            direct_result.request.original_query,
-            context_result.request.original_query,
+            direct_result.request.original_query, context_result.request.original_query,
             "Both retrieval methods should return identical results"
         );
     }
@@ -1760,66 +1825,78 @@ mod tests {
     #[tokio::test]
     async fn test_anchor_end_to_end_cache_functionality() {
         let (storage, _temp_dir) = create_test_storage().await;
-        
+
         // Test query that simulates real usage
         let test_query = "How to implement async functions in Rust?";
         let mut result = create_test_result();
         result.request.original_query = test_query.to_string();
-        
+
         // Simulate pipeline generating cache key (this would happen in real usage)
         let pipeline_key = {
             use std::collections::hash_map::DefaultHasher;
             use std::hash::{Hash, Hasher};
-            
+
             let mut hasher = DefaultHasher::new();
             test_query.hash(&mut hasher);
             result.request.research_type.hash(&mut hasher);
             format!("cache_test_{:x}", hasher.finish())
         };
-        
+
         result.metadata.cache_key = pipeline_key.clone();
-        
+
         println!("Testing cache functionality with query: '{}'", test_query);
         println!("Pipeline generated cache key: {}", pipeline_key);
-        
+
         // First run: Store the result (cache miss)
         let first_run_start = std::time::Instant::now();
         let storage_key = storage.store(&result).await.unwrap();
         let first_run_time = first_run_start.elapsed();
-        
-        assert_eq!(storage_key, pipeline_key, "Storage should use pipeline-provided cache key");
-        
+
+        assert_eq!(
+            storage_key, pipeline_key,
+            "Storage should use pipeline-provided cache key"
+        );
+
         // Second run: Retrieve the result (cache hit)
         let second_run_start = std::time::Instant::now();
         let cached_result = storage.retrieve(&pipeline_key).await.unwrap();
         let second_run_time = second_run_start.elapsed();
-        
-        assert!(cached_result.is_some(), "✅ Should find cached result on second run");
+
+        assert!(
+            cached_result.is_some(),
+            "✅ Should find cached result on second run"
+        );
         let cached = cached_result.unwrap();
         assert_eq!(cached.request.original_query, test_query);
-        
+
         // Cache hit should be much faster than initial processing
         println!("First run (storage): {:?}", first_run_time);
         println!("Second run (cache hit): {:?}", second_run_time);
-        
+
         assert!(
             second_run_time.as_millis() < 50,
             "✅ Cache hit should be fast (<50ms), got: {:?}",
             second_run_time
         );
-        
+
         // Test that both retrieval methods work with the same key
         let context_retrieval_start = std::time::Instant::now();
-        let context_cached = storage.retrieve_with_context(&pipeline_key, None).await.unwrap();
+        let context_cached = storage
+            .retrieve_with_context(&pipeline_key, None)
+            .await
+            .unwrap();
         let context_retrieval_time = context_retrieval_start.elapsed();
-        
-        assert!(context_cached.is_some(), "✅ Context-aware retrieval should also find cached result");
+
+        assert!(
+            context_cached.is_some(),
+            "✅ Context-aware retrieval should also find cached result"
+        );
         assert!(
             context_retrieval_time.as_millis() < 50,
             "✅ Context-aware cache hit should also be fast (<50ms), got: {:?}",
             context_retrieval_time
         );
-        
+
         println!("✅ Cache functionality working correctly:");
         println!("  - Pipeline and storage use unified cache keys");
         println!("  - Cache hits are fast (processing time <50ms)");
@@ -1833,18 +1910,18 @@ mod tests {
     #[tokio::test]
     async fn test_anchor_cli_cache_scenario_simulation() {
         let (storage, _temp_dir) = create_test_storage().await;
-        
+
         // Simulate the exact query mentioned in requirements
         let cli_query = "cache test query";
         let mut result = create_test_result();
         result.request.original_query = cli_query.to_string();
         result.request.research_type = ResearchType::Learning; // Typical for test queries
-        
+
         // Simulate realistic pipeline cache key generation (similar to what pipeline.rs does)
         let realistic_cache_key = {
             use std::collections::hash_map::DefaultHasher;
             use std::hash::{Hash, Hasher};
-            
+
             let mut hasher = DefaultHasher::new();
             // Normalize query similar to storage normalization
             let normalized_query = cli_query.to_lowercase().replace([' ', '?', '!'], "_");
@@ -1854,54 +1931,65 @@ mod tests {
             result.request.domain_context.technology.hash(&mut hasher);
             format!("cli_{:x}", hasher.finish())
         };
-        
+
         result.metadata.cache_key = realistic_cache_key.clone();
         result.metadata.processing_time_ms = 1500; // Simulate longer processing for first run
-        
+
         println!("🔍 CLI Scenario Test: Query = '{}'", cli_query);
         println!("📝 Generated cache key: {}", realistic_cache_key);
-        
+
         // ===== First CLI run (cache miss) =====
         println!("\n📥 FIRST RUN (cache miss):");
         let first_run_start = std::time::Instant::now();
         let storage_key = storage.store(&result).await.unwrap();
         let first_run_duration = first_run_start.elapsed();
-        
-        assert_eq!(storage_key, realistic_cache_key, "Storage should use CLI pipeline cache key");
+
+        assert_eq!(
+            storage_key, realistic_cache_key,
+            "Storage should use CLI pipeline cache key"
+        );
         println!("   ✅ Stored with key: {}", storage_key);
         println!("   ⏱️  Storage time: {:?}", first_run_duration);
-        
+
         // ===== Second CLI run (cache hit) =====
         println!("\n📤 SECOND RUN (cache hit):");
         let second_run_start = std::time::Instant::now();
         let cached_result = storage.retrieve(&realistic_cache_key).await.unwrap();
         let second_run_duration = second_run_start.elapsed();
-        
+
         // Verify cache hit success
-        assert!(cached_result.is_some(), "✅ Should find cached result on second CLI run");
+        assert!(
+            cached_result.is_some(),
+            "✅ Should find cached result on second CLI run"
+        );
         let cached = cached_result.unwrap();
         assert_eq!(cached.request.original_query, cli_query);
         assert_eq!(cached.metadata.cache_key, realistic_cache_key);
-        
+
         // Verify cache hit is fast (requirement: <50ms)
         println!("   ✅ Found cached result!");
         println!("   ⏱️  Retrieval time: {:?}", second_run_duration);
-        println!("   📊 Processing time from cache: {}ms", cached.metadata.processing_time_ms);
-        
+        println!(
+            "   📊 Processing time from cache: {}ms",
+            cached.metadata.processing_time_ms
+        );
+
         assert!(
             second_run_duration.as_millis() < 50,
             "✅ Cache hit should be <50ms (requirement), got: {:?}",
             second_run_duration
         );
-        
+
         // ===== Summary =====
         println!("\n🎉 CLI CACHE SCENARIO RESULTS:");
         println!("   Query: '{}'", cli_query);
         println!("   First run:  {:?} (cache miss)", first_run_duration);
         println!("   Second run: {:?} (cache hit)", second_run_duration);
-        println!("   Speed improvement: {:.1}x faster", 
-                first_run_duration.as_nanos() as f64 / second_run_duration.as_nanos() as f64);
-        
+        println!(
+            "   Speed improvement: {:.1}x faster",
+            first_run_duration.as_nanos() as f64 / second_run_duration.as_nanos() as f64
+        );
+
         let cache_hit_indicator = if second_run_duration.as_millis() < 50 {
             "✅ Cached result found"
         } else {
@@ -1916,54 +2004,61 @@ mod tests {
     #[tokio::test]
     async fn test_anchor_cross_context_retrieval_fallback() {
         let (storage, _temp_dir) = create_test_storage().await;
-        
+
         // Create test results
         let result_standard = create_test_result();
         let mut result_context = create_test_result();
         result_context.request.original_query = "context query".to_string();
-        
+
         // Create a mock context for testing
         use crate::classification::context_detector::ContextDetectionResult;
-        use fortitude_types::{AudienceLevel, TechnicalDomain, UrgencyLevel, ClassificationDimension, DimensionConfidence};
-        
+        use fortitude_types::{
+            AudienceLevel, ClassificationDimension, DimensionConfidence, TechnicalDomain,
+            UrgencyLevel,
+        };
+
         let context = ContextDetectionResult::new(
             AudienceLevel::Intermediate,
             TechnicalDomain::Rust,
             UrgencyLevel::Planned,
-            vec![
-                DimensionConfidence {
-                    dimension: ClassificationDimension::AudienceLevel,
-                    confidence: 0.8,
-                    matched_keywords: vec!["test".to_string()],
-                    reasoning: "test evidence".to_string(),
-                },
-            ],
+            vec![DimensionConfidence {
+                dimension: ClassificationDimension::AudienceLevel,
+                confidence: 0.8,
+                matched_keywords: vec!["test".to_string()],
+                reasoning: "test evidence".to_string(),
+            }],
             50,
             false,
         );
-        
+
         // Store using different methods to create files in different locations
         let key_standard = storage.store(&result_standard).await.unwrap();
-        let key_context = storage.store_with_context(&result_context, Some(&context)).await.unwrap();
-        
+        let key_context = storage
+            .store_with_context(&result_context, Some(&context))
+            .await
+            .unwrap();
+
         println!("Standard storage key: {}", key_standard);
         println!("Context storage key: {}", key_context);
-        
+
         // Test cross-context retrieval matrix
         let test_cases = vec![
             ("Standard->Standard", &key_standard, false, true),
-            ("Standard->Context", &key_standard, true, true), 
+            ("Standard->Context", &key_standard, true, true),
             ("Context->Standard", &key_context, false, true), // This should pass with enhanced fallback
             ("Context->Context", &key_context, true, true),
         ];
-        
+
         for (description, cache_key, use_context, should_succeed) in test_cases {
             let retrieved = if use_context {
-                storage.retrieve_with_context(cache_key, Some(&context)).await.unwrap()
+                storage
+                    .retrieve_with_context(cache_key, Some(&context))
+                    .await
+                    .unwrap()
             } else {
                 storage.retrieve(cache_key).await.unwrap()
             };
-            
+
             if should_succeed {
                 assert!(
                     retrieved.is_some(),
@@ -1987,50 +2082,53 @@ mod tests {
     #[tokio::test]
     async fn test_enhanced_fuzzy_semantic_matching() {
         let (storage, _temp_dir) = create_test_storage().await;
-        
+
         // Store a result with the original query
         let original_query = "How to implement async programming in Rust";
         let mut result = create_test_result();
         result.request.original_query = original_query.to_string();
-        
+
         let cache_key = storage.store(&result).await.unwrap();
         println!("Stored with key: {}", cache_key);
-        
+
         // Test variations that should match via fuzzy logic (if implemented)
         let similar_queries = vec![
-            "how to implement async programming in rust",  // Case difference
+            "how to implement async programming in rust", // Case difference
             "How to implement async programming in Rust?", // Punctuation difference
-            "implement async programming in rust how to",  // Word order difference
+            "implement async programming in rust how to", // Word order difference
             "How do I implement async programming in Rust", // Slight phrasing difference
-            "async programming implementation in rust",     // Semantic similarity
+            "async programming implementation in rust",   // Semantic similarity
         ];
-        
+
         for similar_query in similar_queries {
             println!("Testing fuzzy match for: '{}'", similar_query);
-            
+
             // Create a new research result with the similar query
             let mut fuzzy_result = create_test_result();
             fuzzy_result.request.original_query = similar_query.to_string();
-            
+
             // The current implementation generates cache keys based on query content
             // so similar queries would get different cache keys
             let fuzzy_key = storage.generate_cache_key(&fuzzy_result);
             println!("  Generated key: {}", fuzzy_key);
-            
+
             // Try to retrieve with the fuzzy key - this tests if fuzzy matching is implemented
             let retrieved = storage.retrieve(&fuzzy_key).await.unwrap();
-            
+
             if retrieved.is_some() {
                 println!("  FUZZY MATCH SUCCESS: Found existing cache entry");
             } else {
                 println!("  NO FUZZY MATCH: Would require enhanced fuzzy matching logic");
-                
+
                 // For now, verify that exact key retrieval still works
                 let exact_retrieved = storage.retrieve(&cache_key).await.unwrap();
-                assert!(exact_retrieved.is_some(), "Exact key retrieval should always work");
+                assert!(
+                    exact_retrieved.is_some(),
+                    "Exact key retrieval should always work"
+                );
             }
         }
-        
+
         // This test documents current behavior rather than requiring fuzzy matching
         // True fuzzy matching would require additional implementation
         println!("ENHANCEMENT OPPORTUNITY: Implement fuzzy matching for similar queries");
@@ -2042,7 +2140,7 @@ mod tests {
     #[tokio::test]
     async fn test_enhanced_retrieval_efficiency_optimization() {
         let (storage, _temp_dir) = create_test_storage().await;
-        
+
         // Store multiple items to create a realistic performance test scenario
         let mut stored_keys = Vec::new();
         let context = ContextDetectionResult::new(
@@ -2053,56 +2151,59 @@ mod tests {
             50,
             false,
         );
-        
+
         // Store items in different ways to create files in various locations
         for i in 0..10 {
             let query = format!("efficiency test query {}", i);
             let mut result = create_test_result();
             result.request.original_query = query;
-            
+
             let key = if i % 2 == 0 {
                 storage.store(&result).await.unwrap()
             } else {
-                storage.store_with_context(&result, Some(&context)).await.unwrap()
+                storage
+                    .store_with_context(&result, Some(&context))
+                    .await
+                    .unwrap()
             };
-            
+
             stored_keys.push(key);
         }
-        
+
         // Measure retrieval performance
         let start_time = std::time::Instant::now();
         let mut successful_retrievals = 0;
-        
+
         for key in &stored_keys {
             let retrieved = storage.retrieve(key).await.unwrap();
             if retrieved.is_some() {
                 successful_retrievals += 1;
             }
         }
-        
+
         let total_time = start_time.elapsed();
         let avg_time_per_retrieval = total_time / stored_keys.len() as u32;
-        
+
         println!("EFFICIENCY METRICS:");
         println!("  Items stored: {}", stored_keys.len());
         println!("  Successful retrievals: {}", successful_retrievals);
         println!("  Total retrieval time: {:?}", total_time);
         println!("  Average time per retrieval: {:?}", avg_time_per_retrieval);
-        
+
         // All stored items should be retrievable
         assert_eq!(
             successful_retrievals,
             stored_keys.len(),
             "All stored items should be retrievable with current fallback logic"
         );
-        
+
         // Performance should be reasonable (this is more of a monitoring test)
         assert!(
             avg_time_per_retrieval.as_millis() < 100,
             "Average retrieval time should be reasonable: {:?}",
             avg_time_per_retrieval
         );
-        
+
         println!("OPTIMIZATION OPPORTUNITIES:");
         println!("  - Index-first lookup before file scanning");
         println!("  - Cache recently accessed file paths");

@@ -367,12 +367,12 @@ mod tests {
             // Be more flexible with error message matching - just ensure it's a serialization error
             assert!(!error_string.is_empty(), "Error should have a message");
             assert!(
-                error_string.contains("EOF") || 
-                error_string.contains("expected") || 
-                error_string.contains("incomplete") ||
-                error_string.contains("parse") ||
-                error_string.contains("line") ||
-                error_string.contains("column"),
+                error_string.contains("EOF")
+                    || error_string.contains("expected")
+                    || error_string.contains("incomplete")
+                    || error_string.contains("parse")
+                    || error_string.contains("line")
+                    || error_string.contains("column"),
                 "Error message should indicate parsing issue: {}",
                 error_string
             );

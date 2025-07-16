@@ -740,6 +740,10 @@ mod tests {
             aggregation_window_days: 30,
         };
 
-        Some(ResearchFeedbackProcessor::new(hybrid_search, vector_storage, config))
+        Some(ResearchFeedbackProcessor::new(
+            hybrid_search,
+            vector_storage,
+            config,
+        ))
     }
 }

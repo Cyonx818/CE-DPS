@@ -3,15 +3,15 @@
 //! ANCHOR: Critical cache functionality tests that protect against regressions
 //! Tests: cache key stability, storage index management, retrieval fallback logic
 
+use chrono::Utc;
+use fortitude_core::classification::context_detector::ContextDetectionResult;
 use fortitude_core::storage::FileStorage;
 use fortitude_types::{
-    AudienceLevel, ClassificationDimension, DimensionConfidence, TechnicalDomain, UrgencyLevel,
-    ResearchResult, ResearchType, StorageConfig, AudienceContext, DomainContext,
-    ClassifiedRequest, ResearchMetadata, Storage,
+    AudienceContext, AudienceLevel, ClassificationDimension, ClassifiedRequest,
+    DimensionConfidence, DomainContext, ResearchMetadata, ResearchResult, ResearchType, Storage,
+    StorageConfig, TechnicalDomain, UrgencyLevel,
 };
-use fortitude_core::classification::context_detector::ContextDetectionResult;
 use std::collections::HashMap;
-use chrono::Utc;
 use tempfile::TempDir;
 
 // Basic test utilities
@@ -34,7 +34,7 @@ fn create_basic_research_result(query: &str, research_type: ResearchType) -> Res
         0.8,
         vec!["test".to_string()],
     );
-    
+
     let metadata = ResearchMetadata {
         completed_at: Utc::now(),
         processing_time_ms: 1000,
@@ -44,31 +44,23 @@ fn create_basic_research_result(query: &str, research_type: ResearchType) -> Res
         tags: HashMap::new(),
     };
 
-    ResearchResult::new(
-        request,
-        "Test answer".to_string(),
-        vec![],
-        vec![],
-        metadata,
-    )
+    ResearchResult::new(request, "Test answer".to_string(), vec![], vec![], metadata)
 }
 
 fn create_basic_context_result(confidence: f64) -> ContextDetectionResult {
-    let dimension_confidences = vec![
-        DimensionConfidence {
-            dimension: ClassificationDimension::AudienceLevel,
-            confidence,
-            matched_keywords: vec!["test".to_string()],
-            reasoning: "test evidence".to_string(),
-        },
-    ];
+    let dimension_confidences = vec![DimensionConfidence {
+        dimension: ClassificationDimension::AudienceLevel,
+        confidence,
+        matched_keywords: vec!["test".to_string()],
+        reasoning: "test evidence".to_string(),
+    }];
 
     ContextDetectionResult::new(
         AudienceLevel::Intermediate,
         TechnicalDomain::Rust,
         UrgencyLevel::Planned,
         dimension_confidences,
-        50, // processing_time_ms
+        50,    // processing_time_ms
         false, // fallback_used
     )
 }
@@ -88,8 +80,10 @@ mod cache_key_stability_tests {
         let storage = FileStorage::new(config).await.unwrap();
 
         // Create two research results with identical content but slightly different confidence
-        let result1 = create_basic_research_result("rust async programming", ResearchType::Learning);
-        let result2 = create_basic_research_result("rust async programming", ResearchType::Learning);
+        let result1 =
+            create_basic_research_result("rust async programming", ResearchType::Learning);
+        let result2 =
+            create_basic_research_result("rust async programming", ResearchType::Learning);
 
         // Create context results with very slightly different confidence values
         // This simulates floating point precision issues
@@ -97,12 +91,18 @@ mod cache_key_stability_tests {
         let context2 = create_basic_context_result(0.8500000000000001); // Tiny precision difference
 
         // Store both results
-        let key1 = storage.store_with_context(&result1, Some(&context1)).await.unwrap();
-        let key2 = storage.store_with_context(&result2, Some(&context2)).await.unwrap();
+        let key1 = storage
+            .store_with_context(&result1, Some(&context1))
+            .await
+            .unwrap();
+        let key2 = storage
+            .store_with_context(&result2, Some(&context2))
+            .await
+            .unwrap();
 
         println!("Key 1: {}", key1);
         println!("Key 2: {}", key2);
-        
+
         // ISSUE DEMONSTRATION: These keys should be identical for semantically identical queries
         // but floating-point precision causes them to differ
         if key1 != key2 {
@@ -111,19 +111,31 @@ mod cache_key_stability_tests {
         }
 
         // Test cache retrieval effectiveness
-        let retrieved1 = storage.retrieve_with_context(&key1, Some(&context1)).await.unwrap();
-        let retrieved2 = storage.retrieve_with_context(&key2, Some(&context2)).await.unwrap();
-        
+        let retrieved1 = storage
+            .retrieve_with_context(&key1, Some(&context1))
+            .await
+            .unwrap();
+        let retrieved2 = storage
+            .retrieve_with_context(&key2, Some(&context2))
+            .await
+            .unwrap();
+
         println!("Retrieval 1 success: {}", retrieved1.is_some());
         println!("Retrieval 2 success: {}", retrieved2.is_some());
-        
+
         // Test cross-retrieval (this often fails due to the key differences)
-        let cross_retrieved1 = storage.retrieve_with_context(&key1, Some(&context2)).await.unwrap();
-        let cross_retrieved2 = storage.retrieve_with_context(&key2, Some(&context1)).await.unwrap();
-        
+        let cross_retrieved1 = storage
+            .retrieve_with_context(&key1, Some(&context2))
+            .await
+            .unwrap();
+        let cross_retrieved2 = storage
+            .retrieve_with_context(&key2, Some(&context1))
+            .await
+            .unwrap();
+
         println!("Cross-retrieval 1 success: {}", cross_retrieved1.is_some());
         println!("Cross-retrieval 2 success: {}", cross_retrieved2.is_some());
-        
+
         if cross_retrieved1.is_none() || cross_retrieved2.is_none() {
             println!("ISSUE: Cross-retrieval failed due to confidence precision differences");
         }
@@ -141,7 +153,7 @@ mod cache_key_stability_tests {
             "How to use Rust async programming?",
             "how to use rust async programming?",
             "How    to   use   Rust   async   programming?",
-            "How to use Rust async programming",  // No question mark
+            "How to use Rust async programming", // No question mark
         ];
 
         let mut cache_keys = Vec::new();
@@ -153,12 +165,16 @@ mod cache_key_stability_tests {
 
         // Analyze normalization effectiveness
         let unique_keys: std::collections::HashSet<_> = cache_keys.iter().collect();
-        let normalization_effectiveness = 1.0 - (unique_keys.len() as f64 / cache_keys.len() as f64);
+        let normalization_effectiveness =
+            1.0 - (unique_keys.len() as f64 / cache_keys.len() as f64);
 
         println!("Cache keys generated: {:?}", cache_keys);
         println!("Unique keys: {}", unique_keys.len());
         println!("Total queries: {}", queries.len());
-        println!("Normalization effectiveness: {:.2} (higher is better)", normalization_effectiveness);
+        println!(
+            "Normalization effectiveness: {:.2} (higher is better)",
+            normalization_effectiveness
+        );
 
         // Log the issue if normalization is poor
         if normalization_effectiveness < 0.5 {
@@ -205,7 +221,11 @@ mod storage_index_management_tests {
         // ISSUE DEMONSTRATION: Cache index might not be updated
         if updated_entries.len() != stored_keys.len() {
             println!("ISSUE CONFIRMED: Cache index not properly updated");
-            println!("Index shows {} entries but {} were stored", updated_entries.len(), stored_keys.len());
+            println!(
+                "Index shows {} entries but {} were stored",
+                updated_entries.len(),
+                stored_keys.len()
+            );
         }
 
         // Test retrieval success vs index accuracy
@@ -216,8 +236,12 @@ mod storage_index_management_tests {
             }
         }
 
-        println!("Successful retrievals: {}/{}", successful_retrievals, stored_keys.len());
-        
+        println!(
+            "Successful retrievals: {}/{}",
+            successful_retrievals,
+            stored_keys.len()
+        );
+
         if successful_retrievals > updated_entries.len() {
             println!("ISSUE: File scan fallback working but index update failed");
         }
@@ -232,8 +256,20 @@ mod storage_index_management_tests {
 
         // Store some results
         let stored_keys = vec![
-            storage.store(&create_basic_research_result("test 1", ResearchType::Learning)).await.unwrap(),
-            storage.store(&create_basic_research_result("test 2", ResearchType::Implementation)).await.unwrap(),
+            storage
+                .store(&create_basic_research_result(
+                    "test 1",
+                    ResearchType::Learning,
+                ))
+                .await
+                .unwrap(),
+            storage
+                .store(&create_basic_research_result(
+                    "test 2",
+                    ResearchType::Implementation,
+                ))
+                .await
+                .unwrap(),
         ];
 
         // Perform some retrievals
@@ -253,7 +289,7 @@ mod storage_index_management_tests {
         if stats.total_entries == 0 && !stored_keys.is_empty() {
             println!("ISSUE: Statistics show 0 entries but files were stored");
         }
-        
+
         if stats.hits == 0 && !stored_keys.is_empty() {
             println!("ISSUE: Statistics show 0 hits but retrievals were attempted");
         }
@@ -276,11 +312,14 @@ mod retrieval_fallback_tests {
         // Store results using different methods
         let result1 = create_basic_research_result("standard query", ResearchType::Learning);
         let result2 = create_basic_research_result("context query", ResearchType::Implementation);
-        
+
         let key1 = storage.store(&result1).await.unwrap();
-        
+
         let context = create_basic_context_result(0.8);
-        let key2 = storage.store_with_context(&result2, Some(&context)).await.unwrap();
+        let key2 = storage
+            .store_with_context(&result2, Some(&context))
+            .await
+            .unwrap();
 
         println!("Stored keys:");
         println!("  Standard key: {}", key1);
@@ -302,7 +341,7 @@ mod retrieval_fallback_tests {
             };
 
             println!("{}: {}", test_name, result.is_some());
-            
+
             if result.is_none() {
                 println!("ISSUE: Fallback logic gap in {}", test_name);
             }
@@ -327,24 +366,28 @@ mod retrieval_fallback_tests {
 
         // Create a hypothetical cache key and test directory scanning fallback
         let manual_key = "manual_test_key";
-        let file_path = temp_dir.path()
+        let file_path = temp_dir
+            .path()
             .join("research_results")
             .join("learning")
             .join(format!("{}.json", manual_key));
-        
+
         // Manually create a file (simulating orphaned cache file)
         if let Some(parent) = file_path.parent() {
             tokio::fs::create_dir_all(parent).await.unwrap();
         }
-        
+
         let manual_result = create_basic_research_result("manual query", ResearchType::Learning);
         let json_content = serde_json::to_string_pretty(&manual_result).unwrap();
         tokio::fs::write(&file_path, json_content).await.unwrap();
 
         // Test fallback retrieval
         let fallback_retrieval = storage.retrieve(manual_key).await.unwrap();
-        println!("Fallback retrieval success: {}", fallback_retrieval.is_some());
-        
+        println!(
+            "Fallback retrieval success: {}",
+            fallback_retrieval.is_some()
+        );
+
         if fallback_retrieval.is_none() {
             println!("ISSUE: Directory scanning fallback failed to find existing file");
         }
@@ -374,25 +417,25 @@ mod performance_baseline_tests {
         // Store phase timing
         let store_start = std::time::Instant::now();
         let mut stored_keys = Vec::new();
-        
+
         for (query, research_type) in &test_queries {
             let result = create_basic_research_result(query, research_type.clone());
             let key = storage.store(&result).await.unwrap();
             stored_keys.push(key);
         }
-        
+
         let store_duration = store_start.elapsed();
 
         // Retrieval phase timing
         let retrieval_start = std::time::Instant::now();
         let mut successful_retrievals = 0;
-        
+
         for key in &stored_keys {
             if storage.retrieve(key).await.unwrap().is_some() {
                 successful_retrievals += 1;
             }
         }
-        
+
         let retrieval_duration = retrieval_start.elapsed();
 
         // Calculate and report metrics
@@ -406,11 +449,19 @@ mod performance_baseline_tests {
         println!("  Average Retrieval Time: {:.2}ms", avg_retrieval_time);
         println!("  Total Store Duration: {:?}", store_duration);
         println!("  Total Retrieval Duration: {:?}", retrieval_duration);
-        
+
         // Performance assertions for regression tracking
-        assert!(hit_rate >= 0.8, "Hit rate should be at least 80%, got {:.2}", hit_rate);
-        assert!(avg_retrieval_time < 50.0, "Average retrieval time should be under 50ms, got {:.2}ms", avg_retrieval_time);
-        
+        assert!(
+            hit_rate >= 0.8,
+            "Hit rate should be at least 80%, got {:.2}",
+            hit_rate
+        );
+        assert!(
+            avg_retrieval_time < 50.0,
+            "Average retrieval time should be under 50ms, got {:.2}ms",
+            avg_retrieval_time
+        );
+
         println!("Performance baseline test completed");
     }
 }

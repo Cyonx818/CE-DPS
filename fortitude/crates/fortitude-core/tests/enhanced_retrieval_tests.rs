@@ -6,15 +6,15 @@
 //! ANCHOR: Enhanced retrieval functionality tests that protect against cache lookup gaps
 //! Tests: comprehensive fallback coverage, cross-context retrieval, fuzzy matching
 
+use chrono::Utc;
+use fortitude_core::classification::context_detector::ContextDetectionResult;
 use fortitude_core::storage::FileStorage;
 use fortitude_types::{
-    AudienceLevel, ClassificationDimension, DimensionConfidence, TechnicalDomain, UrgencyLevel,
-    ResearchResult, ResearchType, StorageConfig, AudienceContext, DomainContext,
-    ClassifiedRequest, ResearchMetadata, Storage,
+    AudienceContext, AudienceLevel, ClassificationDimension, ClassifiedRequest,
+    DimensionConfidence, DomainContext, ResearchMetadata, ResearchResult, ResearchType, Storage,
+    StorageConfig, TechnicalDomain, UrgencyLevel,
 };
-use fortitude_core::classification::context_detector::ContextDetectionResult;
 use std::collections::HashMap;
-use chrono::Utc;
 use tempfile::TempDir;
 
 // Test utilities
@@ -50,13 +50,7 @@ fn create_test_research_result(query: &str, research_type: ResearchType) -> Rese
         tags: HashMap::new(),
     };
 
-    ResearchResult::new(
-        request,
-        "Test answer".to_string(),
-        vec![],
-        vec![],
-        metadata,
-    )
+    ResearchResult::new(request, "Test answer".to_string(), vec![], vec![], metadata)
 }
 
 fn create_test_context_result(confidence: f64) -> ContextDetectionResult {
@@ -106,13 +100,17 @@ mod comprehensive_fallback_tests {
 
         // Store items using different methods to create various file locations
         let result_standard = create_test_research_result("standard query", ResearchType::Learning);
-        let result_context = create_test_research_result("context query", ResearchType::Implementation);
-        
+        let result_context =
+            create_test_research_result("context query", ResearchType::Implementation);
+
         let context = create_test_context_result(0.8);
-        
+
         // Store using different methods
         let key_standard = storage.store(&result_standard).await.unwrap();
-        let key_context = storage.store_with_context(&result_context, Some(&context)).await.unwrap();
+        let key_context = storage
+            .store_with_context(&result_context, Some(&context))
+            .await
+            .unwrap();
 
         // Test comprehensive retrieval matrix - ALL should succeed after enhancement
         let test_cases = vec![
@@ -124,7 +122,10 @@ mod comprehensive_fallback_tests {
 
         for (description, cache_key, use_context) in test_cases {
             let retrieved = if use_context {
-                storage.retrieve_with_context(cache_key, Some(&context)).await.unwrap()
+                storage
+                    .retrieve_with_context(cache_key, Some(&context))
+                    .await
+                    .unwrap()
             } else {
                 storage.retrieve(cache_key).await.unwrap()
             };
@@ -138,7 +139,7 @@ mod comprehensive_fallback_tests {
     }
 
     /// ANCHOR: Test directory scanning fallback for all possible cache locations
-    /// This test ensures that fallback scanning checks all directories where 
+    /// This test ensures that fallback scanning checks all directories where
     /// cache entries might be stored
     #[tokio::test]
     async fn test_directory_scanning_fallback_completeness() {
@@ -179,14 +180,17 @@ mod comprehensive_fallback_tests {
             for (j, research_type) in research_types.iter().enumerate() {
                 let query = format!("query {} type {}", i, j);
                 let result = create_test_research_result(&query, *research_type);
-                
+
                 // Store some with context, some without
                 let key = if i % 2 == 0 {
-                    storage.store_with_context(&result, Some(context)).await.unwrap()
+                    storage
+                        .store_with_context(&result, Some(context))
+                        .await
+                        .unwrap()
                 } else {
                     storage.store(&result).await.unwrap()
                 };
-                
+
                 stored_keys.push((key, context.clone(), *research_type));
             }
         }
@@ -202,7 +206,10 @@ mod comprehensive_fallback_tests {
             );
 
             // Try retrieving with context method - should also find via enhanced scanning
-            let retrieved_context = storage.retrieve_with_context(cache_key, Some(original_context)).await.unwrap();
+            let retrieved_context = storage
+                .retrieve_with_context(cache_key, Some(original_context))
+                .await
+                .unwrap();
             assert!(
                 retrieved_context.is_some(),
                 "ENHANCED REQUIREMENT: Context retrieval should find all cache entries via comprehensive directory scanning. Key: {}",
@@ -223,17 +230,20 @@ mod comprehensive_fallback_tests {
         // Store a result and measure retrieval timing for different scenarios
         let result = create_test_research_result("efficiency test query", ResearchType::Learning);
         let context = create_test_context_result(0.85);
-        
-        let cache_key = storage.store_with_context(&result, Some(&context)).await.unwrap();
+
+        let cache_key = storage
+            .store_with_context(&result, Some(&context))
+            .await
+            .unwrap();
 
         // Test retrieval timing - this should be very fast due to intelligent ordering
         let start_time = std::time::Instant::now();
-        
+
         for _ in 0..10 {
             let retrieved = storage.retrieve(&cache_key).await.unwrap();
             assert!(retrieved.is_some(), "All retrievals should succeed");
         }
-        
+
         let total_time = start_time.elapsed();
         let avg_time_per_retrieval = total_time / 10;
 
@@ -265,25 +275,28 @@ mod fuzzy_matching_tests {
 
         // Test variations that should match via fuzzy logic
         let similar_queries = vec![
-            "how to implement async programming in rust",  // Case difference
+            "how to implement async programming in rust", // Case difference
             "How to implement async programming in Rust?", // Punctuation difference
-            "implement async programming in rust how to",  // Word order difference
+            "implement async programming in rust how to", // Word order difference
             "How do I implement async programming in Rust", // Slight phrasing difference
-            "async programming implementation in rust",     // Semantic similarity
+            "async programming implementation in rust",   // Semantic similarity
         ];
 
         for similar_query in similar_queries {
             // This will require enhanced fuzzy matching implementation
             let fuzzy_result = create_test_research_result(similar_query, ResearchType::Learning);
-            
+
             // The enhanced retrieval should find the original cache entry via fuzzy matching
             // Note: This test will initially fail until fuzzy matching is implemented
             println!("Testing fuzzy match for: '{}'", similar_query);
-            
+
             // For now, we'll test that the system doesn't crash and returns None/Some consistently
             // TODO: Implement actual fuzzy matching logic
             let retrieved = storage.retrieve(&cache_key).await.unwrap();
-            assert!(retrieved.is_some(), "Original key should always be retrievable");
+            assert!(
+                retrieved.is_some(),
+                "Original key should always be retrievable"
+            );
         }
     }
 
@@ -296,22 +309,36 @@ mod fuzzy_matching_tests {
         let storage = FileStorage::new(config).await.unwrap();
 
         // Store results with different confidence levels
-        let high_conf_result = create_test_research_result("high confidence query", ResearchType::Learning);
-        let med_conf_result = create_test_research_result("medium confidence query", ResearchType::Learning);
-        
+        let high_conf_result =
+            create_test_research_result("high confidence query", ResearchType::Learning);
+        let med_conf_result =
+            create_test_research_result("medium confidence query", ResearchType::Learning);
+
         let high_context = create_test_context_result(0.95);
         let med_context = create_test_context_result(0.65);
-        
-        let high_key = storage.store_with_context(&high_conf_result, Some(&high_context)).await.unwrap();
-        let med_key = storage.store_with_context(&med_conf_result, Some(&med_context)).await.unwrap();
+
+        let high_key = storage
+            .store_with_context(&high_conf_result, Some(&high_context))
+            .await
+            .unwrap();
+        let med_key = storage
+            .store_with_context(&med_conf_result, Some(&med_context))
+            .await
+            .unwrap();
 
         // Test that confidence thresholds are respected in fuzzy matching
         // High confidence items should be more easily found
         let high_retrieved = storage.retrieve(&high_key).await.unwrap();
         let med_retrieved = storage.retrieve(&med_key).await.unwrap();
 
-        assert!(high_retrieved.is_some(), "High confidence items should be retrievable");
-        assert!(med_retrieved.is_some(), "Medium confidence items should be retrievable");
+        assert!(
+            high_retrieved.is_some(),
+            "High confidence items should be retrievable"
+        );
+        assert!(
+            med_retrieved.is_some(),
+            "Medium confidence items should be retrievable"
+        );
 
         // TODO: Implement actual confidence-based fuzzy matching
         // For now, just ensure basic retrieval works
@@ -343,12 +370,20 @@ mod cross_context_retrieval_tests {
 
         // Store results using different combinations
         let result_std = create_test_research_result("standard storage", ResearchType::Learning);
-        let result_ctx1 = create_test_research_result("context1 storage", ResearchType::Implementation);
-        let result_ctx2 = create_test_research_result("context2 storage", ResearchType::Troubleshooting);
+        let result_ctx1 =
+            create_test_research_result("context1 storage", ResearchType::Implementation);
+        let result_ctx2 =
+            create_test_research_result("context2 storage", ResearchType::Troubleshooting);
 
         let key_std = storage.store(&result_std).await.unwrap();
-        let key_ctx1 = storage.store_with_context(&result_ctx1, Some(&context1)).await.unwrap();
-        let key_ctx2 = storage.store_with_context(&result_ctx2, Some(&context2)).await.unwrap();
+        let key_ctx1 = storage
+            .store_with_context(&result_ctx1, Some(&context1))
+            .await
+            .unwrap();
+        let key_ctx2 = storage
+            .store_with_context(&result_ctx2, Some(&context2))
+            .await
+            .unwrap();
 
         // Complete cross-context retrieval matrix - ALL must succeed with enhancement
         let retrieval_matrix = vec![
@@ -366,7 +401,10 @@ mod cross_context_retrieval_tests {
 
         for (description, cache_key, retrieval_context, should_succeed) in retrieval_matrix {
             let retrieved = if let Some(ctx) = retrieval_context {
-                storage.retrieve_with_context(cache_key, Some(ctx)).await.unwrap()
+                storage
+                    .retrieve_with_context(cache_key, Some(ctx))
+                    .await
+                    .unwrap()
             } else {
                 storage.retrieve(cache_key).await.unwrap()
             };
@@ -401,13 +439,16 @@ mod performance_regression_tests {
         for i in 0..50 {
             let query = format!("performance test query {}", i);
             let result = create_test_research_result(&query, ResearchType::Learning);
-            
+
             let key = if i % 2 == 0 {
                 storage.store(&result).await.unwrap()
             } else {
-                storage.store_with_context(&result, Some(&context)).await.unwrap()
+                storage
+                    .store_with_context(&result, Some(&context))
+                    .await
+                    .unwrap()
             };
-            
+
             stored_keys.push(key);
         }
 
@@ -438,7 +479,11 @@ mod performance_regression_tests {
             avg_time_per_retrieval
         );
 
-        println!("Enhanced retrieval performance: {} items in {:?} (avg: {:?})", 
-                 stored_keys.len(), total_time, avg_time_per_retrieval);
+        println!(
+            "Enhanced retrieval performance: {} items in {:?} (avg: {:?})",
+            stored_keys.len(),
+            total_time,
+            avg_time_per_retrieval
+        );
     }
 }

@@ -1184,7 +1184,10 @@ mod tests {
             }
         };
 
-        Some(VectorStorage::new(Arc::new(qdrant_client), embedding_service))
+        Some(VectorStorage::new(
+            Arc::new(qdrant_client),
+            embedding_service,
+        ))
     }
 
     #[test]

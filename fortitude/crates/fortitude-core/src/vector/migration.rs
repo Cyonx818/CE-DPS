@@ -2181,10 +2181,13 @@ mod tests {
             let migrations = migration_service.active_migrations.read().await;
             migrations.get(&migration_id).cloned()
         };
-        
+
         if let Some(state_lock) = state_lock {
             let state = state_lock.read().await;
-            if matches!(state.status, MigrationStatus::Paused | MigrationStatus::Failed) {
+            if matches!(
+                state.status,
+                MigrationStatus::Paused | MigrationStatus::Failed
+            ) {
                 drop(state); // Release the read lock
                 migration_service
                     .resume_migration(&migration_id)
@@ -2286,20 +2289,29 @@ mod tests {
         tokio::time::sleep(tokio::time::Duration::from_millis(100)).await;
 
         // Check migration status to determine expected rollback behavior
-        let progress = migration_service.get_migration_progress(&migration_id).await.unwrap();
-        
+        let progress = migration_service
+            .get_migration_progress(&migration_id)
+            .await
+            .unwrap();
+
         // Attempt rollback
         let rollback_result = migration_service.rollback_migration(&migration_id).await;
-        
+
         // The test should work regardless of whether migration completed or not
         match progress.is_complete() {
             true => {
                 // If migration completed, rollback should succeed
-                assert!(rollback_result.is_ok(), "Rollback should succeed for completed migration");
+                assert!(
+                    rollback_result.is_ok(),
+                    "Rollback should succeed for completed migration"
+                );
             }
             false => {
                 // If migration not completed, rollback should fail
-                assert!(rollback_result.is_err(), "Rollback should fail for incomplete migration");
+                assert!(
+                    rollback_result.is_err(),
+                    "Rollback should fail for incomplete migration"
+                );
             }
         }
     }
@@ -2381,12 +2393,21 @@ mod tests {
         match result {
             Ok(migration_id) => {
                 // Verify the migration was created with 0 items
-                let progress = migration_service.get_migration_progress(&migration_id).await.unwrap();
-                assert_eq!(progress.total_items, 0, "Empty directory should result in 0 items");
+                let progress = migration_service
+                    .get_migration_progress(&migration_id)
+                    .await
+                    .unwrap();
+                assert_eq!(
+                    progress.total_items, 0,
+                    "Empty directory should result in 0 items"
+                );
             }
             Err(e) => {
                 // If it fails, it might be due to state persistence issues, which is also valid for error handling test
-                eprintln!("Migration failed as expected for error handling test: {:?}", e);
+                eprintln!(
+                    "Migration failed as expected for error handling test: {:?}",
+                    e
+                );
             }
         }
     }

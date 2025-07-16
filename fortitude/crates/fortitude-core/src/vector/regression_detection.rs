@@ -935,9 +935,9 @@ mod tests {
             avg_latency_ms: 160.0, // 60% increase (ratio > 1.5 for Severe)
             p95_latency_ms: 175.0,
             p99_latency_ms: 190.0,
-            throughput_ops_sec: 30.0,              // 40% decrease (ratio 0.6 < 0.7 for Severe)
-            error_rate_percentage: 6.0,            // 6x increase (> 5.0 for Severe)
-            cache_hit_rate: 0.6,                   // 25% decrease
+            throughput_ops_sec: 30.0, // 40% decrease (ratio 0.6 < 0.7 for Severe)
+            error_rate_percentage: 6.0, // 6x increase (> 5.0 for Severe)
+            cache_hit_rate: 0.6,      // 25% decrease
             memory_usage_bytes: 1024 * 1024 * 800, // 800MB - 33% increase
             cpu_usage_percentage: 70.0,
             active_connections: 15,
