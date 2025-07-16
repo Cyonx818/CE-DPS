@@ -240,14 +240,14 @@ async fn run_gate(
             .template("{spinner:.blue} {msg}")
             .unwrap(),
     );
-    pb.set_message(format!("{}: {}", name, description));
+    pb.set_message(format!("{name}: {description}"));
     pb.enable_steady_tick(Duration::from_millis(100));
 
     let output = Command::new("sh")
         .arg("-c")
         .arg(command)
         .output()
-        .context(format!("Failed to execute command: {}", command))?;
+        .context(format!("Failed to execute command: {command}"))?;
 
     pb.finish_and_clear();
 
@@ -284,7 +284,7 @@ async fn run_gate(
         GateStatus::Skipped => "⏭️".yellow(),
     };
 
-    println!("{} {}: {}", status_icon, name, description);
+    println!("{status_icon} {name}: {description}");
 
     if let Some(error) = &gate.error {
         println!("   Error: {}", error.trim());
@@ -322,13 +322,13 @@ async fn count_todo_comments(args: &Args, quality_gates: &mut QualityGates) -> R
 
 async fn generate_report(args: &Args, quality_gates: &QualityGates) -> Result<QualityReport> {
     let branch = Command::new("git")
-        .args(&["branch", "--show-current"])
+        .args(["branch", "--show-current"])
         .current_dir(&args.project_path)
         .output()
         .context("Failed to get git branch")?;
 
     let commit = Command::new("git")
-        .args(&["rev-parse", "HEAD"])
+        .args(["rev-parse", "HEAD"])
         .current_dir(&args.project_path)
         .output()
         .context("Failed to get git commit")?;
@@ -384,7 +384,7 @@ fn print_summary(quality_gates: &QualityGates) {
         .count();
     let total = quality_gates.gates.len();
 
-    println!("Total Gates: {}", total);
+    println!("Total Gates: {total}");
     println!("Passed: {}", passed.to_string().green());
     println!("Failed: {}", failed.to_string().red());
     println!("TODO Comments: {}", quality_gates.todo_comments);

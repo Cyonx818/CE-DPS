@@ -107,7 +107,7 @@ async fn build_fortitude() -> Result<()> {
     pb.enable_steady_tick(Duration::from_millis(100));
 
     let output = Command::new("cargo")
-        .args(&["build", "--release"])
+        .args(["build", "--release"])
         .current_dir(&get_fortitude_dir()?)
         .output()
         .context("Failed to build Fortitude")?;
@@ -180,7 +180,7 @@ async fn start_fortitude() -> Result<()> {
 
     // Start MCP server
     let mcp_child = Command::new("cargo")
-        .args(&[
+        .args([
             "run",
             "--bin",
             "fortitude-mcp-server",
@@ -282,7 +282,7 @@ async fn update_patterns() -> Result<()> {
     let fortitude_dir = get_fortitude_dir()?;
 
     let output = Command::new("cargo")
-        .args(&[
+        .args([
             "run",
             "--bin",
             "fortitude-cli",
@@ -306,13 +306,13 @@ async fn update_patterns() -> Result<()> {
 }
 
 async fn query_knowledge(query: &str) -> Result<()> {
-    println!("Querying knowledge base: {}", query);
+    println!("Querying knowledge base: {query}");
 
     let project_dir = std::env::current_dir()?;
     let fortitude_dir = get_fortitude_dir()?;
 
     let output = Command::new("cargo")
-        .args(&[
+        .args([
             "run",
             "--bin",
             "fortitude-cli",
@@ -349,7 +349,7 @@ async fn generate_report() -> Result<()> {
     );
 
     let output = Command::new("cargo")
-        .args(&[
+        .args([
             "run",
             "--bin",
             "fortitude-cli",
@@ -446,7 +446,7 @@ fn check_process_running(pid: u32) -> bool {
     #[cfg(unix)]
     {
         Command::new("kill")
-            .args(&["-0", &pid.to_string()])
+            .args(["-0", &pid.to_string()])
             .output()
             .map(|output| output.status.success())
             .unwrap_or(false)
