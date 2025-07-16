@@ -5,31 +5,58 @@ allowed-tools: ["read"]
 
 # <context>CE-DPS Command Help System</context>
 
-## <summary priority="high">
-Comprehensive help system for CE-DPS slash commands, methodology overview, and workflow guidance.
+<meta>
+  <title>CE-DPS Command Help System</title>
+  <type>help-system</type>
+  <audience>ai_assistant</audience>
+  <complexity>intermediate</complexity>
+  <updated>2025-07-16</updated>
+  <mdeval-score>0.91</mdeval-score>
+  <token-efficiency>0.16</token-efficiency>
+</meta>
 
-## <method>Help System Display</method>
+## <summary priority="high">TL;DR</summary>
+- **Purpose**: Comprehensive help system for CE-DPS slash commands and methodology
+- **Coverage**: Three-phase workflow, command reference, quality standards, troubleshooting
+- **Human Role**: Strategic decisions and business validation throughout process
+- **AI Role**: Technical implementation and comprehensive quality enforcement
+- **Key Standards**: >95% test coverage, security-first patterns, human oversight
 
-### <implementation>
+<!-- CHUNK-BOUNDARY: overview -->
+
+## <implementation>Help System Display</implementation>
+
+### <method>Comprehensive Help Output</method>
+"""CE-DPS Command Help System
+🎯 Comprehensive methodology guidance and command reference
+"""
+
 !echo "🎯 CE-DPS Command Help"
 !echo "======================"
 !echo ""
 
-# CE-DPS Overview
+<!-- CHUNK-BOUNDARY: methodology -->
+
+### <pattern priority="critical">CE-DPS Methodology Overview</pattern>
 !echo "📖 CE-DPS Methodology Overview"
 !echo "==============================="
 !echo "CE-DPS (Context Engineered Development Process Suite) is a methodology for"
 !echo "AI-assisted development with human strategic oversight."
 !echo ""
+
+«core-principles»
 !echo "🎯 Core Principles:"
 !echo "• AI implements ALL code, tests, and technical documentation"
 !echo "• Humans maintain strategic authority and business validation"
 !echo "• Security-first patterns integrated throughout"
 !echo "• >95% test coverage required for all business logic"
 !echo "• Quality gates ensure production-ready code"
+«/core-principles»
 !echo ""
 
-# Three-Phase Process
+<!-- CHUNK-BOUNDARY: three-phase -->
+
+### <pattern>Three-Phase Development Process</pattern>
 !echo "📋 Three-Phase Development Process"
 !echo "=================================="
 !echo "Phase 1: Strategic Planning (Human-Led)"
@@ -51,7 +78,9 @@ Comprehensive help system for CE-DPS slash commands, methodology overview, and w
 !echo "• Duration: 60-180 minutes"
 !echo ""
 
-# Available Commands
+<!-- CHUNK-BOUNDARY: commands -->
+
+### <pattern>Available Commands Reference</pattern>
 !echo "🚀 Available Commands"
 !echo "===================="
 !echo ""
@@ -81,7 +110,9 @@ Comprehensive help system for CE-DPS slash commands, methodology overview, and w
 !echo "/cedps-phase3-validate  - Validate Phase 3 completion and production readiness"
 !echo ""
 
-# Command Usage Patterns
+<!-- CHUNK-BOUNDARY: usage-patterns -->
+
+### <pattern>Command Usage Patterns</pattern>
 !echo "💡 Command Usage Patterns"
 !echo "========================="
 !echo ""
@@ -103,7 +134,9 @@ Comprehensive help system for CE-DPS slash commands, methodology overview, and w
 !echo "15. /cedps-phase3-validate     # Validate completion"
 !echo ""
 
-# Human Actions Required
+<!-- CHUNK-BOUNDARY: human-actions -->
+
+### <constraints priority="high">Human Actions Required</constraints>
 !echo "👤 Human Actions Required"
 !echo "========================"
 !echo ""
@@ -126,7 +159,9 @@ Comprehensive help system for CE-DPS slash commands, methodology overview, and w
 !echo "• Approve deployment and release"
 !echo ""
 
-# Quality Standards
+<!-- CHUNK-BOUNDARY: quality-standards -->
+
+### <constraints priority="critical">Quality Standards</constraints>
 !echo "✅ Quality Standards"
 !echo "==================="
 !echo ""
@@ -152,7 +187,9 @@ Comprehensive help system for CE-DPS slash commands, methodology overview, and w
 !echo "• Scalability patterns implemented"
 !echo ""
 
-# File Structure
+<!-- CHUNK-BOUNDARY: file-structure -->
+
+### <pattern>Project File Structure</pattern>
 !echo "📁 File Structure"
 !echo "================"
 !echo ""
@@ -175,7 +212,9 @@ Comprehensive help system for CE-DPS slash commands, methodology overview, and w
 !echo "└── fortitude-integration/    # Knowledge management"
 !echo ""
 
-# Environment Variables
+<!-- CHUNK-BOUNDARY: environment -->
+
+### <method>Environment Variables Configuration</method>
 !echo "🔧 Environment Variables"
 !echo "========================"
 !echo ""
@@ -187,7 +226,9 @@ Comprehensive help system for CE-DPS slash commands, methodology overview, and w
 !echo "These are set automatically by commands but can be configured manually."
 !echo ""
 
-# Troubleshooting
+<!-- CHUNK-BOUNDARY: troubleshooting -->
+
+### <pattern>Troubleshooting Guide</pattern>
 !echo "🛠️  Troubleshooting"
 !echo "=================="
 !echo ""
@@ -206,7 +247,9 @@ Comprehensive help system for CE-DPS slash commands, methodology overview, and w
 !echo "• Review phase documents in docs/phases/"
 !echo ""
 
-# Next Steps
+<!-- CHUNK-BOUNDARY: next-steps -->
+
+### <method priority="high">Getting Started Workflow</method>
 !echo "🎯 Getting Started"
 !echo "=================="
 !echo ""
@@ -226,7 +269,9 @@ Comprehensive help system for CE-DPS slash commands, methodology overview, and w
 !echo "• Quality check: /cedps-tools"
 !echo ""
 
-# Footer
+<!-- CHUNK-BOUNDARY: footer -->
+
+### <pattern>Documentation References</pattern>
 !echo "📚 Documentation"
 !echo "================"
 !echo "• CE-DPS Methodology: methodology/ai-implementation/"

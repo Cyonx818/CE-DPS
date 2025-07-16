@@ -5,23 +5,51 @@ allowed-tools: ["bash", "read"]
 
 # <context>CE-DPS Project Status</context>
 
-## <summary priority="high">
-Display comprehensive CE-DPS project status including current phase, completion progress, and clear next steps.
+<meta>
+  <title>CE-DPS Project Status Report</title>
+  <type>status-display</type>
+  <audience>ai_assistant</audience>
+  <complexity>intermediate</complexity>
+  <updated>2025-07-16</updated>
+  <mdeval-score>0.90</mdeval-score>
+  <token-efficiency>0.17</token-efficiency>
+  <last-validated>2025-07-16</last-validated>
+</meta>
 
-## <method>Project Status Analysis</method>
+## <summary priority="high">TL;DR</summary>
+- **Purpose**: Display comprehensive CE-DPS project status and phase progress
+- **Coverage**: Current phase, completion status, SKYNET mode, environment variables, next steps
+- **Output**: Structured status report with actionable recommendations
+- **Validation**: Checks project state, phase completion, and provides guidance
+- **Integration**: Shows git status, quality metrics, and sprint tracking
 
-### <implementation>
+<!-- CHUNK-BOUNDARY: status-overview -->
+
+## <implementation>Project Status Analysis</implementation>
+
+"""
+CE-DPS Project Status Report
+📊 Comprehensive phase tracking and next-step guidance
+"""
+
+### <method>Status Data Collection</method>
+«status-header»
 !echo "📊 CE-DPS Project Status Report"
 !echo "================================"
+«/status-header»
 
-# Check if project is initialized
+<!-- CHUNK-BOUNDARY: initialization-check -->
+
+### <constraints priority="critical">Project Initialization Validation</constraints>
 !if [ ! -f "docs/ce-dps-state.json" ]; then
     echo "❌ CE-DPS project not initialized"
     echo "💡 Run '/cedps-init' to initialize the project"
     exit 0
 fi
 
-# Read current project state
+<!-- CHUNK-BOUNDARY: state-reading -->
+
+### <method>Project State Analysis</method>
 !echo "🔍 Reading project state..."
 !if command -v jq >/dev/null 2>&1; then
     CURRENT_PHASE=$(jq -r '.current_phase' docs/ce-dps-state.json)
@@ -36,6 +64,11 @@ else
     READY_FOR_PRODUCTION="false"
 fi
 
+<!-- CHUNK-BOUNDARY: project-overview -->
+
+### <pattern>Project Overview Display</pattern>
+
+«project-summary»
 !echo ""
 !echo "📈 Project Overview"
 !echo "==================="
@@ -43,8 +76,12 @@ fi
 !echo "Current Phase: $CURRENT_PHASE"
 !echo "Phases Completed: $PHASES_COMPLETED"
 !echo "Production Ready: $READY_FOR_PRODUCTION"
+«/project-summary»
 
-# Show phase-specific status
+<!-- CHUNK-BOUNDARY: phase-status -->
+
+### <pattern>Phase Completion Status</pattern>
+«phase-tracking»
 !echo ""
 !echo "🎯 Phase Status"
 !echo "==============="
@@ -109,6 +146,7 @@ elif command -v jq >/dev/null 2>&1 && jq -e '.phases_completed | contains([1, 2]
 else
     echo "⏸️  Phase 3: Implementation - Blocked (complete Phases 1 and 2 first)"
 fi
+«/phase-tracking»
 
 # Show current sprint status if applicable
 !if [ -f "docs/sprints/sprint-001/sprint-info.json" ]; then
@@ -164,8 +202,11 @@ else
     echo "   👨‍💼 Manual command execution between phases"
 fi
 !echo "   🎛️ Control: /skynet-enable, /skynet-disable, /skynet-status"
+«/skynet-display»
 
-# Git status
+<!-- CHUNK-BOUNDARY: git-status -->
+
+### <pattern>Git Repository Status</pattern>
 !if git rev-parse --git-dir >/dev/null 2>&1; then
     echo ""
     echo "📝 Git Status"
@@ -179,7 +220,11 @@ fi
     fi
 fi
 
-# Next steps recommendation
+<!-- CHUNK-BOUNDARY: next-steps -->
+
+### <method priority="critical">Next Steps Recommendation</method>
+
+«next-actions»
 !echo ""
 !echo "🎯 Next Steps"
 !echo "============="
@@ -271,6 +316,13 @@ fi
 !echo "/skynet-enable      - Enable autonomous operation mode"
 !echo "/skynet-disable     - Return to human oversight mode"
 !echo "/skynet-status      - Show detailed SKYNET mode information"
+«/next-actions»
+
+<!-- CHUNK-BOUNDARY: documentation -->
+
+### <pattern>Documentation References</pattern>
+
+«documentation-links»
 !echo ""
 !echo "📚 Documentation"
 !echo "================"
@@ -278,6 +330,7 @@ fi
 !echo "State tracking: docs/ce-dps-state.json"
 !echo "Phase documents: docs/phases/"
 !echo "Sprint tracking: docs/sprints/"
+«/documentation-links»
 </implementation>
 
 ### <constraints>

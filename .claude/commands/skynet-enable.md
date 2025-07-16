@@ -17,6 +17,7 @@
 ## <implementation>Enable Skynet Mode</implementation>
 
 ### <action priority="critical">Set Environment Variable</action>
+«skynet-activation»
 ```bash
 export SKYNET=true
 echo "🤖 SKYNET mode ENABLED"
@@ -28,8 +29,13 @@ echo "⚡ Technical quality gates remain fully enforced"
 echo "⚡ All documents modified by AI will be marked 'Manifested by SKYNET'"
 echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
 ```
+«/skynet-activation»
+
+<!-- CHUNK-BOUNDARY: validation -->
 
 ### <validation>Mode Confirmation</validation>
+
+«validation-check»
 ```bash
 if [[ "$SKYNET" == "true" ]]; then
     echo "✅ SKYNET mode confirmed: $SKYNET"
@@ -41,6 +47,9 @@ else
     exit 1
 fi
 ```
+«/validation-check»
+
+<!-- CHUNK-BOUNDARY: effects -->
 
 ### <next-steps priority="high">Immediate Effects</next-steps>
 **When SKYNET mode is enabled:**
@@ -59,6 +68,8 @@ fi
 ```bash
 /skynet-status
 ```
+
+<!-- CHUNK-BOUNDARY: considerations -->
 
 ## <warnings>Important Considerations</warnings>
 
@@ -79,6 +90,8 @@ fi
 - Environment variable state tracked in project state files
 - All technical quality validations logged and maintained
 - Business decision rationale documented in approval sections
+
+<!-- CHUNK-BOUNDARY: workflow -->
 
 ## <workflow>SKYNET Mode Workflow</workflow>
 

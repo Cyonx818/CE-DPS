@@ -6,20 +6,30 @@
   <audience>ai_assistant</audience>
   <complexity>intermediate</complexity>
   <updated>2025-07-16</updated>
+  <mdeval-score>0.93</mdeval-score>
+  <token-efficiency>0.15</token-efficiency>
+  <last-validated>2025-07-16</last-validated>
 </meta>
 
-## <summary priority="critical">Quality Gate Execution</summary>
-
+## <summary priority="critical">TL;DR</summary>
 - **Purpose**: Comprehensive CI/CD test suite with auto-fix capability
 - **Authority**: AI must fix ALL failures using optimal solutions for software health
 - **Scope**: Code formatting → linting → build → tests → security → documentation
 - **Success Criteria**: ALL quality gates pass cleanly in back-to-back runs
 - **Non-Negotiable**: Fix broken tests or broken code using best architectural solutions
 
+<!-- CHUNK-BOUNDARY: quality-pipeline -->
+
 ## <implementation priority="critical">Quality Validation Pipeline</implementation>
+
+"""
+Comprehensive quality validation with automated fixes
+🔧 Six-phase validation pipeline ensuring production readiness
+"""
 
 ### <phase>Phase 1: Code Quality Foundation</phase>
 
+«formatting-validation»
 ```bash
 # ANCHOR: Rust formatting validation
 cargo fmt --all -- --check
@@ -29,11 +39,15 @@ cargo fmt --all -- --check
 ```bash
 cargo fmt --all
 ```
+«/formatting-validation»
 
 **Success Criteria**: Zero formatting violations
 
+<!-- CHUNK-BOUNDARY: linting -->
+
 ### <phase>Phase 2: Linting Validation</phase>
 
+«linting-validation»
 ```bash
 # ANCHOR: Clippy linting with warnings as errors
 cargo clippy --workspace --all-targets --all-features -- -D warnings
@@ -43,44 +57,63 @@ cargo clippy --workspace --all-targets --all-features -- -D warnings
 ```bash
 cargo clippy --workspace --all-targets --all-features --fix --allow-dirty --allow-staged
 ```
+«/linting-validation»
 
 **Success Criteria**: Zero clippy warnings or errors
 
+<!-- CHUNK-BOUNDARY: build -->
+
 ### <phase>Phase 3: Build Validation</phase>
 
+«build-validation»
 ```bash
 # ANCHOR: Workspace build verification
 cargo build --workspace --verbose
 ```
+«/build-validation»
 
 **Success Criteria**: Clean build with no compilation errors
 
+<!-- CHUNK-BOUNDARY: testing -->
+
 ### <phase>Phase 4: Test Suite Validation</phase>
 
+«test-validation»
 ```bash
 # ANCHOR: Comprehensive test execution
 cargo test --workspace --verbose
 ```
+«/test-validation»
 
 **Success Criteria**: All tests pass, >95% coverage maintained
 
+<!-- CHUNK-BOUNDARY: security -->
+
 ### <phase>Phase 5: Security Validation</phase>
 
+«security-validation»
 ```bash
 # ANCHOR: Security audit validation
 cargo audit
 ```
+«/security-validation»
 
 **Success Criteria**: No critical security vulnerabilities
 
+<!-- CHUNK-BOUNDARY: documentation -->
+
 ### <phase>Phase 6: Documentation Validation</phase>
 
+«documentation-validation»
 ```bash
 # ANCHOR: Documentation build validation
 cargo doc --workspace --no-deps
 ```
+«/documentation-validation»
 
 **Success Criteria**: Documentation builds without errors
+
+<!-- CHUNK-BOUNDARY: extended-validation -->
 
 ## <validation priority="high">Extended Quality Gates</validation>
 
@@ -112,6 +145,8 @@ cargo run --bin fortitude-integration -- check
 ```
 
 **Purpose**: Knowledge management system validation
+
+<!-- CHUNK-BOUNDARY: requirements -->
 
 ## <constraints priority="critical">Non-Negotiable Requirements</constraints>
 
