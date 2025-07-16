@@ -403,7 +403,7 @@ impl QueryOptimizer {
     }
 
     /// Acquire semaphore for query execution
-    pub async fn acquire_query_permit(&self) -> Result<tokio::sync::SemaphorePermit, VectorError> {
+    pub async fn acquire_query_permit(&self) -> Result<tokio::sync::SemaphorePermit<'_>, VectorError> {
         match tokio::time::timeout(self.config.query_timeout, self.semaphore.acquire()).await {
             Ok(Ok(permit)) => Ok(permit),
             Ok(Err(_)) => Err(VectorError::PerformanceError(
