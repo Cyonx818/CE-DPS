@@ -7,7 +7,6 @@ use serde::{Deserialize, Serialize};
 use std::path::PathBuf;
 use std::process::Command;
 use std::time::Duration;
-use tracing::info;
 
 #[derive(Parser, Debug)]
 #[command(author, version, about, long_about = None)]
