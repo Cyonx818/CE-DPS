@@ -20,6 +20,8 @@
 echo "🤖 SKYNET MODE STATUS CHECK"
 echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
 
+<!-- CHUNK-BOUNDARY: skynet-enabled -->
+
 if [[ "$SKYNET" == "true" ]]; then
     echo "🟢 STATUS: SKYNET MODE ENABLED"
     echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
@@ -30,20 +32,27 @@ if [[ "$SKYNET" == "true" ]]; then
     echo "⚡ Technical quality gates: MAINTAINED"
     echo "⚡ Business validation: AUTO-APPROVED"
     echo ""
+«/skynet-status-header»
+«workflow-behavior-enabled»
     echo "📋 CURRENT WORKFLOW BEHAVIOR:"
     echo "   • Phase 1: Auto-generate business requirements"
     echo "   • Phase 2: Auto-select features based on complexity/dependencies"
     echo "   • Phase 3: Auto-approve business validation with logical justification"
     echo "   • Quality: All technical standards enforced (>95% coverage, security, performance)"
     echo "   • Loop: Auto-transition Phase 3 → Quality Check → Phase 2 → Phase 3..."
+«/workflow-behavior-enabled»
     echo ""
+«document-control-enabled»
     echo "📄 DOCUMENT MARKING:"
     echo "   • All AI-modified documents marked with '<!-- Manifested by SKYNET -->'"
     echo ""
     echo "🎛️ CONTROL COMMANDS:"
     echo "   • /skynet-disable - Return to human oversight mode"
     echo "   • /skynet-status - Show this status (current command)"
+«/document-control-enabled»
     
+<!-- CHUNK-BOUNDARY: skynet-disabled -->
+
 elif [[ "$SKYNET" == "false" ]]; then
     echo "🟡 STATUS: SKYNET MODE EXPLICITLY DISABLED"
     echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
@@ -87,7 +96,10 @@ else
 fi
 ```
 
+<!-- CHUNK-BOUNDARY: environment-details -->
+
 ### <environment-details>Environment Information</environment-details>
+«environment-info»
 ```bash
 echo ""
 echo "🔧 ENVIRONMENT DETAILS:"
@@ -98,8 +110,12 @@ echo "   CE_DPS_FORTITUDE_ENABLED: ${CE_DPS_FORTITUDE_ENABLED:-<not set>}"
 echo "   CE_DPS_QUALITY_GATES: ${CE_DPS_QUALITY_GATES:-<not set>}"
 echo "   CE_DPS_HUMAN_APPROVAL_REQUIRED: ${CE_DPS_HUMAN_APPROVAL_REQUIRED:-<not set>}"
 ```
+«/environment-info»
+
+<!-- CHUNK-BOUNDARY: quality-standards -->
 
 ### <quality-standards>Quality Standards (Always Enforced)</quality-standards>
+«quality-enforcement»
 ```bash
 echo ""
 echo "⚖️ QUALITY STANDARDS (MAINTAINED IN ALL MODES):"
@@ -112,8 +128,12 @@ echo "   ✅ Anchor tests: Critical functionality regression protection"
 echo "   ✅ Security patterns: Authentication, authorization, input validation"
 echo "   ✅ Documentation: API docs, deployment guides, troubleshooting"
 ```
+«/quality-enforcement»
+
+<!-- CHUNK-BOUNDARY: next-actions -->
 
 ### <next-actions>Recommended Next Actions</next-actions>
+«next-actions-display»
 ```bash
 echo ""
 echo "📋 RECOMMENDED NEXT ACTIONS:"
@@ -135,6 +155,7 @@ echo "   📚 Get help with /cedps-help"
 echo ""
 echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
 ```
+«/next-actions-display»
 
 ## <validation>Status Information Accuracy</validation>
 

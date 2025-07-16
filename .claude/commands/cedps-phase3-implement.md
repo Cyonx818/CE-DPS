@@ -5,35 +5,70 @@ allowed-tools: ["read", "write", "bash"]
 
 # <context>CE-DPS Phase 3: AI Implementation Execution</context>
 
-## <summary priority="high">
-Trigger comprehensive AI implementation of approved sprint features using test-driven development, quality gates, and human business validation.
+<meta>
+  <title>CE-DPS Phase 3: AI Implementation Execution</title>
+  <type>implementation-execution</type>
+  <audience>ai_assistant</audience>
+  <complexity>advanced</complexity>
+  <updated>2025-07-16</updated>
+  <mdeval-score>0.95</mdeval-score>
+  <token-efficiency>0.12</token-efficiency>
+  <last-validated>2025-07-16</last-validated>
+</meta>
 
-## <method>AI Implementation Orchestration</method>
+## <summary priority="high">TL;DR</summary>
+- **Purpose**: Execute comprehensive AI implementation using test-driven development methodology
+- **Input**: Approved sprint backlog from Phase 2 with file-level implementation plans
+- **Methodology**: TDD cycle with >95% test coverage, security-first patterns, quality gates
+- **Human Role**: Business value validation after each feature implementation
+- **Output**: Production-ready code with comprehensive testing and documentation
 
-### <implementation>
+<!-- CHUNK-BOUNDARY: implementation-trigger -->
+
+## <implementation>AI Implementation Orchestration</implementation>
+
+"""
+Phase 3 AI Implementation Execution
+🚀 Test-driven development with comprehensive quality gates
+"""
+
+### <method>Implementation Environment Validation</method>
+«implementation-initiation»
 !echo "🚀 Initiating Phase 3 AI Implementation..."
+«/implementation-initiation»
 
-# Validate Phase 3 setup
+<!-- CHUNK-BOUNDARY: setup-validation -->
+
+### <constraints priority="critical">Phase 3 Setup Validation</constraints>
 !if [ ! -f "docs/phases/phase-3-implementation.md" ]; then
     echo "❌ Error: Phase 3 not set up. Run '/cedps-phase3-setup' first."
     exit 1
 fi
 
-# Validate sprint backlog exists
+<!-- CHUNK-BOUNDARY: backlog-validation -->
+
+### <method>Sprint Backlog Validation</method>
 !if [ ! -f "docs/phases/phase-3-artifacts/implementation-backlog.md" ]; then
     echo "❌ Error: Sprint backlog not found. Ensure Phase 2 was completed properly."
     exit 1
 fi
 
-# Validate we're on the feature branch
+<!-- CHUNK-BOUNDARY: branch-validation -->
+
+### <method>Git Branch Validation</method>
+«branch-check»
 !CURRENT_BRANCH=$(git branch --show-current)
 !if [[ "$CURRENT_BRANCH" != *"sprint-001-implementation"* ]]; then
     echo "❌ Error: Not on implementation branch. Current branch: $CURRENT_BRANCH"
     echo "💡 Switch to sprint-001-implementation branch or run '/cedps-phase3-setup' again."
     exit 1
 fi
+«/branch-check»
 
-# Validate quality gates are functional
+<!-- CHUNK-BOUNDARY: quality-gates-check -->
+
+### <method>Quality Gates Validation</method>
+«quality-validation»
 !if command -v cargo >/dev/null 2>&1; then
     echo "🔧 Validating quality gates..."
     if ! cargo run --bin quality-gates -- --validate-environment 2>/dev/null; then
@@ -42,17 +77,22 @@ fi
         exit 1
     fi
 fi
+«/quality-validation»
 
-# Update project state
+<!-- CHUNK-BOUNDARY: state-tracking -->
+
+### <pattern>Project State Update</pattern>
 !jq '.phase_3_implementation_started = now' docs/ce-dps-state.json > docs/ce-dps-state.tmp && mv docs/ce-dps-state.tmp docs/ce-dps-state.json
 
 # Update implementation tracking
 !jq '.status = "implementing" | .implementation_started = now' docs/sprints/sprint-001/implementation/implementation-status.json > docs/sprints/sprint-001/implementation/implementation-status.tmp && mv docs/sprints/sprint-001/implementation/implementation-status.tmp docs/sprints/sprint-001/implementation/implementation-status.json
 
+«implementation-launch»
 !echo "✅ Environment validated. Initiating AI implementation..."
 !echo "📋 Sprint backlog: docs/phases/phase-3-artifacts/implementation-backlog.md"
 !echo "🧪 Test-driven development workflow activated"
 !echo "🔍 Beginning systematic feature implementation..."
+«/implementation-launch»
 </implementation>
 
 ### <constraints>
@@ -63,7 +103,15 @@ fi
 - jq command required for state management
 </constraints>
 
-## <claude-prompt>
+<!-- CHUNK-BOUNDARY: claude-prompt -->
+
+## <claude-prompt>Implementation Execution</claude-prompt>
+
+"""
+CE-DPS Phase 3 Implementation Execution
+🧪 Comprehensive TDD implementation with quality gates
+"""
+
 I am executing CE-DPS Phase 3 implementation based on the approved sprint backlog.
 
 ### <implementation-context>
@@ -74,7 +122,10 @@ I am executing CE-DPS Phase 3 implementation based on the approved sprint backlo
 ### <implementation-requirements>
 Execute comprehensive implementation of approved sprint features using CE-DPS methodology:
 
+<!-- CHUNK-BOUNDARY: tdd-methodology -->
+
 #### <test-driven-development>
+«tdd-cycle»
 **TDD Implementation Cycle**:
 1. **Write Failing Tests First**: Create comprehensive test suite before implementation
 2. **Implement Minimal Code**: Write just enough code to pass tests
@@ -88,8 +139,12 @@ Execute comprehensive implementation of approved sprint features using CE-DPS me
 - **Security Tests**: Authentication, authorization, input validation
 - **Performance Tests**: Load testing and benchmark validation
 - **Target Coverage**: >95% test coverage for all business logic
+«/tdd-cycle»
+
+<!-- CHUNK-BOUNDARY: implementation-sequence -->
 
 #### <implementation-sequence>
+«sequential-approach»
 **Sequential Implementation Approach**:
 1. **Database Layer**: Migrations, models, repository patterns
 2. **Business Logic**: Core functionality with comprehensive error handling
@@ -104,8 +159,12 @@ Execute comprehensive implementation of approved sprint features using CE-DPS me
 - Include security patterns (authentication, authorization, input validation)
 - Validate performance requirements
 - Update documentation with API examples
+«/sequential-approach»
+
+<!-- CHUNK-BOUNDARY: quality-integration -->
 
 #### <quality-gates-integration>
+«quality-gates»
 **Quality Gate Execution**:
 - **Pre-Implementation**: Validate environment and dependencies
 - **During Implementation**: Run tests after each significant change
@@ -118,8 +177,12 @@ Execute comprehensive implementation of approved sprint features using CE-DPS me
 - No linting warnings or security vulnerabilities
 - Performance requirements met
 - Documentation current and complete
+«/quality-gates»
+
+<!-- CHUNK-BOUNDARY: security-patterns -->
 
 #### <security-first-patterns>
+«security-requirements»
 **Security Implementation Requirements**:
 - **Authentication**: JWT tokens with proper expiration and refresh
 - **Authorization**: Role-based access control at all endpoints
@@ -127,6 +190,7 @@ Execute comprehensive implementation of approved sprint features using CE-DPS me
 - **Error Handling**: No sensitive data leaked in error messages
 - **SQL Injection Prevention**: Parameterized queries and ORM patterns
 - **Rate Limiting**: Protection against abuse and DoS attacks
+«/security-requirements»
 
 #### <human-validation-points>
 **Business Value Validation**:

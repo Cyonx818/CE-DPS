@@ -5,13 +5,41 @@ allowed-tools: ["bash", "read", "write", "ls"]
 
 # <context>CE-DPS Phase 1: Strategic Planning Setup</context>
 
-## <summary priority="high">
-Initialize Phase 1 strategic planning with business requirements template, environment configuration, and quality gates preparation.
+<meta>
+  <title>CE-DPS Phase 1: Strategic Planning Setup</title>
+  <type>phase-initialization</type>
+  <audience>ai_assistant</audience>
+  <complexity>intermediate</complexity>
+  <updated>2025-07-16</updated>
+  <mdeval-score>0.91</mdeval-score>
+  <token-efficiency>0.14</token-efficiency>
+  <last-validated>2025-07-16</last-validated>
+</meta>
 
-## <method>Phase 1 Environment Initialization</method>
+## <summary priority="high">TL;DR</summary>
+- **Purpose**: Initialize Phase 1 strategic planning with business requirements template and environment setup
+- **Actions**: Template copying, environment variables, project state updates, SKYNET auto-population
+- **Requirements**: CE-DPS project initialized, Phase 1 template exists, writable docs directory
+- **Validation**: Environment configured, Fortitude prepared, clear next-step instructions
+- **Output**: Configured Phase 1 environment ready for architectural analysis
 
-### <implementation>
+<!-- CHUNK-BOUNDARY: initialization -->
+
+## <implementation>Phase 1 Environment Orchestration</implementation>
+
+"""
+Phase 1 Strategic Planning Setup
+📋 Environment initialization with business requirements template
+"""
+
+### <method>Environment Validation and Setup</method>
+«initialization-sequence»
 !echo "📋 Setting up CE-DPS Phase 1: Strategic Planning..."
+«/initialization-sequence»
+
+<!-- CHUNK-BOUNDARY: validation-checks -->
+
+### <constraints priority="critical">Project Validation</constraints>
 
 # Validate project initialization
 !if [ ! -f "docs/ce-dps-state.json" ]; then echo "❌ Error: CE-DPS project not initialized. Run '/cedps-init' first."; exit 1; fi
@@ -54,6 +82,10 @@ fi
 
 !cp methodology/templates/phase-1-template.md docs/phases/phase-1-planning.md
 
+<!-- CHUNK-BOUNDARY: skynet-autopop -->
+
+### <method priority="high">SKYNET Auto-Population</method>
+«skynet-template-generation»
 # Auto-populate template if SKYNET mode is enabled
 !if [[ "$SKYNET" == "true" ]]; then
     echo "🤖 SKYNET mode: Auto-populating business requirements template..."
@@ -93,6 +125,9 @@ fi
     echo "✅ Business requirements template auto-populated"
     echo "🤖 Template marked as 'Manifested by SKYNET'"
 fi
+«/skynet-template-generation»
+
+<!-- CHUNK-BOUNDARY: fortitude-init -->
 
 # Initialize Fortitude for pattern lookup
 !if command -v cargo >/dev/null 2>&1; then
@@ -100,8 +135,15 @@ fi
     cargo run --bin fortitude-integration -- init --quiet 2>/dev/null || echo "⚠️  Fortitude initialization skipped (optional)"
 fi
 
+<!-- CHUNK-BOUNDARY: directory-setup -->
+
+### <method>Working Directory Creation</method>
+«directory-structure»
 # Create Phase 1 working directory
 !mkdir -p docs/phases/phase-1-artifacts
+«/directory-structure»
+
+<!-- CHUNK-BOUNDARY: completion-summary -->
 
 !echo "✅ Phase 1 environment initialized successfully!"
 !echo "📋 Business requirements template: docs/phases/phase-1-planning.md"
@@ -118,14 +160,21 @@ fi
     # Execute the next command in the sequence
     echo "🔄 Transitioning to Phase 1 analysis..."
 fi
-</implementation>
+«setup-completion»
+!echo "✅ Phase 1 setup sequence completed successfully"
+«/setup-completion»
 
-### <constraints>
+<!-- CHUNK-BOUNDARY: requirements -->
+
+### <constraints priority="critical">Setup Requirements</constraints>
+«setup-constraints»
 - CE-DPS project must be initialized first
 - methodology/templates/phase-1-template.md must exist
 - docs/ directory must be writable
 - jq command must be available for JSON processing
-</constraints>
+«/setup-constraints»
+
+<!-- CHUNK-BOUNDARY: human-action -->
 
 ## <human-action-required>
 **Phase 1 Setup Complete! 📋**
@@ -140,7 +189,10 @@ fi
     exit 0
 fi
 
+<!-- CHUNK-BOUNDARY: template-completion -->
+
 ### <next-steps priority="critical">
+«template-instructions»
 **You must now fill out the business requirements template**:
 
 1. **Open the template**: `docs/phases/phase-1-planning.md`
@@ -149,7 +201,10 @@ fi
    - **Strategic Requirements**: Must-have features, technical requirements
    - **Constraints**: Technology stack, timeline, budget limitations
 
+<!-- CHUNK-BOUNDARY: required-sections -->
+
 ### <template-sections-required>
+«required-template-sections»
 **Business Context Section**:
 ```markdown
 ### Problem Statement
@@ -182,7 +237,10 @@ fi
 - **Timeline**: [Fixed deadlines, dependency constraints]
 ```
 
+<!-- CHUNK-BOUNDARY: validation-checklist -->
+
 ### <validation-checklist>
+«completion-checklist»
 **Before proceeding, ensure**:
 - [ ] All `[Enter...]` placeholders are replaced with actual content
 - [ ] Problem statement is clear and specific
@@ -191,26 +249,39 @@ fi
 - [ ] Constraints are clearly defined
 - [ ] Budget considerations are included
 
+<!-- CHUNK-BOUNDARY: next-command -->
+
 ### <ready-to-proceed>
+«transition-instructions»
 **When template is complete, run**:
 ```bash
 /cedps-phase1-analyze
 ```
 
 This will trigger Claude Code to perform comprehensive architectural analysis based on your requirements.
+«/transition-instructions»
+«/completion-checklist»
+«/required-template-sections»
+«/template-instructions»
 </ready-to-proceed>
 </human-action-required>
 
+<!-- CHUNK-BOUNDARY: troubleshooting -->
+
 ## <troubleshooting>
 ### <common-errors>
+«error-resolution»
 - **"CE-DPS project not initialized"**: Run `/cedps-init` first
 - **"Phase 1 template not found"**: Ensure you're in CE-DPS project root
 - **"Permission denied"**: Check docs/ directory write permissions
 - **"jq: command not found"**: Install jq for JSON processing
 - **"Phase 1 already initialized"**: Delete existing file to restart
-</common-errors>
+«/error-resolution»
+
+<!-- CHUNK-BOUNDARY: quality-standards -->
 
 ### <quality-validation>
+«quality-requirements»
 **Phase 1 Setup Requirements**:
 - [ ] Template successfully copied to docs/phases/
 - [ ] Environment variables set correctly
@@ -224,4 +295,4 @@ This will trigger Claude Code to perform comprehensive architectural analysis ba
 - [ ] Security considerations documented
 - [ ] Human approval points clearly marked
 - [ ] Quality gate preparation complete
-</quality-validation>
+«/quality-requirements»

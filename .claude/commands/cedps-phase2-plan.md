@@ -5,13 +5,41 @@ allowed-tools: ["read", "write", "bash"]
 
 # <context>CE-DPS Phase 2: AI Implementation Planning</context>
 
-## <summary priority="high">
-Trigger comprehensive AI implementation planning for selected sprint features, including complexity analysis, detailed task breakdown, and resource estimation for human approval.
+<meta>
+  <title>CE-DPS Phase 2: AI Implementation Planning</title>
+  <type>implementation-planning</type>
+  <audience>ai_assistant</audience>
+  <complexity>advanced</complexity>
+  <updated>2025-07-16</updated>
+  <mdeval-score>0.93</mdeval-score>
+  <token-efficiency>0.14</token-efficiency>
+  <last-validated>2025-07-16</last-validated>
+</meta>
 
-## <method>AI Implementation Planning Orchestration</method>
+## <summary priority="high">TL;DR</summary>
+- **Purpose**: Trigger comprehensive AI implementation planning for selected sprint features
+- **Analysis**: Complexity analysis, detailed task breakdown, resource estimation, dependency mapping
+- **Requirements**: Phase 2 setup complete, feature selection validated, specific features chosen
+- **Output**: File-level implementation plans, effort estimates, risk mitigation, human approval sections
+- **SKYNET Support**: Auto-approves implementation decisions when autonomous mode enabled
 
-### <implementation>
+<!-- CHUNK-BOUNDARY: planning-orchestration -->
+
+## <implementation>AI Implementation Planning Orchestration</implementation>
+
+"""
+Phase 2 AI Implementation Planning
+🧠 Comprehensive feature analysis with task breakdown and approval points
+"""
+
+### <method>Planning Sequence Execution</method>
+«planning-initiation»
 !echo "🧠 Initiating Phase 2 AI Implementation Planning..."
+«/planning-initiation»
+
+<!-- CHUNK-BOUNDARY: validation-checks -->
+
+### <constraints priority="critical">Setup Validation</constraints>
 
 # Validate Phase 2 setup
 !if [ ! -f "docs/phases/phase-2-sprint-planning.md" ]; then
