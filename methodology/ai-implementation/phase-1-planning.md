@@ -8,7 +8,7 @@
 
 **Research Approach**: Parallel research subagents for comprehensive analysis
 
-**Documentation Standards**: Follow [LLM Documentation Guidelines](llm-documentation-guidelines.md) for all AI-generated documentation
+**Documentation Standards**: Follow [LLM Documentation Guidelines](llm-style-guidelines.md) for all AI-generated documentation
 
 ## <method>AI Planning Process</method>
 

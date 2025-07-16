@@ -22,7 +22,7 @@
 - **Quality Enforcement**: Comprehensive testing and validation
 - **Pattern Application**: Established best practices via Fortitude
 - **Knowledge Integration**: Pattern lookup and learning capture
-- **Documentation Standards**: [LLM Documentation Guidelines](methodology/ai-implementation/llm-documentation-guidelines.md)
+- **Documentation Standards**: [LLM Documentation Guidelines](methodology/ai-implementation/llm-style-guidelines.md)
 
 ### <pattern>Human Strategic Authority</pattern>
 - **Vision & Direction**: Project vision, business requirements
@@ -190,7 +190,7 @@ mod tests {
 - Troubleshooting + error resolution guides
 
 ### <llm-documentation>LLM Documentation Requirements</llm-documentation>
-**All documentation (.md files) generated must follow the [LLM Documentation Guidelines](methodology/ai-implementation/llm-documentation-guidelines.md) unless explicitly specified otherwise by human oversight.**
+**All documentation (.md files) generated must follow the [LLM Documentation Guidelines](methodology/ai-implementation/llm-style-guidelines.md) unless explicitly specified otherwise by human oversight.**
 
 ```xml
 <llm-documentation-framework>

@@ -97,8 +97,9 @@ cargo build --bin quality-gates
 ### <tool>Python Integration Tests</tool>
 
 ```bash
-# ANCHOR: Python test validation
-python3 -m pytest tools/phase-validator.py --doctest-modules -v
+# ANCHOR: Python test validation with forced venv activation
+source .venv/bin/activate
+python -m pytest tools/phase-validator.py --doctest-modules -v
 ```
 
 **Purpose**: Phase validation tool testing
