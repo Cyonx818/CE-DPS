@@ -564,7 +564,13 @@ We welcome contributions to improve the CE-DPS methodology:
 
 ## License
 
-This methodology is designed to be freely used and adapted by development teams. See LICENSE file for details.
+This project is licensed under the Apache License 2.0 - see the [LICENSE](LICENSE) file for details.
+
+The Apache 2.0 license provides:
+- Commercial use permitted
+- Modification and distribution allowed
+- Patent protection for contributors and users
+- Trademark protection for the CE-DPS name
 
 ---
 

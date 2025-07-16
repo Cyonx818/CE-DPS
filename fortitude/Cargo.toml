@@ -84,7 +84,7 @@ version = "0.1.0"
 edition = "2021"
 description = "AI-powered research pipeline and knowledge management system"
 repository = "https://github.com/your-org/fortitude"
-license = "MIT OR Apache-2.0"
+license = "Apache-2.0"
 
 [dependencies]
 # Workspace dependencies
