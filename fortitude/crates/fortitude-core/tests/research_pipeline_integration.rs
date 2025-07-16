@@ -6,11 +6,11 @@ use fortitude_core::{
     research_engine::{ResearchConfig, ResearchEngine},
     research_feedback::{FeedbackCollector, FeedbackType, ResearchQuality},
     vector::{
-        CacheKeyStrategy, ConnectionPoolConfig, DeviceType, DistanceMetric, DocumentMetadata, EmbeddingCacheConfig,
-        EmbeddingConfig, EmbeddingGenerator, FusionMethod, HealthCheckConfig, HybridSearchConfig,
-        HybridSearchOperations, HybridSearchRequest, HybridSearchService, LocalEmbeddingService,
-        SearchConfig, SearchOptions, SearchStrategy, SemanticSearchConfig, SemanticSearchOperations,
-        SemanticSearchService, VectorConfig, VectorStorage, VectorStorageService,
+        CacheKeyStrategy, ConnectionPoolConfig, DeviceType, DistanceMetric, DocumentMetadata,
+        EmbeddingCacheConfig, EmbeddingConfig, EmbeddingGenerator, FusionMethod, HealthCheckConfig,
+        HybridSearchConfig, HybridSearchRequest, HybridSearchService,
+        LocalEmbeddingService, SearchConfig, SearchOptions, SearchStrategy, SemanticSearchConfig,
+        SemanticSearchService, VectorConfig, VectorStorage,
     },
 };
 use fortitude_types::research::{
@@ -86,8 +86,8 @@ async fn test_anchor_enhanced_research_pipeline_workflow() {
 
     // Initialize vector components
     let embedding_service = LocalEmbeddingService::new(vector_config.embedding.clone());
-    let storage =
-        VectorStorage::new_with_config(vector_config.clone()).expect("Failed to create vector storage");
+    let storage = VectorStorage::new_with_config(vector_config.clone())
+        .expect("Failed to create vector storage");
     let search_service = SemanticSearchService::new(
         std::sync::Arc::new(storage.clone()),
         SemanticSearchConfig::default(),
@@ -182,10 +182,17 @@ async fn test_anchor_enhanced_research_pipeline_workflow() {
         .search_with_options(
             &research_request.original_query,
             SearchOptions {
-                limit: Some(5),
-                score_threshold: Some(0.6),
-                with_payload: true,
-                with_vectors: false,
+                limit: 5,
+                threshold: Some(0.6),
+                collection: None,
+                filters: vec![],
+                diversify_results: false,
+                temporal_boost: None,
+                quality_boost: None,
+                include_explanations: false,
+                min_content_length: None,
+                max_content_length: None,
+                fuzzy_matching: false,
             },
         )
         .await
@@ -270,10 +277,17 @@ async fn test_anchor_enhanced_research_pipeline_workflow() {
         .search(
             similar_query,
             SearchOptions {
-                limit: Some(3),
-                score_threshold: Some(0.5),
-                with_payload: true,
-                with_vectors: false,
+                limit: 3,
+                threshold: Some(0.5),
+                collection: None,
+                filters: vec![],
+                diversify_results: false,
+                temporal_boost: None,
+                quality_boost: None,
+                include_explanations: false,
+                min_content_length: None,
+                max_content_length: None,
+                fuzzy_matching: false,
             },
         )
         .await
@@ -291,12 +305,12 @@ async fn test_anchor_enhanced_research_pipeline_workflow() {
     // Clean up
     for (id, _, _) in &knowledge_base {
         storage
-            .delete_vector(id)
+            .delete_document(id)
             .await
             .expect("Failed to cleanup knowledge");
     }
     storage
-        .delete_vector(&result_id)
+        .delete_document(&result_id)
         .await
         .expect("Failed to cleanup result");
 }
@@ -309,8 +323,8 @@ async fn test_anchor_research_pipeline_hybrid_search() {
 
     // Initialize vector components with hybrid search
     let embedding_service = LocalEmbeddingService::new(vector_config.embedding.clone());
-    let storage =
-        VectorStorage::new_with_config(vector_config.clone()).expect("Failed to create vector storage");
+    let storage = VectorStorage::new_with_config(vector_config.clone())
+        .expect("Failed to create vector storage");
     let semantic_search = SemanticSearchService::new(
         SemanticSearchConfig::default(),
         storage.clone(),
@@ -509,7 +523,7 @@ async fn test_anchor_research_pipeline_hybrid_search() {
     // Clean up
     for (id, _, _) in &diverse_knowledge {
         storage
-            .delete_vector(id)
+            .delete_document(id)
             .await
             .expect("Failed to cleanup knowledge");
     }
@@ -523,8 +537,8 @@ async fn test_anchor_research_quality_feedback_integration() {
 
     // Initialize components
     let embedding_service = LocalEmbeddingService::new(vector_config.embedding.clone());
-    let storage =
-        VectorStorage::new_with_config(vector_config.clone()).expect("Failed to create vector storage");
+    let storage = VectorStorage::new_with_config(vector_config.clone())
+        .expect("Failed to create vector storage");
     let search_service = SemanticSearchService::new(
         std::sync::Arc::new(storage.clone()),
         SemanticSearchConfig::default(),
@@ -661,10 +675,17 @@ async fn test_anchor_research_quality_feedback_integration() {
         .search(
             feedback_query,
             SearchOptions {
-                limit: Some(5),
-                score_threshold: Some(0.3),
-                with_payload: true,
-                with_vectors: false,
+                limit: 5,
+                threshold: Some(0.3),
+                collection: None,
+                filters: vec![],
+                diversify_results: false,
+                temporal_boost: None,
+                quality_boost: None,
+                include_explanations: false,
+                min_content_length: None,
+                max_content_length: None,
+                fuzzy_matching: false,
             },
         )
         .await
@@ -731,12 +752,12 @@ async fn test_anchor_research_quality_feedback_integration() {
     // Clean up
     for (id, _, _) in &initial_knowledge {
         storage
-            .delete_vector(id)
+            .delete_document(id)
             .await
             .expect("Failed to cleanup knowledge");
     }
     storage
-        .delete_vector(&result_id)
+        .delete_document(&result_id)
         .await
         .expect("Failed to cleanup result");
 }
@@ -749,8 +770,8 @@ async fn test_anchor_research_pipeline_performance_integration() {
 
     // Initialize components with performance tracking
     let embedding_service = LocalEmbeddingService::new(vector_config.embedding.clone());
-    let storage =
-        VectorStorage::new_with_config(vector_config.clone()).expect("Failed to create vector storage");
+    let storage = VectorStorage::new_with_config(vector_config.clone())
+        .expect("Failed to create vector storage");
     let search_service = SemanticSearchService::new(
         SemanticSearchConfig {
             enable_explain: true,
@@ -880,10 +901,17 @@ async fn test_anchor_research_pipeline_performance_integration() {
         .search(
             cache_test_query,
             SearchOptions {
-                limit: Some(3),
-                score_threshold: Some(0.4),
-                with_payload: true,
-                with_vectors: false,
+                limit: 3,
+                threshold: Some(0.4),
+                collection: None,
+                filters: vec![],
+                diversify_results: false,
+                temporal_boost: None,
+                quality_boost: None,
+                include_explanations: false,
+                min_content_length: None,
+                max_content_length: None,
+                fuzzy_matching: false,
             },
         )
         .await
@@ -896,10 +924,17 @@ async fn test_anchor_research_pipeline_performance_integration() {
         .search(
             cache_test_query,
             SearchOptions {
-                limit: Some(3),
-                score_threshold: Some(0.4),
-                with_payload: true,
-                with_vectors: false,
+                limit: 3,
+                threshold: Some(0.4),
+                collection: None,
+                filters: vec![],
+                diversify_results: false,
+                temporal_boost: None,
+                quality_boost: None,
+                include_explanations: false,
+                min_content_length: None,
+                max_content_length: None,
+                fuzzy_matching: false,
             },
         )
         .await
@@ -943,7 +978,7 @@ async fn test_anchor_research_pipeline_performance_integration() {
     // Clean up
     for (id, _, _) in &knowledge_items {
         storage
-            .delete_vector(id)
+            .delete_document(id)
             .await
             .expect("Failed to cleanup knowledge");
     }

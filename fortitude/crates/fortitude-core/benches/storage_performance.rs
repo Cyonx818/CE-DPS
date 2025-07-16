@@ -5,11 +5,9 @@
 use criterion::{black_box, criterion_group, criterion_main, BenchmarkId, Criterion, Throughput};
 use fortitude_core::vector::{
     DistanceMetric, EmbeddingConfig, EmbeddingGenerator, LocalEmbeddingService, MigrationConfig,
-    MigrationService, SearchConfig, SimilaritySearchResult, VectorConfig, VectorDocument,
-    VectorStorage,
+    SearchConfig, SimilaritySearchResult, VectorConfig, VectorDocument,
 };
 use std::collections::HashMap;
-use std::sync::Arc;
 use std::time::Duration;
 use tokio::runtime::Runtime;
 use uuid::Uuid;

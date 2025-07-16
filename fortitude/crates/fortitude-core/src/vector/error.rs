@@ -235,28 +235,28 @@ mod tests {
     #[test]
     fn test_vector_error_display_formatting() {
         let config_error = VectorError::ConfigurationError("Invalid URL".to_string());
-        let error_message = format!("{}", config_error);
+        let error_message = format!("{config_error}");
         assert!(error_message.contains("Invalid configuration"));
         assert!(error_message.contains("Invalid URL"));
 
         let connection_error = VectorError::ConnectionError {
             message: "Connection refused".to_string(),
         };
-        let error_message = format!("{}", connection_error);
+        let error_message = format!("{connection_error}");
         assert!(error_message.contains("Connection failed"));
         assert!(error_message.contains("Connection refused"));
 
         let timeout_error = VectorError::TimeoutError {
             duration: Duration::from_secs(30),
         };
-        let error_message = format!("{}", timeout_error);
+        let error_message = format!("{timeout_error}");
         assert!(error_message.contains("timeout"));
         assert!(error_message.contains("30s"));
 
         let collection_error = VectorError::CollectionNotFound {
             collection: "test_collection".to_string(),
         };
-        let error_message = format!("{}", collection_error);
+        let error_message = format!("{collection_error}");
         assert!(error_message.contains("Collection not found"));
         assert!(error_message.contains("test_collection"));
 
@@ -264,7 +264,7 @@ mod tests {
             expected: 384,
             actual: 256,
         };
-        let error_message = format!("{}", dimension_error);
+        let error_message = format!("{dimension_error}");
         assert!(error_message.contains("Invalid vector dimensions"));
         assert!(error_message.contains("384"));
         assert!(error_message.contains("256"));
@@ -273,7 +273,7 @@ mod tests {
     #[test]
     fn test_vector_error_debug_formatting() {
         let embedding_error = VectorError::EmbeddingError("Test error".to_string());
-        let debug_message = format!("{:?}", embedding_error);
+        let debug_message = format!("{embedding_error:?}");
         assert!(debug_message.contains("EmbeddingError"));
         assert!(debug_message.contains("Test error"));
     }
@@ -373,8 +373,7 @@ mod tests {
                     || error_string.contains("parse")
                     || error_string.contains("line")
                     || error_string.contains("column"),
-                "Error message should indicate parsing issue: {}",
-                error_string
+                "Error message should indicate parsing issue: {error_string}"
             );
         }
     }
@@ -386,7 +385,7 @@ mod tests {
             reason: "Service unavailable".to_string(),
         };
         assert!(health_error.is_retryable());
-        assert!(format!("{}", health_error).contains("Health check failed"));
+        assert!(format!("{health_error}").contains("Health check failed"));
 
         // Test operation failed error
         let op_error = VectorError::OperationFailed {
@@ -394,24 +393,24 @@ mod tests {
             reason: "Invalid payload".to_string(),
         };
         assert!(!op_error.is_retryable()); // Default case is non-retryable
-        assert!(format!("{}", op_error).contains("upsert"));
+        assert!(format!("{op_error}").contains("upsert"));
 
         // Test index not ready error
         let index_error = VectorError::IndexNotReady {
             collection: "documents".to_string(),
         };
         assert!(index_error.is_retryable());
-        assert!(format!("{}", index_error).contains("Index not ready"));
+        assert!(format!("{index_error}").contains("Index not ready"));
 
         // Test performance error
         let perf_error = VectorError::PerformanceError("High latency detected".to_string());
         assert!(perf_error.is_retryable());
-        assert!(format!("{}", perf_error).contains("Performance error"));
+        assert!(format!("{perf_error}").contains("Performance error"));
 
         // Test resource limit error
         let limit_error = VectorError::ResourceLimitExceeded("Memory exhausted".to_string());
         assert!(!limit_error.is_retryable());
-        assert!(format!("{}", limit_error).contains("Resource limit exceeded"));
+        assert!(format!("{limit_error}").contains("Resource limit exceeded"));
     }
 
     #[test]
@@ -454,8 +453,8 @@ mod tests {
         assert!(long_timeout.is_retryable());
 
         // Should display different durations
-        let short_msg = format!("{}", short_timeout);
-        let long_msg = format!("{}", long_timeout);
+        let short_msg = format!("{short_timeout}");
+        let long_msg = format!("{long_timeout}");
         assert!(short_msg.contains("500ms") || short_msg.contains("0.5"));
         assert!(long_msg.contains("60s") || long_msg.contains("1m"));
     }
@@ -507,7 +506,7 @@ mod tests {
         // Each error should have a defined retryability behavior
         for error in all_errors {
             let _is_retryable = error.is_retryable();
-            let _error_message = format!("{}", error);
+            let _error_message = format!("{error}");
             // Just ensure no panics occur
         }
     }

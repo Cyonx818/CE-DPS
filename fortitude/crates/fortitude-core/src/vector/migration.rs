@@ -13,6 +13,7 @@ use chrono::{DateTime, Utc};
 use fortitude_types::{
     research::{Detail, Evidence, ResearchResult, ResearchType},
     storage::StorageConfig,
+    Storage,
 };
 use serde::{Deserialize, Serialize};
 use std::collections::HashMap;
@@ -78,7 +79,7 @@ pub enum MigrationSource {
     /// Individual JSON file
     JsonFile { file_path: PathBuf },
     /// In-memory data source
-    InMemory { 
+    InMemory {
         data: Vec<ResearchResult>,
         source_name: String,
     },
@@ -573,11 +574,9 @@ impl MigrationService {
 
     /// Start a new migration operation
     #[instrument(skip(self, source))]
-    pub async fn start_migration(
-        &self,
-        source: MigrationSource,
-    ) -> MigrationResult<String> {
-        self.start_migration_with_config(source, MigrationConfig::default()).await
+    pub async fn start_migration(&self, source: MigrationSource) -> MigrationResult<String> {
+        self.start_migration_with_config(source, MigrationConfig::default())
+            .await
     }
 
     /// Start a new migration operation with custom configuration
@@ -1106,7 +1105,9 @@ impl MigrationService {
                     MigrationSource::StorageSystem { .. } => "storage_system".to_string(),
                     MigrationSource::JsonDirectory { .. } => "json_directory".to_string(),
                     MigrationSource::JsonFile { .. } => "json_file".to_string(),
-                    MigrationSource::InMemory { source_name, .. } => format!("in_memory_{}", source_name),
+                    MigrationSource::InMemory { source_name, .. } => {
+                        format!("in_memory_{source_name}")
+                    }
                 },
             });
         }
@@ -1238,7 +1239,10 @@ impl MigrationService {
                 self.load_from_json_directory(directory_path).await
             }
             MigrationSource::JsonFile { file_path } => self.load_from_json_file(file_path).await,
-            MigrationSource::InMemory { data, source_name: _ } => Ok(data.clone()),
+            MigrationSource::InMemory {
+                data,
+                source_name: _,
+            } => Ok(data.clone()),
         }
     }
 
@@ -1409,7 +1413,10 @@ impl MigrationService {
             MigrationSource::JsonFile { .. } => {
                 Ok(1) // Single file
             }
-            MigrationSource::InMemory { data, source_name: _ } => Ok(data.len() as u64),
+            MigrationSource::InMemory {
+                data,
+                source_name: _,
+            } => Ok(data.len() as u64),
         }
     }
 
@@ -1923,8 +1930,8 @@ mod tests {
         let mut file_paths = Vec::new();
 
         for i in 0..3 {
-            let result = create_test_research_result(&format!("test_key_{}", i));
-            let file_path = temp_dir.path().join(format!("test_result_{}.json", i));
+            let result = create_test_research_result(&format!("test_key_{i}"));
+            let file_path = temp_dir.path().join(format!("test_result_{i}.json"));
 
             let json = serde_json::to_string_pretty(&result).unwrap();
             fs::write(&file_path, json).await.unwrap();
@@ -2278,7 +2285,7 @@ mod tests {
 
         // Check that state file was created
         let state_dir = temp_dir.path().join("migration_states");
-        let state_file = state_dir.join(format!("{}.json", migration_id));
+        let state_file = state_dir.join(format!("{migration_id}.json"));
         assert!(state_file.exists());
 
         // Create new service instance to test loading
@@ -2431,8 +2438,7 @@ mod tests {
             Err(e) => {
                 // If it fails, it might be due to state persistence issues, which is also valid for error handling test
                 eprintln!(
-                    "Migration failed as expected for error handling test: {:?}",
-                    e
+                    "Migration failed as expected for error handling test: {e:?}"
                 );
             }
         }

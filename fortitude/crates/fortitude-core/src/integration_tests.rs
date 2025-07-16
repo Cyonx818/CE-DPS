@@ -424,8 +424,7 @@ mod tests {
 
             assert!(
                 has_mapping,
-                "Missing strategy mapping for {:?}: {}",
-                research_type, description
+                "Missing strategy mapping for {research_type:?}: {description}"
             );
         }
     }

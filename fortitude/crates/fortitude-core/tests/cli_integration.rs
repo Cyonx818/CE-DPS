@@ -1,15 +1,10 @@
 //! Integration tests for CLI commands with vector services.
 //! These tests verify CLI functionality works correctly with the public API.
 
-use fortitude_core::vector::{DistanceMetric, VectorConfig, VectorStorageService};
-// Additional imports available for future use
-// use fortitude_core::vector::{
-//     CacheKeyStrategy, ConnectionPoolConfig, DeviceType, DistanceMetric, EmbeddingCacheConfig,
-//     EmbeddingConfig, EmbeddingGenerator, FusionMethod, HealthCheckConfig, HybridSearchConfig,
-//     HybridSearchService, LocalEmbeddingService, MigrationConfig,
-//     MigrationService, SearchOptions, SearchStrategy, SemanticSearchConfig,
-//     SemanticSearchService, VectorStorage,
-// };
+use fortitude_core::vector::{
+    config::{ConnectionPoolConfig, DistanceMetric, HealthCheckConfig, VectorConfig},
+    embeddings::{CacheKeyStrategy, DeviceType, EmbeddingCacheConfig, EmbeddingConfig},
+};
 use serde_json;
 use std::fs;
 use std::process::Command;
@@ -34,10 +29,8 @@ fn create_test_cli_config() -> VectorConfig {
         },
         connection_pool: ConnectionPoolConfig {
             max_connections: 10,
-            min_connections: 2,
             connection_timeout: Duration::from_secs(10),
             idle_timeout: Duration::from_secs(600),
-            max_lifetime: Duration::from_secs(3600),
         },
         embedding: EmbeddingConfig {
             model_name: "sentence-transformers/all-MiniLM-L6-v2".to_string(),

@@ -1757,11 +1757,10 @@ mod tests {
         // Cache hits should be very fast (much less than 50ms)
         assert!(
             retrieval_time.as_millis() < 50,
-            "Cache hit should be fast (<50ms), got: {:?}",
-            retrieval_time
+            "Cache hit should be fast (<50ms), got: {retrieval_time:?}"
         );
 
-        println!("Cache hit retrieval time: {:?}", retrieval_time);
+        println!("Cache hit retrieval time: {retrieval_time:?}");
     }
 
     /// ANCHOR: Test pipeline-storage cache key integration
@@ -1844,8 +1843,8 @@ mod tests {
 
         result.metadata.cache_key = pipeline_key.clone();
 
-        println!("Testing cache functionality with query: '{}'", test_query);
-        println!("Pipeline generated cache key: {}", pipeline_key);
+        println!("Testing cache functionality with query: '{test_query}'");
+        println!("Pipeline generated cache key: {pipeline_key}");
 
         // First run: Store the result (cache miss)
         let first_run_start = std::time::Instant::now();
@@ -1870,13 +1869,12 @@ mod tests {
         assert_eq!(cached.request.original_query, test_query);
 
         // Cache hit should be much faster than initial processing
-        println!("First run (storage): {:?}", first_run_time);
-        println!("Second run (cache hit): {:?}", second_run_time);
+        println!("First run (storage): {first_run_time:?}");
+        println!("Second run (cache hit): {second_run_time:?}");
 
         assert!(
             second_run_time.as_millis() < 50,
-            "✅ Cache hit should be fast (<50ms), got: {:?}",
-            second_run_time
+            "✅ Cache hit should be fast (<50ms), got: {second_run_time:?}"
         );
 
         // Test that both retrieval methods work with the same key
@@ -1893,8 +1891,7 @@ mod tests {
         );
         assert!(
             context_retrieval_time.as_millis() < 50,
-            "✅ Context-aware cache hit should also be fast (<50ms), got: {:?}",
-            context_retrieval_time
+            "✅ Context-aware cache hit should also be fast (<50ms), got: {context_retrieval_time:?}"
         );
 
         println!("✅ Cache functionality working correctly:");
@@ -1935,8 +1932,8 @@ mod tests {
         result.metadata.cache_key = realistic_cache_key.clone();
         result.metadata.processing_time_ms = 1500; // Simulate longer processing for first run
 
-        println!("🔍 CLI Scenario Test: Query = '{}'", cli_query);
-        println!("📝 Generated cache key: {}", realistic_cache_key);
+        println!("🔍 CLI Scenario Test: Query = '{cli_query}'");
+        println!("📝 Generated cache key: {realistic_cache_key}");
 
         // ===== First CLI run (cache miss) =====
         println!("\n📥 FIRST RUN (cache miss):");
@@ -1948,8 +1945,8 @@ mod tests {
             storage_key, realistic_cache_key,
             "Storage should use CLI pipeline cache key"
         );
-        println!("   ✅ Stored with key: {}", storage_key);
-        println!("   ⏱️  Storage time: {:?}", first_run_duration);
+        println!("   ✅ Stored with key: {storage_key}");
+        println!("   ⏱️  Storage time: {first_run_duration:?}");
 
         // ===== Second CLI run (cache hit) =====
         println!("\n📤 SECOND RUN (cache hit):");
@@ -1968,7 +1965,7 @@ mod tests {
 
         // Verify cache hit is fast (requirement: <50ms)
         println!("   ✅ Found cached result!");
-        println!("   ⏱️  Retrieval time: {:?}", second_run_duration);
+        println!("   ⏱️  Retrieval time: {second_run_duration:?}");
         println!(
             "   📊 Processing time from cache: {}ms",
             cached.metadata.processing_time_ms
@@ -1976,15 +1973,14 @@ mod tests {
 
         assert!(
             second_run_duration.as_millis() < 50,
-            "✅ Cache hit should be <50ms (requirement), got: {:?}",
-            second_run_duration
+            "✅ Cache hit should be <50ms (requirement), got: {second_run_duration:?}"
         );
 
         // ===== Summary =====
         println!("\n🎉 CLI CACHE SCENARIO RESULTS:");
-        println!("   Query: '{}'", cli_query);
-        println!("   First run:  {:?} (cache miss)", first_run_duration);
-        println!("   Second run: {:?} (cache hit)", second_run_duration);
+        println!("   Query: '{cli_query}'");
+        println!("   First run:  {first_run_duration:?} (cache miss)");
+        println!("   Second run: {second_run_duration:?} (cache hit)");
         println!(
             "   Speed improvement: {:.1}x faster",
             first_run_duration.as_nanos() as f64 / second_run_duration.as_nanos() as f64
@@ -1995,7 +1991,7 @@ mod tests {
         } else {
             "❌ Cache miss or slow retrieval"
         };
-        println!("   Status: {}", cache_hit_indicator);
+        println!("   Status: {cache_hit_indicator}");
     }
 
     /// ANCHOR: Test cross-context retrieval fallback logic comprehensiveness
@@ -2038,8 +2034,8 @@ mod tests {
             .await
             .unwrap();
 
-        println!("Standard storage key: {}", key_standard);
-        println!("Context storage key: {}", key_context);
+        println!("Standard storage key: {key_standard}");
+        println!("Context storage key: {key_context}");
 
         // Test cross-context retrieval matrix
         let test_cases = vec![
@@ -2062,16 +2058,13 @@ mod tests {
             if should_succeed {
                 assert!(
                     retrieved.is_some(),
-                    "ENHANCED REQUIREMENT: {} retrieval should succeed with comprehensive fallback. Key: {}",
-                    description, cache_key
+                    "ENHANCED REQUIREMENT: {description} retrieval should succeed with comprehensive fallback. Key: {cache_key}"
                 );
-                println!("{}: SUCCESS", description);
+                println!("{description}: SUCCESS");
+            } else if retrieved.is_none() {
+                println!("{description}: EXPECTED FAILURE");
             } else {
-                if retrieved.is_none() {
-                    println!("{}: EXPECTED FAILURE", description);
-                } else {
-                    println!("{}: UNEXPECTED SUCCESS", description);
-                }
+                println!("{description}: UNEXPECTED SUCCESS");
             }
         }
     }
@@ -2089,7 +2082,7 @@ mod tests {
         result.request.original_query = original_query.to_string();
 
         let cache_key = storage.store(&result).await.unwrap();
-        println!("Stored with key: {}", cache_key);
+        println!("Stored with key: {cache_key}");
 
         // Test variations that should match via fuzzy logic (if implemented)
         let similar_queries = vec![
@@ -2101,7 +2094,7 @@ mod tests {
         ];
 
         for similar_query in similar_queries {
-            println!("Testing fuzzy match for: '{}'", similar_query);
+            println!("Testing fuzzy match for: '{similar_query}'");
 
             // Create a new research result with the similar query
             let mut fuzzy_result = create_test_result();
@@ -2110,7 +2103,7 @@ mod tests {
             // The current implementation generates cache keys based on query content
             // so similar queries would get different cache keys
             let fuzzy_key = storage.generate_cache_key(&fuzzy_result);
-            println!("  Generated key: {}", fuzzy_key);
+            println!("  Generated key: {fuzzy_key}");
 
             // Try to retrieve with the fuzzy key - this tests if fuzzy matching is implemented
             let retrieved = storage.retrieve(&fuzzy_key).await.unwrap();
@@ -2154,7 +2147,7 @@ mod tests {
 
         // Store items in different ways to create files in various locations
         for i in 0..10 {
-            let query = format!("efficiency test query {}", i);
+            let query = format!("efficiency test query {i}");
             let mut result = create_test_result();
             result.request.original_query = query;
 
@@ -2186,9 +2179,9 @@ mod tests {
 
         println!("EFFICIENCY METRICS:");
         println!("  Items stored: {}", stored_keys.len());
-        println!("  Successful retrievals: {}", successful_retrievals);
-        println!("  Total retrieval time: {:?}", total_time);
-        println!("  Average time per retrieval: {:?}", avg_time_per_retrieval);
+        println!("  Successful retrievals: {successful_retrievals}");
+        println!("  Total retrieval time: {total_time:?}");
+        println!("  Average time per retrieval: {avg_time_per_retrieval:?}");
 
         // All stored items should be retrievable
         assert_eq!(
@@ -2200,8 +2193,7 @@ mod tests {
         // Performance should be reasonable (this is more of a monitoring test)
         assert!(
             avg_time_per_retrieval.as_millis() < 100,
-            "Average retrieval time should be reasonable: {:?}",
-            avg_time_per_retrieval
+            "Average retrieval time should be reasonable: {avg_time_per_retrieval:?}"
         );
 
         println!("OPTIMIZATION OPPORTUNITIES:");

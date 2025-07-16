@@ -5,9 +5,9 @@
 use fortitude_core::vector::{
     client::QdrantClient,
     config::VectorConfig,
-    embeddings::LocalEmbeddingService,
+    embeddings::{EmbeddingConfig, LocalEmbeddingService},
     hybrid::{
-        FusionMethod, HybridSearchConfig, HybridSearchRequest, HybridSearchService,
+        FusionMethod, HybridSearchConfig, HybridSearchOperations, HybridSearchService,
         KeywordSearcher, SearchStrategy,
     },
     search::{SearchOptions, SemanticSearchService},

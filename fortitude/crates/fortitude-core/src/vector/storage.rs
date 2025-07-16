@@ -6,6 +6,7 @@
 
 use crate::vector::{
     client::QdrantClient,
+    config::VectorConfig,
     embeddings::{EmbeddingGenerator, LocalEmbeddingService},
     error::{VectorError, VectorResult},
 };
@@ -202,16 +203,16 @@ impl VectorStorage {
     pub async fn from_config(config: VectorConfig) -> VectorResult<Self> {
         // Create Qdrant client
         let qdrant_client = Arc::new(QdrantClient::new(config.clone()).await?);
-        
+
         // Create embedding service
         let embedding_service = Arc::new(LocalEmbeddingService::new(config.embedding.clone()));
-        
+
         // Create storage instance
         let storage = Self::new(qdrant_client, embedding_service);
-        
+
         // Initialize the storage
         storage.initialize().await?;
-        
+
         Ok(storage)
     }
 
@@ -221,11 +222,11 @@ impl VectorStorage {
     /// missing Qdrant servers.
     pub fn new_with_config(config: VectorConfig) -> VectorResult<Self> {
         use tokio::runtime::Runtime;
-        
+
         let rt = Runtime::new().map_err(|e| {
-            VectorError::from_connection_error(format!("Failed to create async runtime: {}", e))
+            VectorError::from_connection_error(format!("Failed to create async runtime: {e}"))
         })?;
-        
+
         rt.block_on(Self::from_config(config))
     }
 
@@ -1619,9 +1620,9 @@ mod tests {
             content_type: "a".repeat(1000),
             quality_score: Some(1.0),
             source: Some("https://very-long-domain-name.example.com/path/to/resource".to_string()),
-            tags: (0..100).map(|i| format!("tag_{}", i)).collect(),
+            tags: (0..100).map(|i| format!("tag_{i}")).collect(),
             custom_fields: (0..50)
-                .map(|i| (format!("field_{}", i), serde_json::json!(i)))
+                .map(|i| (format!("field_{i}"), serde_json::json!(i)))
                 .collect(),
         };
 
@@ -1702,8 +1703,8 @@ mod tests {
         assert_eq!(stats.total_documents, 100);
 
         // Simulate search operations with running average
-        let search_times = vec![10.0, 20.0, 30.0, 40.0, 50.0];
-        for (_i, time) in search_times.iter().enumerate() {
+        let search_times = [10.0, 20.0, 30.0, 40.0, 50.0];
+        for time in search_times.iter() {
             stats.total_searches += 1;
             let current_avg = stats.avg_search_latency_ms;
             let current_count = stats.total_searches as f64;

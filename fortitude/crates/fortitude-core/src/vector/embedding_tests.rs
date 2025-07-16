@@ -283,13 +283,11 @@ mod tests {
         
         let service = LocalEmbeddingService::new(config);
         
-        let test_texts = vec![
-            "First text".to_string(),
+        let test_texts = ["First text".to_string(),
             "Second text".to_string(),
             "Third text".to_string(),
             "Fourth text".to_string(),
-            "Fifth text".to_string(),
-        ];
+            "Fifth text".to_string()];
         
         // This should handle batching internally (though we can't test the actual embeddings without a model)
         // We're testing that the structure handles batch processing correctly
@@ -401,7 +399,7 @@ mod tests {
         for i in 0..10 {
             let service_clone = service.clone();
             let handle = tokio::spawn(async move {
-                let key = format!("test_key_{}", i);
+                let key = format!("test_key_{i}");
                 service_clone.cache.insert(key.clone(), CachedEmbedding {
                     embedding: vec![i as f32; 384],
                     cached_at: std::time::Instant::now(),
