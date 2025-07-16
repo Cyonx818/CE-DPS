@@ -3,9 +3,12 @@
 //! including client initialization, collection management, and health checks.
 
 use criterion::{black_box, criterion_group, criterion_main, BenchmarkId, Criterion, Throughput};
-use fortitude_core::vector::{
-    EmbeddingConfig, EmbeddingGenerator, LocalEmbeddingService, QdrantClient, VectorConfig,
-    VectorOperation, VectorRequest,
+use fortitude_core::{
+    ApiClient,
+    vector::{
+        EmbeddingConfig, EmbeddingGenerator, LocalEmbeddingService, QdrantClient, VectorConfig,
+        VectorOperation, VectorRequest,
+    },
 };
 use std::time::Duration;
 use tokio::runtime::Runtime;

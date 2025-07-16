@@ -1811,14 +1811,12 @@ mod tests {
         );
 
         // Test all fusion method variants
-        let methods = vec![
-            FusionMethod::ReciprocalRankFusion,
+        let methods = [FusionMethod::ReciprocalRankFusion,
             FusionMethod::WeightedScoring,
             FusionMethod::RankFusion,
             FusionMethod::MaxScore,
             FusionMethod::LinearInterpolation,
-            FusionMethod::MLFusion,
-        ];
+            FusionMethod::MLFusion];
 
         assert_eq!(methods.len(), 6);
     }
@@ -1830,13 +1828,11 @@ mod tests {
         assert_ne!(QueryType::Technical, QueryType::Keywords);
 
         // Test all query type variants
-        let types = vec![
-            QueryType::Conceptual,
+        let types = [QueryType::Conceptual,
             QueryType::Technical,
             QueryType::Question,
             QueryType::Keywords,
-            QueryType::Mixed,
-        ];
+            QueryType::Mixed];
 
         assert_eq!(types.len(), 5);
     }

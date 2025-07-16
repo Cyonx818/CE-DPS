@@ -154,7 +154,7 @@ async fn test_anchor_vector_storage_workflow() {
         // Validate vector values are in reasonable range
         for &value in &mock_vector {
             assert!(
-                value >= 0.0 && value <= 1.0,
+                (0.0..=1.0).contains(&value),
                 "Vector values should be normalized"
             );
         }
@@ -203,16 +203,14 @@ async fn test_anchor_embedding_generation_workflow() {
         assert_eq!(
             mock_embedding.len(),
             config.vector_dimensions,
-            "Embedding should have correct dimensions for text: {}",
-            text
+            "Embedding should have correct dimensions for text: {text}"
         );
 
         // Verify embedding values are reasonable (not all zeros)
         let sum: f32 = mock_embedding.iter().sum();
         assert!(
             sum.abs() > 0.001,
-            "Embedding should not be zero vector for text: {}",
-            text
+            "Embedding should not be zero vector for text: {text}"
         );
 
         // Test embedding normalization
@@ -277,8 +275,7 @@ async fn test_anchor_semantic_search_workflow() {
 
         if !contains_expected {
             eprintln!(
-                "Note: Query '{}' may not contain expected keyword '{}'",
-                query, expected_keyword
+                "Note: Query '{query}' may not contain expected keyword '{expected_keyword}'"
             );
         }
 
@@ -286,7 +283,7 @@ async fn test_anchor_semantic_search_workflow() {
         let similarity_thresholds = vec![0.1, 0.5, 0.8, 0.95];
         for threshold in similarity_thresholds {
             assert!(
-                threshold >= 0.0 && threshold <= 1.0,
+                (0.0..=1.0).contains(&threshold),
                 "Similarity threshold should be between 0 and 1"
             );
         }
@@ -333,12 +330,12 @@ async fn test_anchor_hybrid_search_workflow() {
         );
 
         assert!(
-            vector_weight >= 0.0 && vector_weight <= 1.0,
+            (0.0..=1.0).contains(&vector_weight),
             "Vector weight should be between 0 and 1"
         );
 
         assert!(
-            keyword_weight >= 0.0 && keyword_weight <= 1.0,
+            (0.0..=1.0).contains(&keyword_weight),
             "Keyword weight should be between 0 and 1"
         );
     }
@@ -374,21 +371,20 @@ async fn test_anchor_hybrid_search_workflow() {
 
             if !contains_keyword {
                 eprintln!(
-                    "Note: Query '{}' may not contain expected keyword '{}'",
-                    query, expected_keyword
+                    "Note: Query '{query}' may not contain expected keyword '{expected_keyword}'"
                 );
             }
         }
 
         // Test fusion score calculation simulation
-        let mock_vector_scores = vec![0.85, 0.72, 0.68];
-        let mock_keyword_scores = vec![0.92, 0.45, 0.78];
+        let mock_vector_scores = [0.85, 0.72, 0.68];
+        let mock_keyword_scores = [0.92, 0.45, 0.78];
 
         for i in 0..mock_vector_scores.len() {
             // Test weighted sum fusion
             let weighted_sum_score = 0.7 * mock_vector_scores[i] + 0.3 * mock_keyword_scores[i];
             assert!(
-                weighted_sum_score >= 0.0 && weighted_sum_score <= 1.0,
+                (0.0..=1.0).contains(&weighted_sum_score),
                 "Weighted sum fusion score should be normalized"
             );
 
@@ -451,7 +447,7 @@ async fn test_anchor_migration_integrity_workflow() {
         let mut hasher = std::collections::hash_map::DefaultHasher::new();
         content.hash(&mut hasher);
         let content_hash = format!("{:x}", hasher.finish());
-        assert!(content_hash.len() > 0, "Content hash should not be empty");
+        assert!(!content_hash.is_empty(), "Content hash should not be empty");
 
         // Test migration metadata structure
         let migration_metadata = serde_json::json!({
@@ -479,7 +475,7 @@ async fn test_anchor_migration_integrity_workflow() {
     // Test batch processing validation
     let total_documents = source_documents.len();
     let batch_size = 2;
-    let expected_batches = (total_documents + batch_size - 1) / batch_size; // Ceiling division
+    let expected_batches = total_documents.div_ceil(batch_size); // Ceiling division
 
     assert_eq!(
         expected_batches, 2,
@@ -571,12 +567,10 @@ async fn test_anchor_research_pipeline_integration_workflow() {
     ];
 
     // Test context document structure and validation
-    let context_documents = vec![
-        "Rust async programming patterns and best practices for concurrent applications",
+    let context_documents = ["Rust async programming patterns and best practices for concurrent applications",
         "Vector database optimization strategies for semantic search performance",
         "Research methodology for software engineering and system design",
-        "Machine learning integration patterns in production environments",
-    ];
+        "Machine learning integration patterns in production environments"];
 
     for (i, doc) in context_documents.iter().enumerate() {
         assert!(!doc.is_empty(), "Context document should not be empty");
@@ -590,7 +584,7 @@ async fn test_anchor_research_pipeline_integration_workflow() {
         );
 
         // Test document ID generation
-        let doc_id = format!("context_{}", i);
+        let doc_id = format!("context_{i}");
         assert!(!doc_id.is_empty(), "Document ID should not be empty");
     }
 
@@ -671,7 +665,7 @@ async fn test_anchor_research_pipeline_integration_workflow() {
             .and_then(|v| v.as_f64())
         {
             assert!(
-                quality_score >= 0.0 && quality_score <= 1.0,
+                (0.0..=1.0).contains(&quality_score),
                 "Quality score should be normalized"
             );
             assert!(quality_score >= 0.5, "Quality score should be reasonable");
@@ -752,13 +746,11 @@ async fn test_anchor_configuration_validation_workflow() {
 
         if invalid_url.is_empty() {
             eprintln!(
-                "Test case '{}': URL validation would catch empty URL",
-                test_name
+                "Test case '{test_name}': URL validation would catch empty URL"
             );
         } else {
             eprintln!(
-                "Test case '{}': URL validation would catch invalid URL: {}",
-                test_name, invalid_url
+                "Test case '{test_name}': URL validation would catch invalid URL: {invalid_url}"
             );
         }
     }
@@ -770,11 +762,10 @@ async fn test_anchor_configuration_validation_workflow() {
             eprintln!("Dimension validation would reject zero dimensions");
         } else if dimensions > 10000 {
             eprintln!(
-                "Dimension validation might warn about very large dimensions: {}",
-                dimensions
+                "Dimension validation might warn about very large dimensions: {dimensions}"
             );
         } else {
-            eprintln!("Dimension {} would be accepted as valid", dimensions);
+            eprintln!("Dimension {dimensions} would be accepted as valid");
         }
     }
 
@@ -791,7 +782,7 @@ async fn test_anchor_configuration_validation_workflow() {
         if timeout.is_zero() {
             eprintln!("Timeout validation would reject zero timeout");
         } else {
-            eprintln!("Timeout {:?} would be accepted as valid", timeout);
+            eprintln!("Timeout {timeout:?} would be accepted as valid");
         }
     }
 
@@ -808,8 +799,7 @@ async fn test_anchor_configuration_validation_workflow() {
             eprintln!("Connection pool validation would reject zero max connections");
         } else {
             eprintln!(
-                "Connection pool with {} max connections and {}s idle timeout would be valid",
-                max_connections, idle_timeout_secs
+                "Connection pool with {max_connections} max connections and {idle_timeout_secs}s idle timeout would be valid"
             );
         }
     }

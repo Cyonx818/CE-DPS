@@ -2,11 +2,12 @@
 //! These tests verify end-to-end workflows using the public API.
 
 use fortitude_core::vector::{
-    CacheKeyStrategy, ConnectionPoolConfig, DeviceType, DistanceMetric, DocumentMetadata, EmbeddingCacheConfig,
-    EmbeddingConfig, EmbeddingGenerator, FusionMethod, HealthCheckConfig, HybridSearchConfig,
-    HybridSearchOperations, HybridSearchRequest, HybridSearchService, LocalEmbeddingService,
-    SearchConfig, SearchOptions, SearchStrategy, SemanticSearchConfig, SemanticSearchOperations,
-    SemanticSearchService, VectorConfig, VectorStorage, VectorStorageService,
+    config::{ConnectionPoolConfig, DistanceMetric, HealthCheckConfig, VectorConfig},
+    embeddings::{CacheKeyStrategy, DeviceType, EmbeddingCacheConfig, EmbeddingConfig, EmbeddingGenerator, LocalEmbeddingService},
+    hybrid::{FusionMethod, HybridSearchConfig, HybridSearchRequest, HybridSearchService, SearchStrategy},
+    search::{SearchOptions, SemanticSearchConfig, SemanticSearchOperations, SemanticSearchService},
+    storage::{DocumentMetadata, SearchConfig, VectorStorage},
+    VectorStorageService,
 };
 // Types available for future use
 // use fortitude_types::research::{AudienceContext, ClassifiedRequest, DomainContext, ResearchType};
@@ -56,7 +57,8 @@ async fn test_anchor_complete_vector_workflow() {
 
     // Initialize services
     let embedding_service = LocalEmbeddingService::new(config.embedding.clone());
-    let storage = VectorStorage::new_with_config(config.clone()).expect("Failed to create vector storage");
+    let storage =
+        VectorStorage::new_with_config(config.clone()).expect("Failed to create vector storage");
 
     // Initialize embedding service
     embedding_service
@@ -107,7 +109,10 @@ async fn test_anchor_complete_vector_workflow() {
         .get_stats()
         .await
         .expect("Failed to get storage stats");
-    assert_eq!(storage_stats.total_documents, 4, "Should have stored 4 documents");
+    assert_eq!(
+        storage_stats.total_documents, 4,
+        "Should have stored 4 documents"
+    );
 
     // Test semantic search
     let query = "async programming in Rust";
@@ -142,13 +147,20 @@ async fn test_anchor_complete_vector_workflow() {
     assert!(retrieved.is_some(), "Should retrieve stored document");
 
     let retrieved_doc = retrieved.unwrap();
-    assert_eq!(retrieved_doc.embedding.len(), 384, "Vector should have correct dimensions");
-    assert_eq!(retrieved_doc.metadata.content_type, "research", "Should preserve metadata");
+    assert_eq!(
+        retrieved_doc.embedding.len(),
+        384,
+        "Vector should have correct dimensions"
+    );
+    assert_eq!(
+        retrieved_doc.metadata.content_type, "research",
+        "Should preserve metadata"
+    );
 
     // Test batch operations
     let batch_queries = vec![
-        "machine learning deployment",
-        "database performance optimization",
+        "machine learning deployment".to_string(),
+        "database performance optimization".to_string(),
     ];
 
     let batch_embeddings = embedding_service
@@ -174,7 +186,10 @@ async fn test_anchor_complete_vector_workflow() {
         .get_stats()
         .await
         .expect("Failed to get stats after cleanup");
-    assert_eq!(final_stats.total_documents, 0, "Should have cleaned up all test documents");
+    assert_eq!(
+        final_stats.total_documents, 0,
+        "Should have cleaned up all test documents"
+    );
 }
 
 /// ANCHOR: Test semantic search service integration
@@ -183,21 +198,22 @@ async fn test_anchor_complete_vector_workflow() {
 async fn test_anchor_semantic_search_integration() {
     let config = create_test_vector_config();
     let search_config = SemanticSearchConfig {
-        collection_name: config.default_collection.clone(),
         default_limit: 10,
-        min_score_threshold: 0.6,
-        enable_explain: true,
-        cache_enabled: true,
-        cache_ttl: Duration::from_secs(300),
+        default_threshold: 0.6,
+        max_limit: 100,
+        enable_analytics: true,
+        cache_results: true,
+        cache_ttl_seconds: 300,
+        enable_query_optimization: true,
+        max_query_length: 1000,
     };
 
     // Initialize services
     let embedding_service = LocalEmbeddingService::new(config.embedding.clone());
-    let storage = VectorStorage::new_with_config(config.clone()).expect("Failed to create vector storage");
-    let search_service = SemanticSearchService::new(
-        std::sync::Arc::new(storage.clone()),
-        search_config,
-    );
+    let storage =
+        VectorStorage::new_with_config(config.clone()).expect("Failed to create vector storage");
+    let search_service =
+        SemanticSearchService::new(std::sync::Arc::new(storage.clone()), search_config);
 
     // Initialize embedding service
     embedding_service
@@ -251,7 +267,7 @@ async fn test_anchor_semantic_search_integration() {
         with_payload: true,
         with_vectors: false,
     };
-    
+
     let results = search_service
         .search_with_options(query, search_options)
         .await
@@ -280,7 +296,8 @@ async fn test_anchor_semantic_search_integration() {
 
     // The search result contains the document directly
     assert_eq!(
-        best_result.metadata.as_ref().unwrap().content_type, "technical",
+        best_result.metadata.as_ref().unwrap().content_type,
+        "technical",
         "Should preserve document metadata"
     );
 
@@ -344,7 +361,8 @@ async fn test_anchor_hybrid_search_integration() {
 
     // Initialize services
     let embedding_service = LocalEmbeddingService::new(config.embedding.clone());
-    let storage = VectorStorage::new_with_config(config.clone()).expect("Failed to create vector storage");
+    let storage =
+        VectorStorage::new_with_config(config.clone()).expect("Failed to create vector storage");
     let search_service = SemanticSearchService::new(
         std::sync::Arc::new(storage.clone()),
         SemanticSearchConfig::default(),
@@ -432,11 +450,24 @@ async fn test_anchor_hybrid_search_integration() {
     // Test different search strategies
     let semantic_focused = HybridSearchRequest {
         query: "memory safety ownership".to_string(),
-        strategy: SearchStrategy::SemanticFocused,
-        limit: 2,
-        semantic_options: None,
-        keyword_options: None,
-        filters: None,
+        strategy: Some(SearchStrategy::SemanticFocused),
+        fusion_method: None,
+        options: SearchOptions {
+            limit: 2,
+            threshold: Some(0.5),
+            collection: None,
+            filters: vec![],
+            diversify_results: false,
+            temporal_boost: None,
+            quality_boost: None,
+            include_explanations: false,
+            min_content_length: None,
+            max_content_length: None,
+            fuzzy_matching: false,
+        },
+        include_explanations: false,
+        custom_weights: None,
+        min_hybrid_score: None,
     };
 
     let semantic_results = hybrid_service
@@ -451,11 +482,24 @@ async fn test_anchor_hybrid_search_integration() {
 
     let keyword_focused = HybridSearchRequest {
         query: "tutorial".to_string(),
-        strategy: SearchStrategy::KeywordFocused,
-        limit: 2,
-        semantic_options: None,
-        keyword_options: None,
-        filters: None,
+        strategy: Some(SearchStrategy::KeywordFocus),
+        fusion_method: None,
+        options: SearchOptions {
+            limit: 2,
+            threshold: Some(0.5),
+            collection: None,
+            filters: vec![],
+            diversify_results: false,
+            temporal_boost: None,
+            quality_boost: None,
+            include_explanations: false,
+            min_content_length: None,
+            max_content_length: None,
+            fuzzy_matching: false,
+        },
+        include_explanations: false,
+        custom_weights: None,
+        min_hybrid_score: None,
     };
 
     let keyword_results = hybrid_service

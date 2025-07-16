@@ -138,7 +138,7 @@ mod cache_key_determinism_tests {
 
         println!("Confidence banding test results:");
         for (confidence, key) in &cache_keys {
-            println!("  Confidence: {:.16} -> Key: {}", confidence, key);
+            println!("  Confidence: {confidence:.16} -> Key: {key}");
         }
         println!("  Unique keys: {}", unique_keys.len());
 
@@ -163,13 +163,11 @@ mod cache_key_determinism_tests {
         let query = "rust async programming";
 
         // Test different research types
-        let research_types = vec![
-            ResearchType::Learning,
+        let research_types = [ResearchType::Learning,
             ResearchType::Implementation,
             ResearchType::Troubleshooting,
             ResearchType::Decision,
-            ResearchType::Validation,
-        ];
+            ResearchType::Validation];
 
         let mut cache_keys = Vec::new();
         for research_type in research_types.iter() {
@@ -183,7 +181,7 @@ mod cache_key_determinism_tests {
 
         println!("Research type differentiation test results:");
         for (research_type, key) in &cache_keys {
-            println!("  Research type: {:?} -> Key: {}", research_type, key);
+            println!("  Research type: {research_type:?} -> Key: {key}");
         }
 
         assert_eq!(
@@ -240,19 +238,17 @@ mod query_normalization_comprehensive_tests {
 
         println!("Comprehensive query normalization test results:");
         for (query, key) in &cache_keys {
-            println!("  Query: \"{}\" -> Key: {}", query, key);
+            println!("  Query: \"{query}\" -> Key: {key}");
         }
         println!("  Unique keys: {}/{}", unique_keys.len(), cache_keys.len());
         println!(
-            "  Normalization effectiveness: {:.2}",
-            normalization_effectiveness
+            "  Normalization effectiveness: {normalization_effectiveness:.2}"
         );
 
         // We expect high normalization effectiveness (ideally 1 unique key)
         assert!(
             normalization_effectiveness >= 0.7,
-            "Normalization effectiveness should be at least 70%, got {:.2}",
-            normalization_effectiveness
+            "Normalization effectiveness should be at least 70%, got {normalization_effectiveness:.2}"
         );
 
         // Ideally, all semantically identical queries should produce the same key
@@ -299,8 +295,8 @@ mod query_normalization_comprehensive_tests {
             let key2 = storage.store(&result2).await.unwrap();
 
             println!("Stop word removal test:");
-            println!("  Full query: \"{}\" -> Key: {}", full_query, key1);
-            println!("  Minimal query: \"{}\" -> Key: {}", minimal_query, key2);
+            println!("  Full query: \"{full_query}\" -> Key: {key1}");
+            println!("  Minimal query: \"{minimal_query}\" -> Key: {key2}");
 
             assert_eq!(
                 key1, key2,
@@ -344,7 +340,7 @@ mod context_aware_cache_key_tests {
 
         println!("Context-aware cache key stability test:");
         for (confidence, key) in &cache_keys {
-            println!("  Context confidence: {} -> Key: {}", confidence, key);
+            println!("  Context confidence: {confidence} -> Key: {key}");
         }
         println!("  Unique keys: {}", unique_keys.len());
 
@@ -378,7 +374,7 @@ mod context_aware_cache_key_tests {
 
         let mut cache_keys = Vec::new();
         for (time_ms, expected_category) in processing_times {
-            let mut context = create_context_result_with_confidence(0.8);
+            let context = create_context_result_with_confidence(0.8);
             // Update processing time using reflection - this is a simplified approach
             let dimension_confidences = vec![DimensionConfidence {
                 dimension: ClassificationDimension::AudienceLevel,
@@ -409,8 +405,7 @@ mod context_aware_cache_key_tests {
         println!("Processing time categorization test:");
         for (time_ms, category, key) in &cache_keys {
             println!(
-                "  Time: {}ms (category: {}) -> Key: {}",
-                time_ms, category, key
+                "  Time: {time_ms}ms (category: {category}) -> Key: {key}"
             );
         }
         println!("  Unique keys: {}", unique_keys.len());
@@ -459,8 +454,7 @@ mod cache_key_collision_tests {
         println!("Cache key collision avoidance test:");
         for (query, research_type, key) in &cache_keys {
             println!(
-                "  Query: \"{}\" (type: {:?}) -> Key: {}",
-                query, research_type, key
+                "  Query: \"{query}\" (type: {research_type:?}) -> Key: {key}"
             );
         }
         println!("  Unique keys: {}/{}", unique_keys.len(), cache_keys.len());

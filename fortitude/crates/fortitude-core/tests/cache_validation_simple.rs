@@ -100,8 +100,8 @@ mod cache_key_stability_tests {
             .await
             .unwrap();
 
-        println!("Key 1: {}", key1);
-        println!("Key 2: {}", key2);
+        println!("Key 1: {key1}");
+        println!("Key 2: {key2}");
 
         // ISSUE DEMONSTRATION: These keys should be identical for semantically identical queries
         // but floating-point precision causes them to differ
@@ -168,12 +168,11 @@ mod cache_key_stability_tests {
         let normalization_effectiveness =
             1.0 - (unique_keys.len() as f64 / cache_keys.len() as f64);
 
-        println!("Cache keys generated: {:?}", cache_keys);
+        println!("Cache keys generated: {cache_keys:?}");
         println!("Unique keys: {}", unique_keys.len());
         println!("Total queries: {}", queries.len());
         println!(
-            "Normalization effectiveness: {:.2} (higher is better)",
-            normalization_effectiveness
+            "Normalization effectiveness: {normalization_effectiveness:.2} (higher is better)"
         );
 
         // Log the issue if normalization is poor
@@ -322,8 +321,8 @@ mod retrieval_fallback_tests {
             .unwrap();
 
         println!("Stored keys:");
-        println!("  Standard key: {}", key1);
-        println!("  Context key: {}", key2);
+        println!("  Standard key: {key1}");
+        println!("  Context key: {key2}");
 
         // Test different retrieval combinations
         let test_cases = vec![
@@ -343,7 +342,7 @@ mod retrieval_fallback_tests {
             println!("{}: {}", test_name, result.is_some());
 
             if result.is_none() {
-                println!("ISSUE: Fallback logic gap in {}", test_name);
+                println!("ISSUE: Fallback logic gap in {test_name}");
             }
         }
     }
@@ -370,7 +369,7 @@ mod retrieval_fallback_tests {
             .path()
             .join("research_results")
             .join("learning")
-            .join(format!("{}.json", manual_key));
+            .join(format!("{manual_key}.json"));
 
         // Manually create a file (simulating orphaned cache file)
         if let Some(parent) = file_path.parent() {
@@ -444,22 +443,20 @@ mod performance_baseline_tests {
         let avg_retrieval_time = retrieval_duration.as_millis() as f64 / stored_keys.len() as f64;
 
         println!("CACHE PERFORMANCE BASELINE:");
-        println!("  Hit Rate: {:.2}", hit_rate);
-        println!("  Average Store Time: {:.2}ms", avg_store_time);
-        println!("  Average Retrieval Time: {:.2}ms", avg_retrieval_time);
-        println!("  Total Store Duration: {:?}", store_duration);
-        println!("  Total Retrieval Duration: {:?}", retrieval_duration);
+        println!("  Hit Rate: {hit_rate:.2}");
+        println!("  Average Store Time: {avg_store_time:.2}ms");
+        println!("  Average Retrieval Time: {avg_retrieval_time:.2}ms");
+        println!("  Total Store Duration: {store_duration:?}");
+        println!("  Total Retrieval Duration: {retrieval_duration:?}");
 
         // Performance assertions for regression tracking
         assert!(
             hit_rate >= 0.8,
-            "Hit rate should be at least 80%, got {:.2}",
-            hit_rate
+            "Hit rate should be at least 80%, got {hit_rate:.2}"
         );
         assert!(
             avg_retrieval_time < 50.0,
-            "Average retrieval time should be under 50ms, got {:.2}ms",
-            avg_retrieval_time
+            "Average retrieval time should be under 50ms, got {avg_retrieval_time:.2}ms"
         );
 
         println!("Performance baseline test completed");

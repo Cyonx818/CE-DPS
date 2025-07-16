@@ -1183,12 +1183,10 @@ mod tests {
         let base_content =
             "This is a test content for similarity checking and some more text to make it exactly";
         let content1 = format!(
-            "{} one hundred characters long - different ending A",
-            base_content
+            "{base_content} one hundred characters long - different ending A"
         );
         let content2 = format!(
-            "{} one hundred characters long - different ending B",
-            base_content
+            "{base_content} one hundred characters long - different ending B"
         );
         let content3 = "Completely different content here";
 
@@ -1197,7 +1195,7 @@ mod tests {
 
         let hash1 = simple_content_hash(&content1);
         let hash2 = simple_content_hash(&content2);
-        let hash3 = simple_content_hash(&content3);
+        let hash3 = simple_content_hash(content3);
 
         // content1 and content2 should have same hash (first 100 chars)
         assert_eq!(hash1, hash2);
@@ -1489,7 +1487,7 @@ mod tests {
             collection: Some("very_long_collection_name_for_testing".to_string()),
             filters: (0..10)
                 .map(|i| SearchFilter {
-                    field: format!("field_{}", i),
+                    field: format!("field_{i}"),
                     operation: FilterOperation::Equals,
                     value: serde_json::json!(format!("value_{}", i)),
                 })

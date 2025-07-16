@@ -12,7 +12,6 @@ use fortitude_core::vector::{
 };
 use std::time::Instant;
 use tracing::{info, Level};
-use tracing_subscriber;
 
 #[tokio::main]
 async fn main() -> Result<(), Box<dyn std::error::Error>> {
@@ -113,7 +112,7 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
     info!("Testing batch processing optimization...");
 
     let batch_texts: Vec<String> = (0..20)
-        .map(|i| format!("batch test text number {}", i))
+        .map(|i| format!("batch test text number {i}"))
         .collect();
 
     let batch_start = Instant::now();
@@ -134,7 +133,7 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
 
     // 7. Get performance statistics
     let embedding_stats = embedding_service.get_optimized_stats().await;
-    let performance_report = performance_manager.get_performance_report().await;
+    let _performance_report = performance_manager.get_performance_report().await;
 
     info!("=== Performance Statistics ===");
     info!(

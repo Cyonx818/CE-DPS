@@ -198,8 +198,7 @@ mod anchor_tests {
 
             assert!(
                 result.is_some(),
-                "REGRESSION: {} retrieval failed - this will cause cache misses for existing entries",
-                test_name
+                "REGRESSION: {test_name} retrieval failed - this will cause cache misses for existing entries"
             );
         }
     }
@@ -249,20 +248,17 @@ mod anchor_tests {
 
         assert!(
             hit_rate >= 0.9,
-            "REGRESSION: Cache hit rate dropped below 90%. Got {:.2} - this indicates cache effectiveness problems",
-            hit_rate
+            "REGRESSION: Cache hit rate dropped below 90%. Got {hit_rate:.2} - this indicates cache effectiveness problems"
         );
 
         assert!(
             avg_store_time < 100.0,
-            "REGRESSION: Average store time increased above 100ms. Got {:.2}ms - this indicates performance degradation",
-            avg_store_time
+            "REGRESSION: Average store time increased above 100ms. Got {avg_store_time:.2}ms - this indicates performance degradation"
         );
 
         assert!(
             avg_retrieval_time < 100.0,
-            "REGRESSION: Average retrieval time increased above 100ms. Got {:.2}ms - this indicates performance degradation",
-            avg_retrieval_time
+            "REGRESSION: Average retrieval time increased above 100ms. Got {avg_retrieval_time:.2}ms - this indicates performance degradation"
         );
     }
 }

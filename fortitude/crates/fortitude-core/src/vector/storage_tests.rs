@@ -394,7 +394,7 @@ async fn test_batch_performance() {
         let documents: Vec<(String, DocumentMetadata)> = (0..batch_size)
             .map(|i| {
                 (
-                    format!("Performance test document number {}", i),
+                    format!("Performance test document number {i}"),
                     create_test_metadata(),
                 )
             })
@@ -406,8 +406,7 @@ async fn test_batch_performance() {
 
         assert_eq!(store_result.successful.len(), batch_size);
         println!(
-            "Batch store of {} documents took: {:?}",
-            batch_size, store_duration
+            "Batch store of {batch_size} documents took: {store_duration:?}"
         );
 
         let stored_ids: Vec<String> = store_result
@@ -423,8 +422,7 @@ async fn test_batch_performance() {
 
         assert_eq!(retrieve_result.successful.len(), batch_size);
         println!(
-            "Batch retrieve of {} documents took: {:?}",
-            batch_size, retrieve_duration
+            "Batch retrieve of {batch_size} documents took: {retrieve_duration:?}"
         );
 
         // Clean up

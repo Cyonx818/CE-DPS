@@ -9,7 +9,7 @@ import json
 import os
 import sys
 import argparse
-from datetime import datetime
+from datetime import datetime, timezone
 from pathlib import Path
 from typing import Dict, List, Optional, Tuple
 import subprocess
@@ -18,7 +18,7 @@ class PhaseValidator:
     def __init__(self, project_path: str):
         self.project_path = Path(project_path)
         self.results = {
-            "timestamp": datetime.utcnow().isoformat(),
+            "timestamp": datetime.now(timezone.utc).isoformat(),
             "project_path": str(self.project_path),
             "validation_results": {}
         }
@@ -482,6 +482,59 @@ def main():
     failed_phases = [p for p in results["validation_results"].values() 
                     if p["status"] == "FAILED"]
     sys.exit(1 if failed_phases else 0)
+
+# Pytest test functions for automated testing
+def test_phase_validator_creation():
+    """Test that PhaseValidator can be created with valid project path"""
+    validator = PhaseValidator(".")
+    assert validator.project_path.exists()
+    assert "timestamp" in validator.results
+    assert "validation_results" in validator.results
+
+def test_phase_1_validation_structure():
+    """Test that Phase 1 validation returns proper structure"""
+    validator = PhaseValidator(".")
+    result = validator.validate_phase_1()
+    
+    assert "phase" in result
+    assert "status" in result
+    assert "checks" in result
+    assert "required_for_phase_2" in result
+    assert result["status"] in ["PASSED", "FAILED"]
+
+def test_phase_2_validation_structure():
+    """Test that Phase 2 validation returns proper structure"""
+    validator = PhaseValidator(".")
+    result = validator.validate_phase_2()
+    
+    assert "phase" in result
+    assert "status" in result  
+    assert "checks" in result
+    assert "required_for_phase_3" in result
+    assert result["status"] in ["PASSED", "FAILED"]
+
+def test_phase_3_validation_structure():
+    """Test that Phase 3 validation returns proper structure"""
+    validator = PhaseValidator(".")
+    result = validator.validate_phase_3()
+    
+    assert "phase" in result
+    assert "status" in result
+    assert "checks" in result
+    assert "ready_for_production" in result
+    assert result["status"] in ["PASSED", "FAILED"]
+
+def test_report_generation():
+    """Test that report generation works for all phases"""
+    validator = PhaseValidator(".")
+    report = validator.generate_report()
+    
+    assert "timestamp" in report
+    assert "project_path" in report
+    assert "validation_results" in report
+    assert "phase_1" in report["validation_results"]
+    assert "phase_2" in report["validation_results"]
+    assert "phase_3" in report["validation_results"]
 
 if __name__ == "__main__":
     main()

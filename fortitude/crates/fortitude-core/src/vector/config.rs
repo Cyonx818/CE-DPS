@@ -496,7 +496,7 @@ mod tests {
     #[test]
     fn test_vector_config_debug_formatting() {
         let config = VectorConfig::default();
-        let debug_str = format!("{:?}", config);
+        let debug_str = format!("{config:?}");
 
         // Ensure debug output contains key fields
         assert!(debug_str.contains("VectorConfig"));

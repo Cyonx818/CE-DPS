@@ -695,6 +695,6 @@ mod tests {
         // This would normally require an actual QdrantClient
         // For testing, we'll just verify the metadata logic
 
-        assert!(!(Duration::from_secs(1) > Duration::from_secs(2))); // Test duration comparison logic
+        assert!((Duration::from_secs(1) <= Duration::from_secs(2))); // Test duration comparison logic
     }
 }
