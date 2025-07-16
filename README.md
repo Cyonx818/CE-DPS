@@ -330,9 +330,16 @@ The recommended way to run tools is through the integrated slash commands:
 # Runs: Quality gates, test suite, security audit, performance benchmarks
 # Provides: Comprehensive quality validation with actionable recommendations
 
+# Comprehensive CI/CD quality validation with auto-fix
+/cedps-quality-check
+# Runs: Complete CI/CD test suite matching .github/workflows/ci.yml
+# Features: Auto-fix for formatting, linting, and dependency issues
+# Validates: Rust tests, Python tests, security audit, documentation build
+# Integrates: Quality gates, integration tests, and coverage reporting
+
 # Project status and guidance
 /cedps-status
-# Shows: Current phase, completion status, next steps
+# Shows: Current phase, completion status, next steps, SKYNET mode status
 # Guides: What to do next to proceed with the methodology
 
 # Help and command reference

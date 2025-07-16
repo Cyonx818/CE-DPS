@@ -27,7 +27,7 @@
 //!
 //! async fn collect_user_feedback() -> Result<(), Box<dyn std::error::Error>> {
 //!     let system = FeedbackIntegrationSystem::new().await?;
-//!     
+//!
 //!     let feedback = UserFeedback {
 //!         feedback_id: "user_rating_001".to_string(),
 //!         user_id: Some("user123".to_string()),
@@ -41,10 +41,10 @@
 //!         timestamp: chrono::Utc::now(),
 //!         context: FeedbackContext::default(),
 //!     };
-//!     
+//!
 //!     system.collect_feedback(feedback).await?;
 //!     system.apply_learning_updates().await?;
-//!     
+//!
 //!     Ok(())
 //! }
 //! ```

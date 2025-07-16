@@ -2,10 +2,10 @@
 //! These tests verify end-to-end workflows using the public API.
 
 use fortitude_core::vector::{
-    CacheKeyStrategy, ConnectionPoolConfig, DeviceType, DistanceMetric, EmbeddingCacheConfig,
+    CacheKeyStrategy, ConnectionPoolConfig, DeviceType, DistanceMetric, DocumentMetadata, EmbeddingCacheConfig,
     EmbeddingConfig, EmbeddingGenerator, FusionMethod, HealthCheckConfig, HybridSearchConfig,
     HybridSearchOperations, HybridSearchRequest, HybridSearchService, LocalEmbeddingService,
-    SearchOptions, SearchStrategy, SemanticSearchConfig, SemanticSearchOperations,
+    SearchConfig, SearchOptions, SearchStrategy, SemanticSearchConfig, SemanticSearchOperations,
     SemanticSearchService, VectorConfig, VectorStorage, VectorStorageService,
 };
 // Types available for future use
@@ -56,7 +56,7 @@ async fn test_anchor_complete_vector_workflow() {
 
     // Initialize services
     let embedding_service = LocalEmbeddingService::new(config.embedding.clone());
-    let storage = VectorStorage::new(config.clone()).expect("Failed to create vector storage");
+    let storage = VectorStorage::new_with_config(config.clone()).expect("Failed to create vector storage");
 
     // Initialize embedding service
     embedding_service
@@ -85,40 +85,41 @@ async fn test_anchor_complete_vector_workflow() {
     ];
 
     // Store documents with embeddings
-    for (id, content) in &documents {
-        let embedding = embedding_service
-            .generate_embedding(content)
+    let mut stored_docs = Vec::new();
+    for (_id, content) in &documents {
+        let doc_metadata = DocumentMetadata {
+            research_type: None,
+            content_type: "research".to_string(),
+            quality_score: Some(0.9),
+            source: Some("test".to_string()),
+            tags: vec!["test".to_string()],
+            custom_fields: std::collections::HashMap::new(),
+        };
+        let stored_doc = storage
+            .store_document(content, doc_metadata)
             .await
-            .expect("Failed to generate embedding");
-
-        let metadata = serde_json::json!({
-            "title": format!("Document {}", id),
-            "category": "research",
-            "content": content
-        });
-
-        storage
-            .store_vector(id, &embedding, Some(metadata))
-            .await
-            .expect("Failed to store vector");
+            .expect("Failed to store document");
+        stored_docs.push(stored_doc);
     }
 
     // Verify storage
-    let stored_count = storage
-        .count_vectors()
+    let storage_stats = storage
+        .get_stats()
         .await
-        .expect("Failed to count vectors");
-    assert_eq!(stored_count, 4, "Should have stored 4 documents");
+        .expect("Failed to get storage stats");
+    assert_eq!(storage_stats.total_documents, 4, "Should have stored 4 documents");
 
     // Test semantic search
     let query = "async programming in Rust";
-    let query_embedding = embedding_service
-        .generate_embedding(query)
-        .await
-        .expect("Failed to generate query embedding");
+    let search_config = SearchConfig {
+        limit: 2,
+        threshold: Some(0.3),
+        collection: None,
+        filters: vec![],
+    };
 
     let search_results = storage
-        .search_vectors(&query_embedding, 2, None)
+        .retrieve_similar(query, search_config)
         .await
         .expect("Failed to search vectors");
 
@@ -133,18 +134,16 @@ async fn test_anchor_complete_vector_workflow() {
     );
 
     // Retrieve document by ID
+    let first_doc_id = &stored_docs[0].id;
     let retrieved = storage
-        .get_vector("doc1")
+        .retrieve_by_id(first_doc_id)
         .await
         .expect("Failed to retrieve vector");
     assert!(retrieved.is_some(), "Should retrieve stored document");
 
-    let (vector, metadata) = retrieved.unwrap();
-    assert_eq!(vector.len(), 384, "Vector should have correct dimensions");
-    assert!(metadata.is_some(), "Should have metadata");
-
-    let metadata = metadata.unwrap();
-    assert_eq!(metadata["category"], "research", "Should preserve metadata");
+    let retrieved_doc = retrieved.unwrap();
+    assert_eq!(retrieved_doc.embedding.len(), 384, "Vector should have correct dimensions");
+    assert_eq!(retrieved_doc.metadata.content_type, "research", "Should preserve metadata");
 
     // Test batch operations
     let batch_queries = vec![
@@ -164,18 +163,18 @@ async fn test_anchor_complete_vector_workflow() {
     );
 
     // Clean up test data
-    for (id, _) in &documents {
+    for stored_doc in &stored_docs {
         storage
-            .delete_vector(id)
+            .delete_document(&stored_doc.id)
             .await
-            .expect("Failed to delete vector");
+            .expect("Failed to delete document");
     }
 
-    let final_count = storage
-        .count_vectors()
+    let final_stats = storage
+        .get_stats()
         .await
-        .expect("Failed to count vectors after cleanup");
-    assert_eq!(final_count, 0, "Should have cleaned up all test documents");
+        .expect("Failed to get stats after cleanup");
+    assert_eq!(final_stats.total_documents, 0, "Should have cleaned up all test documents");
 }
 
 /// ANCHOR: Test semantic search service integration
@@ -194,10 +193,11 @@ async fn test_anchor_semantic_search_integration() {
 
     // Initialize services
     let embedding_service = LocalEmbeddingService::new(config.embedding.clone());
-    let storage = VectorStorage::new(config.clone()).expect("Failed to create vector storage");
-    let search_service =
-        SemanticSearchService::new(search_config, storage.clone(), embedding_service.clone())
-            .expect("Failed to create search service");
+    let storage = VectorStorage::new_with_config(config.clone()).expect("Failed to create vector storage");
+    let search_service = SemanticSearchService::new(
+        std::sync::Arc::new(storage.clone()),
+        search_config,
+    );
 
     // Initialize embedding service
     embedding_service
@@ -226,35 +226,34 @@ async fn test_anchor_semantic_search_integration() {
     ];
 
     // Store documents
-    for (id, content) in &test_docs {
-        let embedding = embedding_service
-            .generate_embedding(content)
-            .await
-            .expect("Failed to generate embedding");
-
-        let metadata = serde_json::json!({
-            "id": id,
-            "content": content,
-            "category": "technical"
-        });
-
-        storage
-            .store_vector(id, &embedding, Some(metadata))
+    let mut test_stored_docs = Vec::new();
+    for (_id, content) in &test_docs {
+        let doc_metadata = DocumentMetadata {
+            research_type: None,
+            content_type: "technical".to_string(),
+            quality_score: Some(0.8),
+            source: Some("test".to_string()),
+            tags: vec!["technical".to_string()],
+            custom_fields: std::collections::HashMap::new(),
+        };
+        let stored_doc = storage
+            .store_document(content, doc_metadata)
             .await
             .expect("Failed to store document");
+        test_stored_docs.push(stored_doc);
     }
 
     // Test semantic search
+    let query = "async Rust programming";
     let search_options = SearchOptions {
         limit: Some(3),
         score_threshold: Some(0.4),
         with_payload: true,
         with_vectors: false,
     };
-
-    let query = "async Rust programming";
+    
     let results = search_service
-        .search(query, search_options)
+        .search_with_options(query, search_options)
         .await
         .expect("Search should succeed");
 
@@ -279,9 +278,9 @@ async fn test_anchor_semantic_search_integration() {
     );
     assert!(best_result.metadata.is_some(), "Should include metadata");
 
-    let metadata = best_result.metadata.as_ref().unwrap();
+    // The search result contains the document directly
     assert_eq!(
-        metadata["category"], "technical",
+        best_result.metadata.as_ref().unwrap().content_type, "technical",
         "Should preserve document metadata"
     );
 
@@ -294,7 +293,7 @@ async fn test_anchor_semantic_search_integration() {
     };
 
     let filtered_results = search_service
-        .search("programming", filtered_options)
+        .search_with_options("programming", filtered_options)
         .await
         .expect("Filtered search should succeed");
 
@@ -319,9 +318,9 @@ async fn test_anchor_semantic_search_integration() {
     );
 
     // Clean up
-    for (id, _) in &test_docs {
+    for stored_doc in &test_stored_docs {
         storage
-            .delete_vector(id)
+            .delete_document(&stored_doc.id)
             .await
             .expect("Failed to cleanup test document");
     }
@@ -345,17 +344,18 @@ async fn test_anchor_hybrid_search_integration() {
 
     // Initialize services
     let embedding_service = LocalEmbeddingService::new(config.embedding.clone());
-    let storage = VectorStorage::new(config.clone()).expect("Failed to create vector storage");
+    let storage = VectorStorage::new_with_config(config.clone()).expect("Failed to create vector storage");
     let search_service = SemanticSearchService::new(
+        std::sync::Arc::new(storage.clone()),
         SemanticSearchConfig::default(),
-        storage.clone(),
-        embedding_service.clone(),
-    )
-    .expect("Failed to create semantic search service");
+    );
 
-    let hybrid_service =
-        HybridSearchService::new(hybrid_config, search_service, embedding_service.clone())
-            .expect("Failed to create hybrid search service");
+    let hybrid_service = HybridSearchService::new(
+        hybrid_config,
+        search_service,
+        std::sync::Arc::new(embedding_service.clone()),
+    )
+    .expect("Failed to create hybrid search service");
 
     // Initialize embedding service
     embedding_service
@@ -372,22 +372,21 @@ async fn test_anchor_hybrid_search_integration() {
     ];
 
     // Store documents
-    for (id, content) in &documents {
-        let embedding = embedding_service
-            .generate_embedding(content)
-            .await
-            .expect("Failed to generate embedding");
-
-        let metadata = serde_json::json!({
-            "id": id,
-            "content": content,
-            "type": if id.starts_with("tech") { "technical" } else if id.starts_with("business") { "business" } else { "tutorial" }
-        });
-
-        storage
-            .store_vector(id, &embedding, Some(metadata))
+    let mut hybrid_stored_docs = Vec::new();
+    for (_id, content) in &documents {
+        let doc_metadata = DocumentMetadata {
+            research_type: None,
+            content_type: "technical".to_string(),
+            quality_score: Some(0.8),
+            source: Some("test".to_string()),
+            tags: vec!["technical".to_string()],
+            custom_fields: std::collections::HashMap::new(),
+        };
+        let stored_doc = storage
+            .store_document(content, doc_metadata)
             .await
             .expect("Failed to store document");
+        hybrid_stored_docs.push(stored_doc);
     }
 
     // Test hybrid search
@@ -487,9 +486,9 @@ async fn test_anchor_hybrid_search_integration() {
     );
 
     // Clean up
-    for (id, _) in &documents {
+    for stored_doc in &hybrid_stored_docs {
         storage
-            .delete_vector(id)
+            .delete_document(&stored_doc.id)
             .await
             .expect("Failed to cleanup test document");
     }
@@ -522,7 +521,7 @@ async fn test_anchor_vector_service_error_handling() {
     let mut invalid_config = config.clone();
     invalid_config.url = "invalid://url".to_string();
 
-    let storage_result = VectorStorage::new(invalid_config);
+    let storage_result = VectorStorage::new_with_config(invalid_config);
     assert!(storage_result.is_err(), "Should fail with invalid URL");
 
     // Test empty query handling
@@ -588,7 +587,7 @@ async fn test_anchor_vector_configuration_integration() {
 
     // Test configuration validation
     let valid_config = create_test_vector_config();
-    let storage = VectorStorage::new(valid_config.clone());
+    let storage = VectorStorage::new_with_config(valid_config.clone());
     assert!(storage.is_ok(), "Valid configuration should be accepted");
 
     // Test embedding configuration

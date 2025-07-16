@@ -121,28 +121,21 @@ async fn setup_test_environment() -> (
     let scorer = Arc::new(ComprehensiveQualityScorer::new(scorer_config));
 
     // Initialize cross-validation engine
-    let cross_validator = Arc::new(
-        CrossValidationEngine::with_default_config()
-        .await
-        .unwrap(),
-    );
+    let cross_validator = Arc::new(CrossValidationEngine::with_default_config().await.unwrap());
 
     // Initialize feedback system
     let feedback_system = Arc::new(FeedbackIntegrationSystem::new().await.unwrap());
 
     // Initialize metrics collector
     let metrics_config = MetricsConfig::production_optimized();
-    let metrics_collector = Arc::new(
-        MetricsCollector::new(metrics_config, Arc::new(InMemoryMetricsStorage::new())),
-    );
+    let metrics_collector = Arc::new(MetricsCollector::new(
+        metrics_config,
+        Arc::new(InMemoryMetricsStorage::new()),
+    ));
 
     // Initialize optimization engine
     let opt_config = OptimizationConfig::production_optimized();
-    let optimization_engine = Arc::new(
-        QualityOptimizationEngine::new()
-        .await
-        .unwrap(),
-    );
+    let optimization_engine = Arc::new(QualityOptimizationEngine::new().await.unwrap());
 
     // Initialize configuration manager
     let quality_config = QualityControlConfig::production_defaults();
@@ -290,8 +283,7 @@ fn bench_provider_optimization(c: &mut Criterion) {
     group.bench_function("single_optimization", |b| {
         b.to_async(&rt).iter(|| async {
             let (query, _, _) = test_data.get_test_case(0);
-            let mut criteria = SelectionCriteria::research_optimized()
-                .with_domain("technology");
+            let mut criteria = SelectionCriteria::research_optimized().with_domain("technology");
             criteria.urgency_level = UrgencyLevel::Normal;
 
             let result = optimization_engine
@@ -304,8 +296,7 @@ fn bench_provider_optimization(c: &mut Criterion) {
     // Provider selection latency benchmark (requirement: <50ms)
     group.bench_function("provider_selection_latency", |b| {
         b.to_async(&rt).iter(|| async {
-            let mut criteria = SelectionCriteria::research_optimized()
-                .with_domain("technology");
+            let mut criteria = SelectionCriteria::research_optimized().with_domain("technology");
             criteria.urgency_level = UrgencyLevel::High;
 
             // select_optimal_provider method is private
@@ -438,9 +429,10 @@ fn bench_e2e_quality_workflow(c: &mut Criterion) {
                 .unwrap();
 
             // 2. Cross-validation (if enabled)
-            let validation_result = if true { // cross_validator.is_enabled() method not available
+            let validation_result = if true {
+                // cross_validator.is_enabled() method not available
                 Some(
-                    // validate_response method not implemented yet  
+                    // validate_response method not implemented yet
                     ValidationResult {
                         consensus_result: "mock_response".to_string(),
                         confidence_score: 0.8,
@@ -474,8 +466,7 @@ fn bench_e2e_quality_workflow(c: &mut Criterion) {
             let _ = &evaluation;
 
             // 4. Provider optimization assessment
-            let criteria =
-                SelectionCriteria::research_optimized().with_domain("technology");
+            let criteria = SelectionCriteria::research_optimized().with_domain("technology");
             // assess_query_complexity method not implemented yet
             let _ = &criteria;
 
@@ -567,8 +558,8 @@ fn bench_accuracy_achievement(c: &mut Criterion) {
 
             for i in 0..total_optimizations {
                 let (query, _, _) = test_data.get_test_case(i);
-                let mut criteria = SelectionCriteria::research_optimized()
-                    .with_domain("technology");
+                let mut criteria =
+                    SelectionCriteria::research_optimized().with_domain("technology");
                 criteria.urgency_level = UrgencyLevel::Normal;
 
                 if let Ok(result) = optimization_engine

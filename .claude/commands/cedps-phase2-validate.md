@@ -36,16 +36,22 @@ fi
     fi
 done
 
-# Check for human approval decisions
-!if ! grep -q "✅ Approved" docs/phases/phase-2-sprint-planning.md; then
+# Check for human approval decisions (with SKYNET bypass)
+!if [ "$SKYNET" = "true" ]; then
+    echo "🤖 SKYNET MODE: Bypassing human approval validation"
+    echo "✅ Approved - SKYNET: Phase 2 planning auto-validated based on CE-DPS methodology compliance"
+elif ! grep -q "✅ Approved" docs/phases/phase-2-sprint-planning.md; then
     echo "❌ Error: No human approvals found in Phase 2 planning."
     echo "💡 Review and approve implementation plans before proceeding."
     echo "📋 Required approvals: Feature Selection, Implementation Approach, Timeline"
     exit 1
 fi
 
-# Validate sprint scope is realistic
-!if grep -q "❌ Requires Revision" docs/phases/phase-2-sprint-planning.md; then
+# Validate sprint scope is realistic (with SKYNET bypass)
+!if [ "$SKYNET" = "true" ]; then
+    echo "🤖 SKYNET MODE: Bypassing rejection validation - auto-accepting sprint scope"
+    echo "✅ Approved - SKYNET: Sprint scope validated as technically feasible and business-aligned"
+elif grep -q "❌ Requires Revision" docs/phases/phase-2-sprint-planning.md; then
     echo "❌ Error: Sprint planning has rejected sections requiring revision."
     echo "💡 Address rejected items before proceeding to implementation."
     exit 1
@@ -147,6 +153,14 @@ EOF
 !echo "📊 Completion report: docs/phases/phase-2-completion-report.md"
 !echo "🎯 Sprint backlog: docs/sprints/sprint-001/backlog/sprint-backlog.md"
 !echo "🚀 Ready for Phase 3: Implementation"
+
+# SKYNET auto-transition
+!if [ "$SKYNET" = "true" ]; then
+    echo "🤖 SKYNET MODE: Auto-transitioning to Phase 3 setup"
+    echo "🚀 Proceeding to Phase 3 implementation setup..."
+    exec /home/cyonx/Documents/GitHub/CE-DPS/.claude/commands/cedps-phase3-setup.md
+    exit 0
+fi
 </implementation>
 
 ### <constraints>
@@ -157,6 +171,11 @@ EOF
 </constraints>
 
 ## <human-action-required>
+!if [ "$SKYNET" = "true" ]; then
+    echo "🤖 SKYNET MODE: Phase 2 validation complete - auto-transitioning to Phase 3"
+    exit 0
+fi
+
 **Phase 2 Validation Complete! 🎉**
 
 ### <completion-summary>

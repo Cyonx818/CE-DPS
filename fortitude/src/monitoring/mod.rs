@@ -8,7 +8,7 @@
 //! ## Core Components
 //!
 //! - **Metrics Collection**: Performance data gathering for all system components
-//! - **Distributed Tracing**: Request flow tracking across system boundaries  
+//! - **Distributed Tracing**: Request flow tracking across system boundaries
 //! - **Health Checks**: System health monitoring and status reporting
 //! - **Alerting**: Automated notifications for critical performance issues
 //!

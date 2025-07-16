@@ -387,7 +387,7 @@ impl TimeRange {
 pub struct QuietHours {
     /// Start time for quiet period
     pub start: NaiveTime,
-    /// End time for quiet period  
+    /// End time for quiet period
     pub end: NaiveTime,
     /// Timezone for the quiet hours (e.g., "UTC", "America/New_York")
     pub timezone: String,

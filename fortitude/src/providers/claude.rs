@@ -17,7 +17,7 @@
 //!         std::env::var("ANTHROPIC_API_KEY")?,
 //!         "claude-3-5-sonnet-20241022".to_string()
 //!     );
-//!     
+//!
 //!     let provider = ClaudeProvider::new(settings).await?;
 //!     let response = provider.research_query("What is quantum computing?".to_string()).await?;
 //!     println!("Response: {}", response);

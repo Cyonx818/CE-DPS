@@ -91,7 +91,7 @@ pub enum NotificationType {
     Info,
     /// Warning messages
     Warning,
-    /// Error messages  
+    /// Error messages
     Error,
     /// Progress updates
     Progress { current: u32, total: u32 },

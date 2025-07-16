@@ -8,7 +8,7 @@
 //! ## Key Features
 //!
 //! - **Environment Variable Support**: Full environment variable override capability
-//! - **File Configuration**: JSON and TOML configuration file support  
+//! - **File Configuration**: JSON and TOML configuration file support
 //! - **Validation**: Comprehensive configuration validation with sensible defaults
 //! - **Hot Reload**: Runtime configuration updates for non-breaking changes
 //! - **Performance Tuning**: Configurable thresholds and collection intervals

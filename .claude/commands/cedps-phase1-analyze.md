@@ -19,12 +19,16 @@ Trigger comprehensive AI analysis of business requirements to produce architectu
     exit 1
 fi
 
-# Validate business requirements are filled out
-!if grep -q "\[Enter" docs/phases/phase-1-planning.md; then
-    echo "❌ Error: Business requirements template not completed."
-    echo "💡 Complete all [Enter...] sections in docs/phases/phase-1-planning.md"
-    echo "📋 Required sections: Business Context, Strategic Requirements, Constraints"
-    exit 1
+# Validate business requirements are filled out (bypass in SKYNET mode)
+!if [[ "$SKYNET" != "true" ]]; then
+    if grep -q "\[Enter" docs/phases/phase-1-planning.md; then
+        echo "❌ Error: Business requirements template not completed."
+        echo "💡 Complete all [Enter...] sections in docs/phases/phase-1-planning.md"
+        echo "📋 Required sections: Business Context, Strategic Requirements, Constraints"
+        exit 1
+    fi
+else
+    echo "🤖 SKYNET mode: Business requirements auto-populated, proceeding with analysis"
 fi
 
 # Update project state
@@ -33,6 +37,14 @@ fi
 !echo "✅ Requirements validated. Triggering AI analysis..."
 !echo "📋 Business requirements loaded from docs/phases/phase-1-planning.md"
 !echo "🔍 Beginning comprehensive architectural analysis..."
+
+# Auto-proceed in SKYNET mode after analysis
+!if [[ "$SKYNET" == "true" ]]; then
+    echo ""
+    echo "🤖 SKYNET mode: AI analysis will auto-approve architectural decisions"
+    echo "⚡ Strategic decisions will be made autonomously based on best practices"
+    echo "⚡ Auto-transitioning to Phase 1 validation after analysis completion"
+fi
 </implementation>
 
 ### <constraints>
@@ -139,10 +151,26 @@ Based on the business requirements above, provide comprehensive analysis in the 
 - Risks are identified and have actionable mitigation plans
 - Human approval points are clearly marked and justified
 
-Please begin the comprehensive Phase 1 analysis now. When complete, provide structured human review sections for strategic approval before proceeding to Phase 2.
+Please begin the comprehensive Phase 1 analysis now. When complete:
+
+**If SKYNET mode is enabled ($SKYNET=true):**
+- Auto-generate strategic approval decisions based on best practices
+- Mark all analysis sections as "✅ Approved - SKYNET: [reasoning]"
+- Proceed automatically to Phase 1 validation
+
+**If human oversight mode ($SKYNET=false or unset):**
+- Provide structured human review sections for strategic approval before proceeding to Phase 2
 </claude-prompt>
 
 ## <human-action-required>
+!if [[ "$SKYNET" == "true" ]]; then
+    echo "🤖 **SKYNET MODE**: AI analysis will auto-approve strategic decisions"
+    echo "⚡ Architectural decisions made autonomously using best practices"
+    echo "⚡ System will auto-proceed to Phase 1 validation"
+    echo "⚡ No human strategic review required"
+    exit 0
+fi
+
 **AI Analysis In Progress... 🧠**
 
 ### <current-status>
