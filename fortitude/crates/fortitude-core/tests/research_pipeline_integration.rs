@@ -6,11 +6,11 @@ use fortitude_core::{
     research_engine::{ResearchConfig, ResearchEngine},
     research_feedback::{FeedbackCollector, FeedbackType, ResearchQuality},
     vector::{
-        CacheKeyStrategy, ConnectionPoolConfig, DeviceType, DistanceMetric, EmbeddingCacheConfig,
+        CacheKeyStrategy, ConnectionPoolConfig, DeviceType, DistanceMetric, DocumentMetadata, EmbeddingCacheConfig,
         EmbeddingConfig, EmbeddingGenerator, FusionMethod, HealthCheckConfig, HybridSearchConfig,
         HybridSearchOperations, HybridSearchRequest, HybridSearchService, LocalEmbeddingService,
-        SearchOptions, SearchStrategy, SemanticSearchConfig, SemanticSearchOperations,
-        SemanticSearchService, VectorConfig, VectorStorage, VectorStorageOperations,
+        SearchConfig, SearchOptions, SearchStrategy, SemanticSearchConfig, SemanticSearchOperations,
+        SemanticSearchService, VectorConfig, VectorStorage, VectorStorageService,
     },
 };
 use fortitude_types::research::{
@@ -37,10 +37,8 @@ fn create_test_pipeline_config() -> (VectorConfig, ResearchConfig, PipelineConfi
         },
         connection_pool: ConnectionPoolConfig {
             max_connections: 10,
-            min_connections: 2,
             connection_timeout: Duration::from_secs(10),
             idle_timeout: Duration::from_secs(600),
-            max_lifetime: Duration::from_secs(3600),
         },
         embedding: EmbeddingConfig {
             model_name: "sentence-transformers/all-MiniLM-L6-v2".to_string(),
@@ -89,13 +87,11 @@ async fn test_anchor_enhanced_research_pipeline_workflow() {
     // Initialize vector components
     let embedding_service = LocalEmbeddingService::new(vector_config.embedding.clone());
     let storage =
-        VectorStorage::new(vector_config.clone()).expect("Failed to create vector storage");
+        VectorStorage::new_with_config(vector_config.clone()).expect("Failed to create vector storage");
     let search_service = SemanticSearchService::new(
+        std::sync::Arc::new(storage.clone()),
         SemanticSearchConfig::default(),
-        storage.clone(),
-        embedding_service.clone(),
-    )
-    .expect("Failed to create search service");
+    );
 
     // Initialize research pipeline components
     let research_engine =
@@ -148,8 +144,16 @@ async fn test_anchor_enhanced_research_pipeline_workflow() {
             .await
             .expect("Failed to generate knowledge embedding");
 
+        let doc_metadata = DocumentMetadata {
+            research_type: None,
+            content_type: "knowledge".to_string(),
+            quality_score: metadata.get("quality_score").and_then(|v| v.as_f64()),
+            source: Some("test".to_string()),
+            tags: vec![],
+            custom_fields: std::collections::HashMap::new(),
+        };
         storage
-            .store_vector(id, &embedding, Some(metadata.clone()))
+            .store_document(content, doc_metadata)
             .await
             .expect("Failed to store knowledge");
     }
@@ -306,7 +310,7 @@ async fn test_anchor_research_pipeline_hybrid_search() {
     // Initialize vector components with hybrid search
     let embedding_service = LocalEmbeddingService::new(vector_config.embedding.clone());
     let storage =
-        VectorStorage::new(vector_config.clone()).expect("Failed to create vector storage");
+        VectorStorage::new_with_config(vector_config.clone()).expect("Failed to create vector storage");
     let semantic_search = SemanticSearchService::new(
         SemanticSearchConfig::default(),
         storage.clone(),
@@ -373,8 +377,16 @@ async fn test_anchor_research_pipeline_hybrid_search() {
             .await
             .expect("Failed to generate embedding");
 
+        let doc_metadata = DocumentMetadata {
+            research_type: None,
+            content_type: "knowledge".to_string(),
+            quality_score: metadata.get("quality_score").and_then(|v| v.as_f64()),
+            source: Some("test".to_string()),
+            tags: vec![],
+            custom_fields: std::collections::HashMap::new(),
+        };
         storage
-            .store_vector(id, &embedding, Some(metadata.clone()))
+            .store_document(content, doc_metadata)
             .await
             .expect("Failed to store knowledge");
     }
@@ -512,13 +524,11 @@ async fn test_anchor_research_quality_feedback_integration() {
     // Initialize components
     let embedding_service = LocalEmbeddingService::new(vector_config.embedding.clone());
     let storage =
-        VectorStorage::new(vector_config.clone()).expect("Failed to create vector storage");
+        VectorStorage::new_with_config(vector_config.clone()).expect("Failed to create vector storage");
     let search_service = SemanticSearchService::new(
+        std::sync::Arc::new(storage.clone()),
         SemanticSearchConfig::default(),
-        storage.clone(),
-        embedding_service.clone(),
-    )
-    .expect("Failed to create search service");
+    );
 
     let research_engine =
         ResearchEngine::new(research_config).expect("Failed to create research engine");
@@ -562,8 +572,16 @@ async fn test_anchor_research_quality_feedback_integration() {
             .await
             .expect("Failed to generate embedding");
 
+        let doc_metadata = DocumentMetadata {
+            research_type: None,
+            content_type: "knowledge".to_string(),
+            quality_score: metadata.get("quality_score").and_then(|v| v.as_f64()),
+            source: Some("test".to_string()),
+            tags: vec![],
+            custom_fields: std::collections::HashMap::new(),
+        };
         storage
-            .store_vector(id, &embedding, Some(metadata.clone()))
+            .store_document(content, doc_metadata)
             .await
             .expect("Failed to store knowledge");
     }
@@ -732,7 +750,7 @@ async fn test_anchor_research_pipeline_performance_integration() {
     // Initialize components with performance tracking
     let embedding_service = LocalEmbeddingService::new(vector_config.embedding.clone());
     let storage =
-        VectorStorage::new(vector_config.clone()).expect("Failed to create vector storage");
+        VectorStorage::new_with_config(vector_config.clone()).expect("Failed to create vector storage");
     let search_service = SemanticSearchService::new(
         SemanticSearchConfig {
             enable_explain: true,
@@ -781,8 +799,16 @@ async fn test_anchor_research_pipeline_performance_integration() {
             .await
             .expect("Failed to generate embedding");
 
+        let doc_metadata = DocumentMetadata {
+            research_type: None,
+            content_type: "knowledge".to_string(),
+            quality_score: metadata.get("quality_score").and_then(|v| v.as_f64()),
+            source: Some("test".to_string()),
+            tags: vec![],
+            custom_fields: std::collections::HashMap::new(),
+        };
         storage
-            .store_vector(id, &embedding, Some(metadata.clone()))
+            .store_document(content, doc_metadata)
             .await
             .expect("Failed to store knowledge");
     }

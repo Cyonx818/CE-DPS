@@ -17,7 +17,7 @@
 //!         std::env::var("GOOGLE_API_KEY")?,
 //!         "gemini-1.5-pro".to_string()
 //!     );
-//!     
+//!
 //!     let provider = GeminiProvider::new(settings).await?;
 //!     let response = provider.research_query("What is quantum computing?".to_string()).await?;
 //!     println!("Response: {}", response);

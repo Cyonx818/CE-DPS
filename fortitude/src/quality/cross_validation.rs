@@ -37,10 +37,10 @@
 //!     let engine = CrossValidationEngine::new(config).await?;
 //!     let query = "Explain how async Rust works";
 //!     let validation_result = engine.validate_across_providers(query).await?;
-//!     
+//!
 //!     println!("Consensus result: {}", validation_result.consensus_result);
 //!     println!("Confidence: {}", validation_result.confidence_score);
-//!     
+//!
 //!     Ok(())
 //! }
 //! ```

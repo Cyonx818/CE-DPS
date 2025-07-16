@@ -15,7 +15,7 @@
 //! ## Metrics Categories
 //!
 //! - API request/response metrics
-//! - Provider performance metrics  
+//! - Provider performance metrics
 //! - Quality processing overhead
 //! - Cache hit rates and performance
 //! - Learning system metrics

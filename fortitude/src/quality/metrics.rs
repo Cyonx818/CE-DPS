@@ -48,7 +48,7 @@
 //!         Some(provider.to_string()),
 //!     );
 //!     collector.collect(quality_metric).await?;
-//!     
+//!
 //!     // Collect performance metric
 //!     let perf_metric = QualityMetric::new(
 //!         MetricType::ProviderPerformance,
@@ -56,7 +56,7 @@
 //!         Some(provider.to_string()),
 //!     );
 //!     collector.collect(perf_metric).await?;
-//!     
+//!
 //!     Ok(())
 //! }
 //! ```
@@ -1110,7 +1110,7 @@ pub struct QualityTrends {
     pub average_quality: f64,
     /// Minimum quality score
     pub min_quality: f64,
-    /// Maximum quality score  
+    /// Maximum quality score
     pub max_quality: f64,
     /// Trend direction
     pub trend_direction: TrendDirection,

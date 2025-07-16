@@ -449,13 +449,13 @@ fn bench_manual_vs_proactive_research_comparison(c: &mut Criterion) {
                 b.to_async(&rt).iter(|| async {
                     // Run manual research simulation
                     let manual_result = simulate_manual_research(black_box(scenario)).await;
-                    
+
                     // Run proactive research simulation
                     let proactive_result = simulate_proactive_research(black_box(scenario)).await;
-                    
+
                     // Compare performance
                     let comparison = compare_performance(&manual_result, &proactive_result);
-                    
+
                     // Validate Sprint 008 core target: >50% reduction in manual lookup time
                     assert!(
                         comparison.meets_50_percent_target,
@@ -465,7 +465,7 @@ fn bench_manual_vs_proactive_research_comparison(c: &mut Criterion) {
                         comparison.manual_time,
                         comparison.proactive_time
                     );
-                    
+
                     // Validate that quality is maintained or improved
                     assert!(
                         comparison.quality_difference >= -0.05,
@@ -473,7 +473,7 @@ fn bench_manual_vs_proactive_research_comparison(c: &mut Criterion) {
                         comparison.scenario,
                         comparison.quality_difference
                     );
-                    
+
                     black_box(comparison);
                 });
             },

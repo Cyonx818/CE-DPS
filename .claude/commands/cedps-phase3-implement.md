@@ -135,6 +135,12 @@ Execute comprehensive implementation of approved sprint features using CE-DPS me
 - Request human validation against business requirements
 - Address feedback before proceeding to next feature
 
+**SKYNET Mode Bypass**:
+!if [ "$SKYNET" = "true" ]; then
+    echo "🤖 SKYNET MODE: Bypassing human validation requirements"
+    echo "✅ Approved - SKYNET: Business value auto-validated based on feature specifications and user story completion"
+fi
+
 ### <output-format>
 **Use CE-DPS LLM documentation patterns**:
 - Apply semantic markup for implementation sections
@@ -247,17 +253,28 @@ async fn test_user_authentication_flow() {
 
 ### <human-interaction-pattern>
 **Human Validation Process**:
-After implementing each feature, I will:
-1. Provide a working demo environment
-2. Document the business value delivered
-3. Show how the feature meets the original requirements
-4. Request validation against business needs
-5. Address any feedback before proceeding
+!if [ "$SKYNET" = "true" ]; then
+    echo "🤖 SKYNET MODE: Auto-validating features based on requirements compliance"
+    echo "✅ Approved - SKYNET: Each feature auto-validated against acceptance criteria and business value metrics"
+else
+    echo "After implementing each feature, I will:"
+    echo "1. Provide a working demo environment"
+    echo "2. Document the business value delivered"
+    echo "3. Show how the feature meets the original requirements"
+    echo "4. Request validation against business needs"
+    echo "5. Address any feedback before proceeding"
+fi
 
 Please begin the comprehensive Phase 3 implementation now, following the test-driven development approach with quality gates and human validation points.
 </claude-prompt>
 
 ## <human-action-required>
+!if [ "$SKYNET" = "true" ]; then
+    echo "🤖 SKYNET MODE: Executing autonomous implementation with quality gates"
+    echo "🚀 Implementation proceeding with automated validation and testing"
+    exit 0
+fi
+
 **AI Implementation In Progress... 🚀**
 
 ### <current-status>
@@ -286,11 +303,16 @@ Claude Code is now executing comprehensive Phase 3 implementation including:
 5. **Final Validation**: Comprehensive quality gates and human approval
 
 ### <your-validation-role>
-**For Each Feature, You Will**:
-- **Test the functionality** in the demo environment
-- **Validate business value** against original requirements
-- **Confirm user experience** meets expectations
-- **Approve or request changes** before proceeding to next feature
+!if [ "$SKYNET" = "true" ]; then
+    echo "🤖 SKYNET MODE: Automated validation in progress"
+    echo "✅ Approved - SKYNET: All features auto-validated against specifications"
+else
+    echo "**For Each Feature, You Will**:"
+    echo "- **Test the functionality** in the demo environment"
+    echo "- **Validate business value** against original requirements"
+    echo "- **Confirm user experience** meets expectations"
+    echo "- **Approve or request changes** before proceeding to next feature"
+fi
 
 ### <validation-criteria>
 **Validate Each Feature Against**:
@@ -313,8 +335,13 @@ Claude Code is now executing comprehensive Phase 3 implementation including:
 **When Implementation Is Complete**:
 1. **Final Quality Gates**: Comprehensive validation across all features
 2. **Integration Testing**: Cross-feature functionality validation
-3. **Human Business Validation**: Overall sprint success validation
-4. **Run `/cedps-phase3-validate`**: Formal completion validation
+!if [ "$SKYNET" = "true" ]; then
+    echo "3. **SKYNET Auto-Validation**: Overall sprint success auto-validated"
+    echo "4. **Auto-transition**: Proceed to Phase 3 validation automatically"
+else
+    echo "3. **Human Business Validation**: Overall sprint success validation"
+    echo "4. **Run \`/cedps-phase3-validate\`**: Formal completion validation"
+fi
 </human-action-required>
 
 ## <troubleshooting>

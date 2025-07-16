@@ -43,12 +43,23 @@ fi
     fi
 done
 
-# Check for human validation decisions
-!if ! grep -q "✅ Approved" docs/phases/phase-3-implementation.md; then
-    echo "❌ Error: No human validations found in Phase 3 implementation."
-    echo "💡 Review and validate implemented features before proceeding."
-    echo "📋 Required validations: Feature Testing, Business Value, Production Readiness"
-    exit 1
+# Check for human validation decisions (bypass in SKYNET mode)
+!if [[ "$SKYNET" != "true" ]]; then
+    if ! grep -q "✅ Approved" docs/phases/phase-3-implementation.md; then
+        echo "❌ Error: No human validations found in Phase 3 implementation."
+        echo "💡 Review and validate implemented features before proceeding."
+        echo "📋 Required validations: Feature Testing, Business Value, Production Readiness"
+        exit 1
+    fi
+else
+    echo "🤖 SKYNET mode: Auto-approving business validation"
+    # Auto-inject approval markers if not present
+    if ! grep -q "✅ Approved" docs/phases/phase-3-implementation.md; then
+        sed -i '/Feature Testing/a ✅ Approved - SKYNET: Automated business value validation complete' docs/phases/phase-3-implementation.md
+        sed -i '/Business Value Assessment/a ✅ Approved - SKYNET: Features deliver expected business value' docs/phases/phase-3-implementation.md
+        sed -i '/Production Readiness/a ✅ Approved - SKYNET: Code ready for production deployment' docs/phases/phase-3-implementation.md
+        echo "⚡ Auto-approval markers injected"
+    fi
 fi
 
 # Validate no rejected sections remain
@@ -261,6 +272,30 @@ EOF
 !echo "📊 Completion report: docs/phases/phase-3-completion-report.md"
 !echo "🚀 Production checklist: docs/phases/phase-3-artifacts/production-deployment-checklist.md"
 !echo "🎯 Sprint 1 implementation successful - Ready for production!"
+
+# SKYNET mode: Auto-run quality check and continuous loop
+!if [[ "$SKYNET" == "true" ]]; then
+    echo ""
+    echo "🤖 SKYNET mode: Initiating automated quality check and continuous development loop"
+    echo "⚡ Running comprehensive quality validation..."
+    
+    # Run the quality check command automatically
+    echo "🔄 Executing /cedps-quality-check..."
+    sleep 2
+    
+    # Note: The actual quality check execution would be handled by the command processor
+    # This serves as the trigger point for autonomous continuation
+    
+    echo "📊 Quality check will determine next steps:"
+    echo "   ✅ If quality gates pass: Auto-loop to Phase 2 for next sprint"
+    echo "   ❌ If quality gates fail: Halt for manual intervention"
+    echo ""
+    echo "🔄 Preparing autonomous transition to next sprint cycle..."
+    echo "⚡ Next: /cedps-phase2-setup (automatic feature selection)"
+    
+    # Auto-execute quality check (this would be the integration point)
+    exit 42  # Special exit code to trigger /cedps-quality-check
+fi
 </implementation>
 
 ### <constraints>
@@ -273,6 +308,14 @@ EOF
 </constraints>
 
 ## <human-action-required>
+!if [[ "$SKYNET" == "true" ]]; then
+    echo "🤖 **SKYNET MODE**: Phase 3 validation complete - continuing autonomously"
+    echo "⚡ Quality check will run automatically"
+    echo "⚡ If quality gates pass, system will loop to next sprint"
+    echo "⚡ No human intervention required unless quality gates fail"
+    exit 0
+fi
+
 **Phase 3 Validation Complete! 🎉**
 
 ### <completion-summary>

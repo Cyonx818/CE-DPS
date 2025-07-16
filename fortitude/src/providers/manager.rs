@@ -22,7 +22,7 @@
 //! #[tokio::main]
 //! async fn main() -> Result<(), Box<dyn std::error::Error>> {
 //!     let mut manager = ProviderManager::new(ProviderConfig::default()).await?;
-//!     
+//!
 //!     // Add providers
 //!     let openai_settings = ProviderSettings::new(
 //!         std::env::var("OPENAI_API_KEY")?,
@@ -30,24 +30,24 @@
 //!     );
 //!     let openai_provider = OpenAIProvider::new(openai_settings).await?;
 //!     manager.add_provider("openai".to_string(), Box::new(openai_provider)).await?;
-//!     
+//!
 //!     let claude_settings = ProviderSettings::new(
 //!         std::env::var("CLAUDE_API_KEY")?,
 //!         "claude-3-5-sonnet-20241022".to_string()
 //!     );
 //!     let claude_provider = ClaudeProvider::new(claude_settings).await?;
 //!     manager.add_provider("claude".to_string(), Box::new(claude_provider)).await?;
-//!     
+//!
 //!     // Execute research with intelligent provider selection
 //!     let request = ClassifiedRequest::new(
 //!         "How to implement async Rust?".to_string(),
 //!         ResearchType::Implementation,
 //!         // ... other fields
 //!     );
-//!     
+//!
 //!     let response = manager.execute_research(&request).await?;
 //!     println!("Research result: {}", response.immediate_answer);
-//!     
+//!
 //!     Ok(())
 //! }
 //! ```
@@ -292,7 +292,7 @@ impl ManagedProvider {
             perf.successful_requests += 1;
             perf.consecutive_failures = 0;
             perf.last_success = Some(Utc::now());
-            
+
             // Update health status on successful requests
             if !matches!(perf.health_status, HealthStatus::Healthy) {
                 perf.health_status = HealthStatus::Healthy;
@@ -301,10 +301,11 @@ impl ManagedProvider {
             perf.failed_requests += 1;
             perf.consecutive_failures += 1;
             perf.last_failure = Some(Utc::now());
-            
+
             // Update health status on failures
             if perf.consecutive_failures >= 3 {
-                perf.health_status = HealthStatus::Unhealthy("Too many consecutive failures".to_string());
+                perf.health_status =
+                    HealthStatus::Unhealthy("Too many consecutive failures".to_string());
             }
         }
 
@@ -447,8 +448,8 @@ impl ProviderManager {
             debug!("Investigating why no healthy providers found:");
             for (name, managed_provider) in providers.iter() {
                 let performance = managed_provider.get_performance().await;
-                debug!("Provider {}: health_status={:?}, is_healthy()={}, consecutive_failures={}, success_rate={}", 
-                    name, performance.health_status, performance.is_healthy(), 
+                debug!("Provider {}: health_status={:?}, is_healthy()={}, consecutive_failures={}, success_rate={}",
+                    name, performance.health_status, performance.is_healthy(),
                     performance.consecutive_failures, performance.success_rate());
             }
             warn!("No healthy providers available, falling back to all providers");
@@ -1152,41 +1153,53 @@ mod tests {
         assert_eq!(provider_perf.success_rate(), 0.0);
         assert_eq!(provider_perf.consecutive_failures, 0);
         assert!(matches!(provider_perf.health_status, HealthStatus::Healthy));
-        
+
         // Test case 2: Provider with some successful requests should be healthy
         let mut provider_perf_with_success = ProviderPerformance::default();
         provider_perf_with_success.total_requests = 10;
         provider_perf_with_success.successful_requests = 8;
         provider_perf_with_success.failed_requests = 2;
-        
-        assert!(provider_perf_with_success.is_healthy(), "Provider with 80% success rate should be healthy");
+
+        assert!(
+            provider_perf_with_success.is_healthy(),
+            "Provider with 80% success rate should be healthy"
+        );
         assert_eq!(provider_perf_with_success.success_rate(), 0.8);
-        
+
         // Test case 3: Provider with low success rate should not be healthy
         let mut provider_perf_low_success = ProviderPerformance::default();
         provider_perf_low_success.total_requests = 10;
         provider_perf_low_success.successful_requests = 3;
         provider_perf_low_success.failed_requests = 7;
-        
-        assert!(!provider_perf_low_success.is_healthy(), "Provider with 30% success rate should not be healthy");
+
+        assert!(
+            !provider_perf_low_success.is_healthy(),
+            "Provider with 30% success rate should not be healthy"
+        );
         assert_eq!(provider_perf_low_success.success_rate(), 0.3);
-        
+
         // Test case 4: Provider with exactly 50% success rate should not be healthy
         let mut provider_perf_boundary = ProviderPerformance::default();
         provider_perf_boundary.total_requests = 10;
         provider_perf_boundary.successful_requests = 5;
         provider_perf_boundary.failed_requests = 5;
-        
-        assert!(!provider_perf_boundary.is_healthy(), "Provider with exactly 50% success rate should not be healthy");
+
+        assert!(
+            !provider_perf_boundary.is_healthy(),
+            "Provider with exactly 50% success rate should not be healthy"
+        );
         assert_eq!(provider_perf_boundary.success_rate(), 0.5);
-        
+
         // Test case 5: Provider with just above 50% success rate should be healthy
         let mut provider_perf_above_boundary = ProviderPerformance::default();
         provider_perf_above_boundary.total_requests = 1000;
         provider_perf_above_boundary.successful_requests = 501;
         provider_perf_above_boundary.failed_requests = 499;
-        
-        assert!(provider_perf_above_boundary.is_healthy(), "Provider with 50.1% success rate should be healthy");
+
+        assert!(
+            provider_perf_above_boundary.is_healthy(),
+            "Provider with 50.1% success rate should be healthy"
+        );
         assert_eq!(provider_perf_above_boundary.success_rate(), 0.501);
     }
 }

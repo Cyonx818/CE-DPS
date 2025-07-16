@@ -283,29 +283,29 @@ fn bench_sprint_008_notification_target(c: &mut Criterion) {
                     let notifications: Vec<String> = (0..notification_count)
                         .map(|i| format!("Notification {}: Gap detected", i))
                         .collect();
-                    
+
                     let start = std::time::Instant::now();
                     let delivery_results = simulate_notification_delivery(black_box(&notifications)).await;
                     let duration = start.elapsed();
-                    
+
                     // Validate Sprint 008 target: <1s for immediate notifications
                     if notification_count <= 10 {
-                        assert!(duration.as_millis() < 1000, 
-                            "Notification delivery took {}ms for {} notifications, Sprint 008 target is <1000ms", 
+                        assert!(duration.as_millis() < 1000,
+                            "Notification delivery took {}ms for {} notifications, Sprint 008 target is <1000ms",
                             duration.as_millis(), notification_count);
                     }
-                    
+
                     // Validate throughput target: 50+ notifications per minute
                     let notifications_per_minute = (notification_count as f64 * 60.0) / duration.as_secs_f64();
                     if notification_count >= 25 {
-                        assert!(notifications_per_minute >= 50.0, 
-                            "Notification throughput: {:.0}/min, Sprint 008 target is 50+/min", 
+                        assert!(notifications_per_minute >= 50.0,
+                            "Notification throughput: {:.0}/min, Sprint 008 target is 50+/min",
                             notifications_per_minute);
                     }
-                    
+
                     // Verify all notifications were processed
                     assert_eq!(delivery_results.len(), notification_count);
-                    
+
                     black_box(delivery_results);
                 });
             },

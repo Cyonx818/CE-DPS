@@ -140,6 +140,31 @@ fi
 !echo "CE_DPS_QUALITY_GATES: ${CE_DPS_QUALITY_GATES:-Not set}"
 !echo "CE_DPS_HUMAN_APPROVAL_REQUIRED: ${CE_DPS_HUMAN_APPROVAL_REQUIRED:-Not set}"
 
+# SKYNET mode status
+!echo ""
+!echo "🤖 SKYNET Mode Status"
+!echo "====================="
+!SKYNET_STATUS="${SKYNET:-false}"
+!if [[ "$SKYNET" == "true" ]]; then
+    echo "🟢 SKYNET MODE: ENABLED (Autonomous Operation)"
+    echo "   ⚡ Human approval checkpoints: BYPASSED"
+    echo "   ⚡ Template auto-population: ENABLED"
+    echo "   ⚡ Continuous development loops: ENABLED"
+    echo "   ⚡ Technical quality gates: MAINTAINED"
+    echo "   ⚡ Next steps will execute automatically"
+elif [[ "$SKYNET" == "false" ]]; then
+    echo "🟡 SKYNET MODE: EXPLICITLY DISABLED (Human Oversight)"
+    echo "   👨‍💼 Human approval checkpoints: REQUIRED"
+    echo "   👨‍💼 Template completion: MANUAL"
+    echo "   👨‍💼 Manual command execution between phases"
+else
+    echo "🔵 SKYNET MODE: NOT SET (Default: Human Oversight)"
+    echo "   👨‍💼 Human approval checkpoints: REQUIRED"
+    echo "   👨‍💼 Template completion: MANUAL"
+    echo "   👨‍💼 Manual command execution between phases"
+fi
+!echo "   🎛️ Control: /skynet-enable, /skynet-disable, /skynet-status"
+
 # Git status
 !if git rev-parse --git-dir >/dev/null 2>&1; then
     echo ""
@@ -159,10 +184,21 @@ fi
 !echo "🎯 Next Steps"
 !echo "============="
 
+# Check SKYNET mode for next step behavior
+!if [[ "$SKYNET" == "true" ]]; then
+    echo "🤖 SKYNET MODE: Commands will execute automatically"
+    echo "   ⚡ No human intervention required"
+    echo "   ⚡ Quality gates must still pass"
+    echo ""
+fi
+
 !if [ "$CURRENT_PHASE" = "0" ] || [ "$CURRENT_PHASE" = "unknown" ]; then
     echo "👉 Start Phase 1: Strategic Planning"
     echo "   Command: /cedps-phase1-setup"
     echo "   Purpose: Define project vision and approve architecture"
+    if [[ "$SKYNET" == "true" ]]; then
+        echo "   🤖 SKYNET: Will auto-generate business requirements"
+    fi
 elif [ "$CURRENT_PHASE" = "1" ]; then
     if command -v jq >/dev/null 2>&1 && jq -e '.phases_completed | contains([1])' docs/ce-dps-state.json >/dev/null 2>&1; then
         echo "👉 Start Phase 2: Sprint Planning"
@@ -229,8 +265,12 @@ fi
 !echo ""
 !echo "💡 Other Commands"
 !echo "================"
-!echo "/cedps-tools  - Run quality gates and validation tools"
-!echo "/cedps-help   - Show detailed command help"
+!echo "/cedps-tools        - Run quality gates and validation tools"
+!echo "/cedps-quality-check - Run complete CI/CD test suite with auto-fix"
+!echo "/cedps-help         - Show detailed command help"
+!echo "/skynet-enable      - Enable autonomous operation mode"
+!echo "/skynet-disable     - Return to human oversight mode"
+!echo "/skynet-status      - Show detailed SKYNET mode information"
 !echo ""
 !echo "📚 Documentation"
 !echo "================"

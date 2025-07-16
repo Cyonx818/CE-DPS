@@ -35,17 +35,17 @@
 //!
 //! async fn optimize_research_query() -> Result<String, Box<dyn std::error::Error>> {
 //!     let mut engine = QualityOptimizationEngine::new().await?;
-//!     
+//!
 //!     let criteria = SelectionCriteria::research_optimized()
 //!         .with_quality_priority(0.8)
 //!         .with_cost_priority(0.2)
 //!         .with_domain("machine learning");
-//!     
+//!
 //!     let result = engine.execute_optimized_query(
 //!         "Explain transformer architectures",
 //!         criteria
 //!     ).await?;
-//!     
+//!
 //!     Ok(result.response)
 //! }
 //! ```

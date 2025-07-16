@@ -27,16 +27,16 @@
 //!         check_interval: Duration::from_secs(30),
 //!         circuit_breaker_threshold: 5,
 //!     };
-//!     
+//!
 //!     let engine = FallbackEngine::new(strategy).await?;
-//!     
+//!
 //!     // Add providers to the engine
 //!     // engine.add_provider("openai", openai_provider).await?;
 //!     // engine.add_provider("claude", claude_provider).await?;
-//!     
+//!
 //!     // Execute with automatic fallback
 //!     // let result = engine.execute_with_fallback(request).await?;
-//!     
+//!
 //!     Ok(())
 //! }
 //! ```

@@ -17,7 +17,7 @@
 //!         std::env::var("OPENAI_API_KEY")?,
 //!         "gpt-4".to_string()
 //!     );
-//!     
+//!
 //!     let provider = OpenAIProvider::new(settings).await?;
 //!     let response = provider.research_query("What is quantum computing?".to_string()).await?;
 //!     println!("Response: {}", response);

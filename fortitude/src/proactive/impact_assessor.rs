@@ -228,7 +228,7 @@ impl Default for UsagePatternAnalysis {
     }
 }
 
-/// Dependency impact analysis for a code component  
+/// Dependency impact analysis for a code component
 #[derive(Debug, Clone, Serialize, Deserialize)]
 pub struct DependencyImpactAnalysis {
     /// Number of direct dependencies
@@ -496,7 +496,7 @@ impl ImpactAssessor {
         config.validate()?;
 
         info!("Initializing impact assessor with weights: usage={}, dependency={}, api={}, activity={}, team={}",
-              config.usage_frequency_weight, config.dependency_impact_weight, 
+              config.usage_frequency_weight, config.dependency_impact_weight,
               config.api_visibility_weight, config.development_activity_weight, config.team_impact_weight);
 
         Ok(Self {

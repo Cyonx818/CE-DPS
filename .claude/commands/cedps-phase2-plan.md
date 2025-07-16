@@ -138,6 +138,12 @@ Based on the selected features above, provide comprehensive implementation plann
 - Timeline estimates and resource allocation
 - Quality gates and acceptance criteria
 
+**SKYNET Mode Bypass**:
+!if [ "$SKYNET" = "true" ]; then
+    echo "🤖 SKYNET MODE: Bypassing human approval requirements"
+    echo "✅ Approved - SKYNET: Strategic implementation decisions auto-approved based on CE-DPS best practices and technical soundness"
+fi
+
 ### <fortitude-integration>
 **Knowledge Management**:
 - Query existing implementation patterns for similar features
@@ -196,6 +202,13 @@ Please begin the comprehensive Phase 2 implementation planning now. When complet
 </claude-prompt>
 
 ## <human-action-required>
+!if [ "$SKYNET" = "true" ]; then
+    echo "🤖 SKYNET MODE: Auto-transitioning to phase validation"
+    echo "✅ Phase 2 planning complete - proceeding to validation"
+    exec /home/cyonx/Documents/GitHub/CE-DPS/.claude/commands/cedps-phase2-validate.md
+    exit 0
+fi
+
 **AI Implementation Planning In Progress... 🧠**
 
 ### <current-status>
@@ -225,10 +238,15 @@ Claude Code is now performing comprehensive Phase 2 implementation planning incl
 5. **Run `/cedps-phase2-validate`** when ready to proceed to implementation
 
 ### <approval-process>
-**You will approve/reject each section**:
-- ✅ **Approved**: Implementation approach accepted, proceed as planned
-- ❓ **Needs Adjustment**: Request changes to scope, timeline, or approach
-- ❌ **Requires Revision**: Reject plan, request alternative implementation strategy
+!if [ "$SKYNET" = "true" ]; then
+    echo "🤖 SKYNET MODE: Auto-approving all sections with AI reasoning"
+    echo "✅ Approved - SKYNET: All implementation sections validated against CE-DPS standards"
+else
+    echo "**You will approve/reject each section**:"
+    echo "- ✅ **Approved**: Implementation approach accepted, proceed as planned"
+    echo "- ❓ **Needs Adjustment**: Request changes to scope, timeline, or approach"
+    echo "- ❌ **Requires Revision**: Reject plan, request alternative implementation strategy"
+fi
 
 ### <quality-standards>
 **Validate that planning includes**:

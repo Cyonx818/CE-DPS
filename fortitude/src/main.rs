@@ -1,6 +1,6 @@
 use clap::{Parser, Subcommand};
 use fortitude::proactive::{ProactiveManager, ProactiveManagerConfig, ProactiveManagerError};
-use fortitude::providers::{Provider, HealthStatus};
+use fortitude::providers::{HealthStatus, Provider};
 use std::path::PathBuf;
 use std::time::Duration;
 use tracing::{error, info, warn, Level};
@@ -401,7 +401,7 @@ async fn handle_proactive_start(
     match manager.start().await {
         Ok(()) => {
             println!("✅ Proactive research mode started successfully");
-            info!("Proactive research mode started with gap_interval={}min, max_tasks={}, debounce={}s", 
+            info!("Proactive research mode started with gap_interval={}min, max_tasks={}, debounce={}s",
                   gap_interval, max_tasks, debounce);
 
             // Keep the process running
@@ -435,9 +435,7 @@ async fn handle_proactive_stop(force: bool, timeout: u64) -> Result<(), Proactiv
     if force {
         println!("   Force stop requested - terminating immediately");
     } else {
-        println!(
-            "   Graceful stop requested - waiting up to {timeout} seconds"
-        );
+        println!("   Graceful stop requested - waiting up to {timeout} seconds");
     }
 
     println!("⚠️  Stop functionality not yet fully implemented");
@@ -536,28 +534,30 @@ async fn handle_research_command(
     );
 
     if cross_validate {
-        println!(
-            "🔍 Cross-provider validation enabled (threshold: {quality_threshold:.2})"
-        );
+        println!("🔍 Cross-provider validation enabled (threshold: {quality_threshold:.2})");
     }
 
     println!("🔍 Starting research on: {topic}");
     println!("  Provider: {provider}");
     println!("  Cross-validation: {cross_validate}");
     println!("  Quality threshold: {quality_threshold:.2}");
-    
+
     // Create a research pipeline with the infrastructure
     match create_research_pipeline().await {
         Ok(pipeline) => {
             println!("✅ Research pipeline created");
-            
+
             // Show cache lookup attempt
             println!("\n🔍 Checking reference library cache...");
             println!("  📂 Looking for existing research on: '{topic}'");
-            
+
             // Use the enhanced query processing with the provider preference
-            let provider_pref = if provider == "auto" { None } else { Some(provider) };
-            
+            let provider_pref = if provider == "auto" {
+                None
+            } else {
+                Some(provider)
+            };
+
             match pipeline
                 .process_query_enhanced(
                     &topic,
@@ -573,28 +573,33 @@ async fn handle_research_command(
                     // Check if this was from cache based on fast processing time
                     // Cache hits typically complete in < 50ms
                     let was_cached = result.metadata.processing_time_ms < 50;
-                    
+
                     if was_cached {
                         println!("✅ Found cached result in reference library!");
-                        println!("  ⚡ Retrieved from cache in {}ms", result.metadata.processing_time_ms);
+                        println!(
+                            "  ⚡ Retrieved from cache in {}ms",
+                            result.metadata.processing_time_ms
+                        );
                     } else {
                         println!("  ❌ No cached result found");
                         println!("🤖 Executing new research...");
-                        
+
                         if cross_validate {
-                            println!("  🔄 Cross-validation enabled - comparing multiple providers");
+                            println!(
+                                "  🔄 Cross-validation enabled - comparing multiple providers"
+                            );
                         }
-                        
+
                         let processing_time = result.metadata.processing_time_ms;
                         println!("  ⏱️  Processing completed in {processing_time}ms");
-                        
+
                         // Show sources consulted as indication of provider activity
                         if !result.metadata.sources_consulted.is_empty() {
                             let source_count = result.metadata.sources_consulted.len();
                             println!("  📡 Consulted {source_count} source(s)");
                         }
                     }
-                    
+
                     println!("\n📝 Research Results:");
                     println!("==================");
                     let query = result.original_query();
@@ -605,16 +610,16 @@ async fn handle_research_command(
                     println!("Quality Score: {quality_score:.2}");
                     let source = if was_cached { "Cache" } else { "New Research" };
                     println!("Source: {source}");
-                    
+
                     // Show sources consulted
                     if !result.metadata.sources_consulted.is_empty() {
                         let sources = result.metadata.sources_consulted.join(", ");
                         println!("Sources: {sources}");
                     }
-                    
+
                     println!("\n💡 Answer:");
                     println!("{}", result.immediate_answer);
-                    
+
                     if !result.supporting_evidence.is_empty() {
                         println!("\n🔍 Supporting Evidence:");
                         for evidence in &result.supporting_evidence {
@@ -623,7 +628,7 @@ async fn handle_research_command(
                             println!("  • {source} ({evidence_type})");
                         }
                     }
-                    
+
                     if !result.implementation_details.is_empty() {
                         println!("\n⚙️ Implementation Details:");
                         for detail in &result.implementation_details {
@@ -632,11 +637,11 @@ async fn handle_research_command(
                             println!("  • {category}: {content}");
                         }
                     }
-                    
+
                     if !was_cached {
                         println!("\n💾 Result saved to reference library for future use");
                     }
-                    
+
                     println!("\n✅ Research completed successfully");
                 }
                 Err(e) => {
@@ -662,7 +667,7 @@ fn is_placeholder_key(key: &str) -> bool {
     // Common placeholder patterns
     let placeholders = [
         "your-openai-api-key-here",
-        "your-claude-api-key-here", 
+        "your-claude-api-key-here",
         "your-anthropic-api-key-here",
         "your-gemini-api-key-here",
         "sk-example",
@@ -671,22 +676,22 @@ fn is_placeholder_key(key: &str) -> bool {
         "placeholder",
         "example",
     ];
-    
+
     // Check for exact matches
     if placeholders.contains(&key) {
         return true;
     }
-    
+
     // Check for obviously invalid keys (too short, wrong format)
     if key.len() < 10 {
         return true;
     }
-    
+
     // OpenAI keys should start with sk- and be much longer
     if key.starts_with("sk-") && key.len() < 50 {
         return true;
     }
-    
+
     false
 }
 
@@ -697,16 +702,16 @@ async fn determine_openai_model(api_key: &str) -> String {
         .timeout(std::time::Duration::from_secs(10))
         .build()
         .unwrap_or_default();
-    
+
     // Test newer models first, then fall back to older ones
     let test_models = ["gpt-4.1-mini", "gpt-4", "gpt-3.5-turbo"];
-    
+
     for model in &test_models {
         if test_model_access(&client, api_key, model).await {
             return model.to_string();
         }
     }
-    
+
     // Default to gpt-3.5-turbo if all tests fail
     "gpt-3.5-turbo".to_string()
 }
@@ -719,7 +724,7 @@ async fn test_model_access(client: &reqwest::Client, api_key: &str, model: &str)
         "max_tokens": 1,
         "temperature": 0.0
     });
-    
+
     let response = client
         .post("https://api.openai.com/v1/chat/completions")
         .header("Authorization", format!("Bearer {api_key}"))
@@ -727,12 +732,12 @@ async fn test_model_access(client: &reqwest::Client, api_key: &str, model: &str)
         .json(&request_body)
         .send()
         .await;
-    
+
     match response {
         Ok(resp) => {
             // Success (200) or rate limit (429) means model is accessible
             resp.status().is_success() || resp.status() == reqwest::StatusCode::TOO_MANY_REQUESTS
-        },
+        }
         Err(_) => false,
     }
 }
@@ -743,20 +748,17 @@ async fn test_gemini_key_validity(api_key: &str) -> bool {
         .timeout(std::time::Duration::from_secs(10))
         .build()
         .unwrap_or_default();
-    
+
     // Test with a simple model list request
     let url = format!("https://generativelanguage.googleapis.com/v1/models?key={api_key}");
-    
-    let response = client
-        .get(&url)
-        .send()
-        .await;
-    
+
+    let response = client.get(&url).send().await;
+
     match response {
         Ok(resp) => {
             // Success (200) or rate limit (429) means key is valid
             resp.status().is_success() || resp.status() == reqwest::StatusCode::TOO_MANY_REQUESTS
-        },
+        }
         Err(_) => false,
     }
 }
@@ -767,13 +769,13 @@ async fn test_claude_key_validity(api_key: &str) -> bool {
         .timeout(std::time::Duration::from_secs(10))
         .build()
         .unwrap_or_default();
-    
+
     let request_body = serde_json::json!({
         "model": "claude-3-5-sonnet-20241022",
         "max_tokens": 1,
         "messages": [{"role": "user", "content": "test"}]
     });
-    
+
     let response = client
         .post("https://api.anthropic.com/v1/messages")
         .header("x-api-key", api_key)
@@ -782,29 +784,35 @@ async fn test_claude_key_validity(api_key: &str) -> bool {
         .json(&request_body)
         .send()
         .await;
-    
+
     match response {
         Ok(resp) => {
             // Success (200) or rate limit (429) means key is valid
             resp.status().is_success() || resp.status() == reqwest::StatusCode::TOO_MANY_REQUESTS
-        },
+        }
         Err(_) => false,
     }
 }
 
 /// Create a research pipeline with multi-provider research engine and cache lookup
-async fn create_research_pipeline() -> Result<fortitude_core::pipeline::ResearchPipeline, Box<dyn std::error::Error>> {
+async fn create_research_pipeline(
+) -> Result<fortitude_core::pipeline::ResearchPipeline, Box<dyn std::error::Error>> {
+    use fortitude::providers::config::{ProviderSettings, RateLimitConfig};
+    use fortitude::providers::{
+        ClaudeProvider, GeminiProvider, OpenAIProvider, ProviderConfig, ProviderManager,
+        SelectionStrategy,
+    };
+    use fortitude::research_engine_adapter::ProviderManagerAdapter;
+    use fortitude_core::pipeline::{PipelineBuilder, PipelineConfig};
+    use fortitude_core::{
+        BasicClassifier, FileStorage, MultiProviderConfig, MultiProviderResearchEngine,
+    };
+    use fortitude_types::{AudienceContext, ClassificationConfig, DomainContext, StorageConfig};
     use std::sync::Arc;
     use std::time::Duration;
-    use fortitude_core::pipeline::{PipelineBuilder, PipelineConfig};
-    use fortitude_core::{BasicClassifier, FileStorage, MultiProviderResearchEngine, MultiProviderConfig};
-    use fortitude_types::{AudienceContext, DomainContext, ClassificationConfig, StorageConfig};
-    use fortitude::providers::{ProviderManager, ProviderConfig, SelectionStrategy, OpenAIProvider, ClaudeProvider, GeminiProvider};
-    use fortitude::providers::config::{ProviderSettings, RateLimitConfig};
-    use fortitude::research_engine_adapter::ProviderManagerAdapter;
-    
+
     println!("🔧 Setting up research pipeline with multi-provider support...");
-    
+
     // Set up provider manager with automatic provider selection
     let provider_config = ProviderConfig {
         selection_strategy: SelectionStrategy::Balanced,
@@ -826,11 +834,11 @@ async fn create_research_pipeline() -> Result<fortitude_core::pipeline::Research
     if let Ok(openai_key) = std::env::var("OPENAI_API_KEY") {
         if !openai_key.is_empty() && !is_placeholder_key(&openai_key) {
             println!("✅ Configuring OpenAI provider...");
-            
+
             // Try gpt-3.5-turbo first (more widely accessible), with gpt-4 as fallback
             let model = determine_openai_model(&openai_key).await;
             println!("  📝 Using model: {model}");
-            
+
             let openai_settings = ProviderSettings::new(openai_key.clone(), model)
                 .with_timeout(Duration::from_secs(30))
                 .with_rate_limits(RateLimitConfig {
@@ -846,26 +854,30 @@ async fn create_research_pipeline() -> Result<fortitude_core::pipeline::Research
                     match openai_provider.health_check().await {
                         Ok(health_status) => {
                             let provider_arc = Arc::new(openai_provider);
-                            provider_manager.add_provider("openai".to_string(), provider_arc).await?;
+                            provider_manager
+                                .add_provider("openai".to_string(), provider_arc)
+                                .await?;
                             provider_count += 1;
                             match health_status {
                                 HealthStatus::Healthy => {
                                     println!("✅ OpenAI provider added successfully (healthy)");
-                                },
+                                }
                                 HealthStatus::Degraded(reason) => {
-                                    println!("⚠️  OpenAI provider added with degraded health: {reason}");
-                                },
+                                    println!(
+                                        "⚠️  OpenAI provider added with degraded health: {reason}"
+                                    );
+                                }
                                 HealthStatus::Unhealthy(reason) => {
                                     println!("❌ OpenAI provider unhealthy but added: {reason}");
-                                },
+                                }
                             }
-                        },
+                        }
                         Err(e) => {
                             println!("❌ OpenAI provider health check failed: {e}");
                             println!("   Skipping OpenAI provider");
                         }
                     }
-                },
+                }
                 Err(e) => {
                     println!("❌ Failed to create OpenAI provider: {e}");
                     println!("   Skipping OpenAI provider");
@@ -879,19 +891,21 @@ async fn create_research_pipeline() -> Result<fortitude_core::pipeline::Research
     }
 
     // Add Claude provider if API key is available
-    if let Ok(claude_key) = std::env::var("CLAUDE_API_KEY")
-        .or_else(|_| std::env::var("ANTHROPIC_API_KEY")) {
+    if let Ok(claude_key) =
+        std::env::var("CLAUDE_API_KEY").or_else(|_| std::env::var("ANTHROPIC_API_KEY"))
+    {
         if !claude_key.is_empty() && !is_placeholder_key(&claude_key) {
             println!("✅ Configuring Claude provider...");
-            
-            let claude_settings = ProviderSettings::new(claude_key.clone(), "claude-3-5-sonnet-20241022".to_string())
-                .with_timeout(Duration::from_secs(30))
-                .with_rate_limits(RateLimitConfig {
-                    requests_per_minute: 50,
-                    input_tokens_per_minute: 80_000,
-                    output_tokens_per_minute: 16_000,
-                    max_concurrent_requests: 3,
-                });
+
+            let claude_settings =
+                ProviderSettings::new(claude_key.clone(), "claude-3-5-sonnet-20241022".to_string())
+                    .with_timeout(Duration::from_secs(30))
+                    .with_rate_limits(RateLimitConfig {
+                        requests_per_minute: 50,
+                        input_tokens_per_minute: 80_000,
+                        output_tokens_per_minute: 16_000,
+                        max_concurrent_requests: 3,
+                    });
 
             match ClaudeProvider::new(claude_settings).await {
                 Ok(claude_provider) => {
@@ -899,26 +913,30 @@ async fn create_research_pipeline() -> Result<fortitude_core::pipeline::Research
                     match claude_provider.health_check().await {
                         Ok(health_status) => {
                             let provider_arc = Arc::new(claude_provider);
-                            provider_manager.add_provider("claude".to_string(), provider_arc).await?;
+                            provider_manager
+                                .add_provider("claude".to_string(), provider_arc)
+                                .await?;
                             provider_count += 1;
                             match health_status {
                                 HealthStatus::Healthy => {
                                     println!("✅ Claude provider added successfully (healthy)");
-                                },
+                                }
                                 HealthStatus::Degraded(reason) => {
-                                    println!("⚠️  Claude provider added with degraded health: {reason}");
-                                },
+                                    println!(
+                                        "⚠️  Claude provider added with degraded health: {reason}"
+                                    );
+                                }
                                 HealthStatus::Unhealthy(reason) => {
                                     println!("❌ Claude provider unhealthy but added: {reason}");
-                                },
+                                }
                             }
-                        },
+                        }
                         Err(e) => {
                             println!("❌ Claude provider health check failed: {e}");
                             println!("   Skipping Claude provider");
                         }
                     }
-                },
+                }
                 Err(e) => {
                     println!("❌ Failed to create Claude provider: {e}");
                     println!("   Skipping Claude provider");
@@ -931,16 +949,17 @@ async fn create_research_pipeline() -> Result<fortitude_core::pipeline::Research
         println!("⚠️  CLAUDE_API_KEY or ANTHROPIC_API_KEY environment variable not found");
     }
 
-    // Add Gemini provider if API key is available  
-    if let Ok(gemini_key) = std::env::var("GEMINI_API_KEY")
-        .or_else(|_| std::env::var("GOOGLE_API_KEY")) {
+    // Add Gemini provider if API key is available
+    if let Ok(gemini_key) =
+        std::env::var("GEMINI_API_KEY").or_else(|_| std::env::var("GOOGLE_API_KEY"))
+    {
         if !gemini_key.is_empty() && !is_placeholder_key(&gemini_key) {
             println!("✅ Configuring Gemini provider...");
-            
+
             // Use gemini-2.5-flash as default (latest fast model)
             let model = "gemini-2.5-flash".to_string();
             println!("  📝 Using model: {model}");
-            
+
             let gemini_settings = ProviderSettings::new(gemini_key.clone(), model)
                 .with_timeout(Duration::from_secs(30))
                 .with_rate_limits(RateLimitConfig {
@@ -956,26 +975,30 @@ async fn create_research_pipeline() -> Result<fortitude_core::pipeline::Research
                     match gemini_provider.health_check().await {
                         Ok(health_status) => {
                             let provider_arc = Arc::new(gemini_provider);
-                            provider_manager.add_provider("gemini".to_string(), provider_arc).await?;
+                            provider_manager
+                                .add_provider("gemini".to_string(), provider_arc)
+                                .await?;
                             provider_count += 1;
                             match health_status {
                                 HealthStatus::Healthy => {
                                     println!("✅ Gemini provider added successfully (healthy)");
-                                },
+                                }
                                 HealthStatus::Degraded(reason) => {
-                                    println!("⚠️  Gemini provider added with degraded health: {reason}");
-                                },
+                                    println!(
+                                        "⚠️  Gemini provider added with degraded health: {reason}"
+                                    );
+                                }
                                 HealthStatus::Unhealthy(reason) => {
                                     println!("❌ Gemini provider unhealthy but added: {reason}");
-                                },
+                                }
                             }
-                        },
+                        }
                         Err(e) => {
                             println!("❌ Gemini provider health check failed: {e}");
                             println!("   Skipping Gemini provider");
                         }
                     }
-                },
+                }
                 Err(e) => {
                     println!("❌ Failed to create Gemini provider: {e}");
                     println!("   Skipping Gemini provider");
@@ -1020,24 +1043,24 @@ async fn create_research_pipeline() -> Result<fortitude_core::pipeline::Research
 
     // Wrap provider manager in adapter
     let provider_adapter = ProviderManagerAdapter::new(Arc::new(provider_manager));
-    
+
     let research_engine = Arc::new(
-        MultiProviderResearchEngine::new(Arc::new(provider_adapter), multi_provider_config).await?
+        MultiProviderResearchEngine::new(Arc::new(provider_adapter), multi_provider_config).await?,
     );
-    
+
     println!("✅ Multi-provider research engine created successfully");
-    
-    // Create basic components with proper configurations  
+
+    // Create basic components with proper configurations
     // Lower confidence threshold for CLI usage (demo mode)
     let classification_config = ClassificationConfig {
         default_threshold: 0.05,
         ..Default::default()
     };
     let classifier = Arc::new(BasicClassifier::new(classification_config));
-    
+
     let storage_config = StorageConfig::default();
     let storage = Arc::new(FileStorage::new(storage_config).await?);
-    
+
     // Configure the pipeline with multi-provider support enabled
     let config = PipelineConfig {
         max_concurrent: 3,
@@ -1059,7 +1082,7 @@ async fn create_research_pipeline() -> Result<fortitude_core::pipeline::Research
         enable_monitoring: false,
         auto_apply_learning: false,
     };
-    
+
     // Build the pipeline with research engine (CRITICAL FIX)
     let pipeline = PipelineBuilder::new()
         .with_max_concurrent(config.max_concurrent)
@@ -1070,9 +1093,9 @@ async fn create_research_pipeline() -> Result<fortitude_core::pipeline::Research
         .with_context_detection(config.enable_context_detection)
         .with_research_engine(research_engine) // CRITICAL: Add research engine
         .build(classifier, storage);
-    
+
     println!("✅ Research pipeline created with cache lookup and multi-provider support");
-    
+
     Ok(pipeline)
 }
 
@@ -1240,31 +1263,47 @@ async fn handle_provider_health(
         if let Ok(openai_key) = std::env::var("OPENAI_API_KEY") {
             if !openai_key.is_empty() && !is_placeholder_key(&openai_key) {
                 print!("Testing API connectivity... ");
-                
+
                 let model = if force {
                     // Force test all models if requested, prioritizing newer ones
-                    if test_model_access(&reqwest::Client::new(), &openai_key, "gpt-4.1-mini").await {
+                    if test_model_access(&reqwest::Client::new(), &openai_key, "gpt-4.1-mini").await
+                    {
                         "gpt-4.1-mini"
-                    } else if test_model_access(&reqwest::Client::new(), &openai_key, "gpt-4").await {
+                    } else if test_model_access(&reqwest::Client::new(), &openai_key, "gpt-4").await
+                    {
                         "gpt-4"
-                    } else if test_model_access(&reqwest::Client::new(), &openai_key, "gpt-3.5-turbo").await {
+                    } else if test_model_access(
+                        &reqwest::Client::new(),
+                        &openai_key,
+                        "gpt-3.5-turbo",
+                    )
+                    .await
+                    {
                         "gpt-3.5-turbo"
                     } else {
                         "❌ No accessible models"
                     }
                 } else {
                     // Test in priority order: newest first
-                    if test_model_access(&reqwest::Client::new(), &openai_key, "gpt-4.1-mini").await {
+                    if test_model_access(&reqwest::Client::new(), &openai_key, "gpt-4.1-mini").await
+                    {
                         "gpt-4.1-mini"
-                    } else if test_model_access(&reqwest::Client::new(), &openai_key, "gpt-4").await {
+                    } else if test_model_access(&reqwest::Client::new(), &openai_key, "gpt-4").await
+                    {
                         "gpt-4"
-                    } else if test_model_access(&reqwest::Client::new(), &openai_key, "gpt-3.5-turbo").await {
+                    } else if test_model_access(
+                        &reqwest::Client::new(),
+                        &openai_key,
+                        "gpt-3.5-turbo",
+                    )
+                    .await
+                    {
                         "gpt-3.5-turbo"
                     } else {
                         "❌ No accessible models"
                     }
                 };
-                
+
                 if model.starts_with("❌") {
                     println!("❌ Unhealthy ({model})");
                 } else {
@@ -1282,11 +1321,12 @@ async fn handle_provider_health(
     // Check Claude/Anthropic
     if provider.is_none() || provider.as_ref().unwrap() == "claude" {
         print!("Claude: ");
-        if let Ok(claude_key) = std::env::var("CLAUDE_API_KEY")
-            .or_else(|_| std::env::var("ANTHROPIC_API_KEY")) {
+        if let Ok(claude_key) =
+            std::env::var("CLAUDE_API_KEY").or_else(|_| std::env::var("ANTHROPIC_API_KEY"))
+        {
             if !claude_key.is_empty() && !is_placeholder_key(&claude_key) {
                 print!("Testing API connectivity... ");
-                
+
                 // Test Claude API with a simple request
                 if test_claude_key_validity(&claude_key).await {
                     println!("✅ Healthy");
@@ -1305,11 +1345,12 @@ async fn handle_provider_health(
     // Check Gemini
     if provider.is_none() || provider.as_ref().unwrap() == "gemini" {
         print!("Gemini: ");
-        if let Ok(gemini_key) = std::env::var("GEMINI_API_KEY")
-            .or_else(|_| std::env::var("GOOGLE_API_KEY")) {
+        if let Ok(gemini_key) =
+            std::env::var("GEMINI_API_KEY").or_else(|_| std::env::var("GOOGLE_API_KEY"))
+        {
             if !gemini_key.is_empty() && !is_placeholder_key(&gemini_key) {
                 print!("Testing API connectivity... ");
-                
+
                 if test_gemini_key_validity(&gemini_key).await {
                     println!("✅ Healthy (implementation pending)");
                 } else {
@@ -1338,7 +1379,10 @@ async fn handle_provider_health(
         println!("   - CLAUDE_API_KEY=your-claude-api-key (or ANTHROPIC_API_KEY)");
         println!("   - GEMINI_API_KEY=your-gemini-api-key (or GOOGLE_API_KEY)");
     } else {
-        println!("\n✅ Health check completed for {} provider(s)", checked_providers.len());
+        println!(
+            "\n✅ Health check completed for {} provider(s)",
+            checked_providers.len()
+        );
     }
 
     Ok(())

@@ -295,7 +295,7 @@ pub struct ContextAwarePriorityBreakdown {
     pub extracted_context: Option<ExtractedContext>,
     /// Domain-aware score adjustment
     pub domain_adjustment: f64,
-    /// Audience-aware score adjustment  
+    /// Audience-aware score adjustment
     pub audience_adjustment: f64,
     /// Urgency-based score adjustment
     pub urgency_adjustment: f64,

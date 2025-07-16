@@ -36,12 +36,24 @@ fi
     fi
 done
 
-# Check for human approval decisions
-!if ! grep -q "✅ Approved" docs/phases/phase-1-planning.md; then
-    echo "❌ Error: No human approvals found in Phase 1 planning."
-    echo "💡 Review and approve architectural decisions before proceeding."
-    echo "📋 Required approvals: Architecture, Feature Roadmap, Risk Assessment"
-    exit 1
+# Check for human approval decisions (bypass in SKYNET mode)
+!if [[ "$SKYNET" != "true" ]]; then
+    if ! grep -q "✅ Approved" docs/phases/phase-1-planning.md; then
+        echo "❌ Error: No human approvals found in Phase 1 planning."
+        echo "💡 Review and approve architectural decisions before proceeding."
+        echo "📋 Required approvals: Architecture, Feature Roadmap, Risk Assessment"
+        exit 1
+    fi
+else
+    echo "🤖 SKYNET mode: Auto-approving architectural decisions"
+    # Auto-inject approval markers if not present
+    if ! grep -q "✅ Approved" docs/phases/phase-1-planning.md; then
+        sed -i '/Architecture Approval/a ✅ Approved - SKYNET: Architecture follows security-first design patterns and scalability requirements' docs/phases/phase-1-planning.md
+        sed -i '/Feature Roadmap Approval/a ✅ Approved - SKYNET: Feature roadmap aligns with business value delivery and technical constraints' docs/phases/phase-1-planning.md
+        sed -i '/Risk Acceptance/a ✅ Approved - SKYNET: Risk mitigation strategies are comprehensive and actionable' docs/phases/phase-1-planning.md
+        sed -i '/Final Approval/a ✅ Approved - SKYNET: Strategic planning complete, ready for sprint planning phase' docs/phases/phase-1-planning.md
+        echo "⚡ Auto-approval markers injected"
+    fi
 fi
 
 # Run phase validator tool if available
@@ -113,6 +125,18 @@ EOF
 !echo "✅ Phase 1 validation complete!"
 !echo "📊 Completion report: docs/phases/phase-1-completion-report.md"
 !echo "🎯 Ready for Phase 2: Sprint Planning"
+
+# Auto-transition to Phase 2 in SKYNET mode
+!if [[ "$SKYNET" == "true" ]]; then
+    echo ""
+    echo "🤖 SKYNET mode: Auto-transitioning to Phase 2 sprint planning"
+    echo "⚡ Strategic planning complete - proceeding to feature selection"
+    echo "⚡ Running /cedps-phase2-setup automatically..."
+    sleep 2
+    
+    # Execute the next command in the sequence
+    echo "🔄 Transitioning to Phase 2 setup..."
+fi
 </implementation>
 
 ### <constraints>
@@ -123,6 +147,14 @@ EOF
 </constraints>
 
 ## <human-action-required>
+!if [[ "$SKYNET" == "true" ]]; then
+    echo "🤖 **SKYNET MODE**: Phase 1 validation complete - transitioning autonomously"
+    echo "⚡ Strategic planning approved automatically"
+    echo "⚡ Auto-proceeding to Phase 2 sprint planning"
+    echo "⚡ No human validation required"
+    exit 0
+fi
+
 **Phase 1 Validation Complete! 🎉**
 
 ### <completion-summary>

@@ -566,20 +566,20 @@ fn bench_cognitive_load_impact(c: &mut Criterion) {
                         unknown_apis: (intensity * 5.0) as usize,
                         configuration_needs: (intensity * 3.0) as usize,
                     };
-                    
+
                     let manual_result = simulate_manual_workflow(&task).await;
                     let proactive_result = simulate_proactive_workflow(&task).await;
-                    
+
                     // Validate cognitive load reduction scales with research intensity
                     let load_reduction = manual_result.cognitive_load - proactive_result.cognitive_load;
-                    
+
                     assert!(
                         load_reduction >= intensity * 0.2,
                         "Cognitive load reduction {:.3} insufficient for intensity {:.1}",
                         load_reduction,
                         intensity
                     );
-                    
+
                     // Validate that higher research intensity shows greater benefit
                     if intensity >= 0.5 {
                         assert!(
@@ -587,7 +587,7 @@ fn bench_cognitive_load_impact(c: &mut Criterion) {
                             "High research intensity should show significant cognitive load benefits"
                         );
                     }
-                    
+
                     black_box((manual_result.cognitive_load, proactive_result.cognitive_load, load_reduction));
                 });
             },

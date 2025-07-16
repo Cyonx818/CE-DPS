@@ -39,7 +39,7 @@ impl ResourceProvider {
         let possible_paths = vec![
             // CE-DPS reference directory (preferred)
             current_path.join("../../../reference"),
-            current_path.join("../../reference"), 
+            current_path.join("../../reference"),
             current_path.join("../reference"),
             current_path.join("reference"),
             // CE-DPS methodology directory
@@ -59,7 +59,7 @@ impl ResourceProvider {
             if path.join("llm-documentation-quick-reference.md").exists() {
                 return path;
             }
-            // Check for CE-DPS methodology structure  
+            // Check for CE-DPS methodology structure
             if path.join("ai-implementation").exists() {
                 return path;
             }
@@ -128,7 +128,7 @@ impl ResourceProvider {
         let possible_library_paths = vec![
             // CE-DPS reference directory
             self.docs_base_path.clone(),
-            // CE-DPS methodology directory  
+            // CE-DPS methodology directory
             self.docs_base_path.clone(),
             // Legacy fortitude reference_library
             self.docs_base_path.join("reference_library"),
@@ -136,18 +136,11 @@ impl ResourceProvider {
 
         for library_path in possible_library_paths {
             if library_path.exists() {
-                debug!(
-                    "Found reference library path: {}",
-                    library_path.display()
-                );
-                
-                self.scan_directory_for_resources(
-                    &library_path,
-                    &library_path,
-                    resources,
-                )
-                .await?;
-                
+                debug!("Found reference library path: {}", library_path.display());
+
+                self.scan_directory_for_resources(&library_path, &library_path, resources)
+                    .await?;
+
                 return Ok(());
             }
         }

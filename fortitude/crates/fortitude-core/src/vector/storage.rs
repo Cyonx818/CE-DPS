@@ -163,11 +163,12 @@ pub struct VectorStorageStats {
 }
 
 /// High-level vector storage service combining Qdrant and embedding generation
+#[derive(Clone)]
 pub struct VectorStorage {
     /// Qdrant client for vector database operations
-    qdrant_client: Arc<QdrantClient>,
+    pub qdrant_client: Arc<QdrantClient>,
     /// Embedding service for text-to-vector conversion
-    embedding_service: Arc<LocalEmbeddingService>,
+    pub embedding_service: Arc<LocalEmbeddingService>,
     /// Default collection name
     default_collection: String,
     /// Service statistics
@@ -175,7 +176,7 @@ pub struct VectorStorage {
 }
 
 impl VectorStorage {
-    /// Create a new vector storage service
+    /// Create a new vector storage service from components
     pub fn new(
         qdrant_client: Arc<QdrantClient>,
         embedding_service: Arc<LocalEmbeddingService>,
@@ -195,6 +196,37 @@ impl VectorStorage {
                 embedding_cache_hit_rate: 0.0,
             })),
         }
+    }
+
+    /// Create a new vector storage service from configuration (async)
+    pub async fn from_config(config: VectorConfig) -> VectorResult<Self> {
+        // Create Qdrant client
+        let qdrant_client = Arc::new(QdrantClient::new(config.clone()).await?);
+        
+        // Create embedding service
+        let embedding_service = Arc::new(LocalEmbeddingService::new(config.embedding.clone()));
+        
+        // Create storage instance
+        let storage = Self::new(qdrant_client, embedding_service);
+        
+        // Initialize the storage
+        storage.initialize().await?;
+        
+        Ok(storage)
+    }
+
+    /// Create a new vector storage service from configuration (synchronous, for tests)
+    /// Note: This method will attempt to connect to Qdrant. If the connection fails,
+    /// it returns an error instead of panicking, allowing tests to gracefully handle
+    /// missing Qdrant servers.
+    pub fn new_with_config(config: VectorConfig) -> VectorResult<Self> {
+        use tokio::runtime::Runtime;
+        
+        let rt = Runtime::new().map_err(|e| {
+            VectorError::from_connection_error(format!("Failed to create async runtime: {}", e))
+        })?;
+        
+        rt.block_on(Self::from_config(config))
     }
 
     /// Initialize the storage service (ensure collections exist)
@@ -338,7 +370,7 @@ impl VectorStorage {
 
     /// Search by pre-computed vector
     #[instrument(skip(self, query_vector))]
-    async fn search_by_vector(
+    pub async fn search_by_vector(
         &self,
         query_vector: &[f32],
         config: SearchConfig,

@@ -143,12 +143,12 @@ fn benchmark_accuracy_achievement(c: &mut Criterion) {
 
     for (name, strategy) in strategies {
         group.bench_with_input(
-            BenchmarkId::new("accuracy_test", name), 
-            &strategy, 
+            BenchmarkId::new("accuracy_test", name),
+            &strategy,
             |b, strategy| {
                 b.to_async(&rt).iter(|| async {
                     let start = Instant::now();
-                    
+
                     // Simulate optimized query execution
                     let criteria = match strategy {
                         ProviderSelectionStrategy::QualityOptimized => {
@@ -159,32 +159,32 @@ fn benchmark_accuracy_achievement(c: &mut Criterion) {
                         },
                         _ => SelectionCriteria::research_optimized(),
                     };
-                    
+
                     // Simulate provider selection and execution
                     let selected_provider = simulate_optimal_provider_selection(&criteria).await;
                     let query_result = simulate_query_execution(&selected_provider).await;
                     let quality_evaluation = simulate_quality_evaluation(&query_result, &criteria).await;
-                    
+
                     let accuracy_confidence = calculate_accuracy_confidence(&quality_evaluation);
-                    
+
                     let processing_time = start.elapsed();
-                    
+
                     // Validate accuracy target achievement
                     match strategy {
                         ProviderSelectionStrategy::QualityOptimized => {
-                            assert!(accuracy_confidence >= 0.95, 
+                            assert!(accuracy_confidence >= 0.95,
                                 "Quality-optimized strategy achieved {:.3} accuracy, below 95% target", accuracy_confidence);
                         },
                         ProviderSelectionStrategy::Balanced => {
-                            assert!(accuracy_confidence >= 0.85, 
+                            assert!(accuracy_confidence >= 0.85,
                                 "Balanced strategy achieved {:.3} accuracy", accuracy_confidence);
                         },
                         _ => {
-                            assert!(accuracy_confidence >= 0.80, 
+                            assert!(accuracy_confidence >= 0.80,
                                 "Context-aware strategy achieved {:.3} accuracy", accuracy_confidence);
                         }
                     }
-                    
+
                     black_box((accuracy_confidence, processing_time))
                 });
             }
@@ -206,44 +206,44 @@ fn benchmark_concurrent_optimization(c: &mut Criterion) {
 
     for concurrency in concurrency_levels {
         group.bench_with_input(
-            BenchmarkId::new("concurrent_queries", concurrency), 
-            &concurrency, 
+            BenchmarkId::new("concurrent_queries", concurrency),
+            &concurrency,
             |b, &concurrency| {
                 b.to_async(&rt).iter(|| async {
                     let start = Instant::now();
-                    
+
                     // Create concurrent optimization tasks
                     let mut tasks = Vec::new();
                     for i in 0..concurrency {
                         let task = tokio::spawn(async move {
                             let query = format!("Test query {}", i);
                             let criteria = SelectionCriteria::research_optimized();
-                            
+
                             // Simulate optimization process
                             let _context = simulate_context_analysis(&query).await;
                             let _provider = simulate_provider_selection(&criteria).await;
                             let _result = simulate_execution().await;
                             let _quality = simulate_quality_check().await;
-                            
+
                             Duration::from_millis(10) // Simulated processing time
                         });
                         tasks.push(task);
                     }
-                    
+
                     // Wait for all tasks to complete
                     let results = futures::future::join_all(tasks).await;
                     let total_time = start.elapsed();
-                    
+
                     // Calculate throughput
                     let queries_per_minute = (concurrency as f64 / total_time.as_secs_f64()) * 60.0;
-                    
+
                     // Validate scalability requirement
                     if concurrency >= 100 {
                         assert!(queries_per_minute >= 1000.0,
-                            "Achieved {:.1} queries/minute with {} concurrent queries, below 1000/minute target", 
+                            "Achieved {:.1} queries/minute with {} concurrent queries, below 1000/minute target",
                             queries_per_minute, concurrency);
                     }
-                    
+
                     black_box((queries_per_minute, total_time))
                 });
             }

@@ -1555,7 +1555,10 @@ impl App {
         // Placeholder semantic search implementation
         println!("Semantic search query: '{}'", params.query);
         println!("Collection: {collection_name}");
-        println!("Limit: {}, Threshold: {:.2}", params.limit, params.threshold);
+        println!(
+            "Limit: {}, Threshold: {:.2}",
+            params.limit, params.threshold
+        );
         println!("Strategy: {}", params.strategy);
         if params.explain {
             println!("Explanation requested");
@@ -1592,7 +1595,10 @@ impl App {
             "Keyword weight: {:.2}, Semantic weight: {:.2}",
             params.keyword_weight, params.semantic_weight
         );
-        println!("Limit: {}, Threshold: {:.2}", params.limit, params.threshold);
+        println!(
+            "Limit: {}, Threshold: {:.2}",
+            params.limit, params.threshold
+        );
         if params.explain {
             println!("Explanation requested");
         }
@@ -1730,9 +1736,7 @@ impl App {
         });
 
         // Placeholder stats implementation
-        println!(
-            "Collection stats not yet implemented for '{collection_name}'"
-        );
+        println!("Collection stats not yet implemented for '{collection_name}'");
 
         Ok(())
     }
@@ -1773,9 +1777,7 @@ impl App {
         }
 
         // Placeholder migration implementation
-        println!(
-            "Migration from '{source}' to collection '{collection_name}'"
-        );
+        println!("Migration from '{source}' to collection '{collection_name}'");
         println!("Batch size: {batch_size}, Validation: {validation}");
         if let Some(checkpoint_id) = resume {
             println!("Resume from checkpoint: {checkpoint_id}");
@@ -1944,9 +1946,7 @@ impl App {
         }
 
         println!("Setting up collection: {collection_name}");
-        println!(
-            "Dimensions: {vector_dimensions}, Distance metric: {distance_metric}"
-        );
+        println!("Dimensions: {vector_dimensions}, Distance metric: {distance_metric}");
         println!("Setup functionality not yet implemented");
 
         Ok(())
@@ -2015,9 +2015,7 @@ impl App {
             info!("Force rebuilding index");
         }
 
-        println!(
-            "Index rebuild for '{collection_name}' not yet implemented"
-        );
+        println!("Index rebuild for '{collection_name}' not yet implemented");
 
         Ok(())
     }
@@ -2041,9 +2039,7 @@ impl App {
 
         info!("Optimizing index for collection: {}", collection_name);
 
-        println!(
-            "Index optimization for '{collection_name}' not yet implemented"
-        );
+        println!("Index optimization for '{collection_name}' not yet implemented");
 
         Ok(())
     }

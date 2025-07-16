@@ -13,7 +13,6 @@ use chrono::{DateTime, Utc};
 use fortitude_types::{
     research::{Detail, Evidence, ResearchResult, ResearchType},
     storage::StorageConfig,
-    Storage,
 };
 use serde::{Deserialize, Serialize};
 use std::collections::HashMap;
@@ -79,7 +78,10 @@ pub enum MigrationSource {
     /// Individual JSON file
     JsonFile { file_path: PathBuf },
     /// In-memory data source
-    InMemory { documents: Vec<ResearchResult> },
+    InMemory { 
+        data: Vec<ResearchResult>,
+        source_name: String,
+    },
 }
 
 /// Migration configuration
@@ -570,8 +572,17 @@ impl MigrationService {
     }
 
     /// Start a new migration operation
-    #[instrument(skip(self, source, config))]
+    #[instrument(skip(self, source))]
     pub async fn start_migration(
+        &self,
+        source: MigrationSource,
+    ) -> MigrationResult<String> {
+        self.start_migration_with_config(source, MigrationConfig::default()).await
+    }
+
+    /// Start a new migration operation with custom configuration
+    #[instrument(skip(self, source, config))]
+    pub async fn start_migration_with_config(
         &self,
         source: MigrationSource,
         config: MigrationConfig,
@@ -1046,6 +1057,21 @@ impl MigrationService {
         Ok(state.progress.clone())
     }
 
+    /// Get migration status (complete migration state)
+    #[instrument(skip(self))]
+    pub async fn get_migration_status(
+        &self,
+        migration_id: &str,
+    ) -> MigrationResult<MigrationState> {
+        let migrations = self.active_migrations.read().await;
+        let state_lock = migrations
+            .get(migration_id)
+            .ok_or_else(|| MigrationError::MigrationNotFound(migration_id.to_string()))?;
+
+        let state = state_lock.read().await;
+        Ok(state.clone())
+    }
+
     /// Get migration statistics
     #[instrument(skip(self))]
     pub async fn get_migration_statistics(
@@ -1080,7 +1106,7 @@ impl MigrationService {
                     MigrationSource::StorageSystem { .. } => "storage_system".to_string(),
                     MigrationSource::JsonDirectory { .. } => "json_directory".to_string(),
                     MigrationSource::JsonFile { .. } => "json_file".to_string(),
-                    MigrationSource::InMemory { .. } => "in_memory".to_string(),
+                    MigrationSource::InMemory { source_name, .. } => format!("in_memory_{}", source_name),
                 },
             });
         }
@@ -1212,7 +1238,7 @@ impl MigrationService {
                 self.load_from_json_directory(directory_path).await
             }
             MigrationSource::JsonFile { file_path } => self.load_from_json_file(file_path).await,
-            MigrationSource::InMemory { documents } => Ok(documents.clone()),
+            MigrationSource::InMemory { data, source_name: _ } => Ok(data.clone()),
         }
     }
 
@@ -1383,7 +1409,7 @@ impl MigrationService {
             MigrationSource::JsonFile { .. } => {
                 Ok(1) // Single file
             }
-            MigrationSource::InMemory { documents } => Ok(documents.len() as u64),
+            MigrationSource::InMemory { data, source_name: _ } => Ok(data.len() as u64),
         }
     }
 
@@ -1507,7 +1533,7 @@ impl MigrationService {
     ) -> MigrationResult<String> {
         let source = MigrationSource::ResearchCache { cache_path };
         let config = config.unwrap_or_default();
-        self.start_migration(source, config).await
+        self.start_migration_with_config(source, config).await
     }
 
     /// Create migration from storage system
@@ -1518,7 +1544,7 @@ impl MigrationService {
     ) -> MigrationResult<String> {
         let source = MigrationSource::StorageSystem { storage_config };
         let config = config.unwrap_or_default();
-        self.start_migration(source, config).await
+        self.start_migration_with_config(source, config).await
     }
 
     /// Create migration from JSON directory
@@ -1529,7 +1555,7 @@ impl MigrationService {
     ) -> MigrationResult<String> {
         let source = MigrationSource::JsonDirectory { directory_path };
         let config = config.unwrap_or_default();
-        self.start_migration(source, config).await
+        self.start_migration_with_config(source, config).await
     }
 
     /// Create migration from single JSON file
@@ -1540,7 +1566,7 @@ impl MigrationService {
     ) -> MigrationResult<String> {
         let source = MigrationSource::JsonFile { file_path };
         let config = config.unwrap_or_default();
-        self.start_migration(source, config).await
+        self.start_migration_with_config(source, config).await
     }
 
     /// Rollback a completed migration (remove migrated documents)

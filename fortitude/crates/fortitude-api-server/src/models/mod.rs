@@ -6,4 +6,4 @@ pub mod requests;
 pub mod responses;
 
 // Re-export common types for easier access
-pub use responses::{LearningInsight, MonitoringMetricsQuery, HealthCheckRequest};
+pub use responses::{HealthCheckRequest, LearningInsight, MonitoringMetricsQuery};

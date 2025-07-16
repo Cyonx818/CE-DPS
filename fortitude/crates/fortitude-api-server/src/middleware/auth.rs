@@ -146,16 +146,14 @@ impl ApiPermissionLevel {
     /// Convert from Permission enum
     pub fn from_permission(permission: Permission) -> Self {
         match permission {
-            Permission::ResearchRead 
-            | Permission::ResourcesRead 
-            | Permission::ConfigRead 
-            | Permission::LearningRead 
-            | Permission::MonitoringRead => {
-                ApiPermissionLevel::ReadOnly
+            Permission::ResearchRead
+            | Permission::ResourcesRead
+            | Permission::ConfigRead
+            | Permission::LearningRead
+            | Permission::MonitoringRead => ApiPermissionLevel::ReadOnly,
+            Permission::ReadWrite | Permission::LearningWrite | Permission::MonitoringWrite => {
+                ApiPermissionLevel::ReadWrite
             }
-            Permission::ReadWrite 
-            | Permission::LearningWrite 
-            | Permission::MonitoringWrite => ApiPermissionLevel::ReadWrite,
             Permission::Admin => ApiPermissionLevel::Admin,
             Permission::System => ApiPermissionLevel::System,
         }

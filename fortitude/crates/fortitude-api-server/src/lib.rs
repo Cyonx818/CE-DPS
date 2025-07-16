@@ -10,5 +10,5 @@ pub mod routes;
 pub mod server;
 
 pub use config::ApiServerConfig;
+pub use models::{HealthCheckRequest, LearningInsight, MonitoringMetricsQuery};
 pub use server::ApiServer;
-pub use models::{LearningInsight, MonitoringMetricsQuery, HealthCheckRequest};

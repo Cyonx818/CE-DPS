@@ -70,15 +70,29 @@ fi
 !export CE_DPS_QUALITY_GATES=true
 !export CE_DPS_HUMAN_APPROVAL_REQUIRED=true
 
-# Initialize project state file
-!cat > docs/ce-dps-state.json << 'EOF'
+# Check and preserve SKYNET environment variable if already set
+!SKYNET_STATUS="${SKYNET:-false}"
+!echo "🤖 SKYNET mode status: $SKYNET_STATUS"
+
+# If SKYNET is enabled, configure autonomous operation
+!if [[ "$SKYNET" == "true" ]]; then
+    echo "⚡ SKYNET mode detected - configuring autonomous operation"
+    export CE_DPS_HUMAN_APPROVAL_REQUIRED=false
+    echo "⚡ Human approval requirements bypassed for autonomous development"
+    echo "⚡ Templates will be auto-populated with contextual values"
+    echo "⚡ Technical quality gates remain fully enforced"
+fi
+
+# Initialize project state file with SKYNET status
+!cat > docs/ce-dps-state.json << EOF
 {
   "project_initialized": true,
   "current_phase": 0,
   "phases_completed": [],
   "quality_gates_enabled": true,
   "fortitude_enabled": true,
-  "human_approval_required": true,
+  "human_approval_required": $(if [[ "$SKYNET" == "true" ]]; then echo "false"; else echo "true"; fi),
+  "skynet_mode": "$SKYNET_STATUS",
   "created_at": "$(date -u +%Y-%m-%dT%H:%M:%SZ)"
 }
 EOF
@@ -137,11 +151,18 @@ fi
 
 **To Begin Development**:
 ```bash
-# Check current project status
+# Check current project status and SKYNET mode
 /cedps-status
 
 # Start Phase 1: Strategic Planning
 /cedps-phase1-setup
+
+# Check SKYNET mode status anytime
+/skynet-status
+
+# Enable/disable autonomous operation
+/skynet-enable   # Enable autonomous development
+/skynet-disable  # Return to human oversight
 ```
 
 **Project Structure Created**:
@@ -160,6 +181,7 @@ docs/
 - `CE_DPS_FORTITUDE_ENABLED=true`
 - `CE_DPS_QUALITY_GATES=true`
 - `CE_DPS_HUMAN_APPROVAL_REQUIRED=true`
+- `SKYNET=$SKYNET_STATUS` (autonomous operation mode)
 
 ### <validation-checklist>
 - [ ] `docs/` directory structure exists

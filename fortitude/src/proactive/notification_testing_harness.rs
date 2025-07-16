@@ -121,7 +121,7 @@ impl MockRateLimiter {
         let now = Instant::now();
         let elapsed = now.duration_since(self.last_refill);
         let tokens_to_add = (elapsed.as_secs_f64() * self.max_per_second as f64) as u32;
-        
+
         if tokens_to_add > 0 {
             self.tokens = (self.tokens + tokens_to_add).min(self.max_per_second);
             self.last_refill = now;
@@ -145,7 +145,7 @@ impl MockNotificationChannel {
     /// Configure the mock behavior
     pub async fn set_behavior(&mut self, behavior: MockBehavior) {
         self.behavior = behavior.clone();
-        
+
         // Setup rate limiter if needed
         if let MockBehavior::RateLimited { max_per_second } = behavior {
             let mut rate_limiter = self.rate_limiter.write().await;
@@ -158,8 +158,8 @@ impl MockNotificationChannel {
     pub async fn deliver(&self, notification: &Notification) -> Result<(), NotificationSystemError> {
         let start_time = Instant::now();
         let delivery_id = Uuid::new_v4().to_string();
-        
-        debug!("Mock delivery attempt to channel: {} for notification: {}", 
+
+        debug!("Mock delivery attempt to channel: {} for notification: {}",
                self.channel_id, notification.id);
 
         // Apply behavior pattern
@@ -193,7 +193,7 @@ impl MockNotificationChannel {
     async fn apply_behavior_pattern(&self) -> Result<(), NotificationSystemError> {
         match &self.behavior {
             MockBehavior::AlwaysSucceed => Ok(()),
-            
+
             MockBehavior::AlwaysFail { error_message } => {
                 Err(NotificationSystemError::ChannelDeliveryFailed {
                     channel: self.channel_id.clone(),
@@ -201,12 +201,12 @@ impl MockNotificationChannel {
                     retry_count: 0,
                 })
             }
-            
+
             MockBehavior::DelayedSuccess { delay_ms } => {
                 tokio::time::sleep(Duration::from_millis(*delay_ms)).await;
                 Ok(())
             }
-            
+
             MockBehavior::IntermittentFailure { failure_rate } => {
                 use rand::Rng;
                 let mut rng = rand::thread_rng();
@@ -220,7 +220,7 @@ impl MockNotificationChannel {
                     Ok(())
                 }
             }
-            
+
             MockBehavior::RateLimited { .. } => {
                 let mut rate_limiter_guard = self.rate_limiter.write().await;
                 if let Some(ref mut limiter) = rate_limiter_guard.as_mut() {
@@ -237,12 +237,12 @@ impl MockNotificationChannel {
                     Ok(())
                 }
             }
-            
+
             MockBehavior::CustomPattern { pattern } => {
                 let mut index_guard = self.current_pattern_index.write().await;
                 let index = *index_guard % pattern.len();
                 *index_guard += 1;
-                
+
                 if pattern[index] {
                     Ok(())
                 } else {
@@ -262,7 +262,7 @@ impl MockNotificationChannel {
         let total_deliveries = log.len();
         let successful_deliveries = log.iter().filter(|r| r.success).count();
         let failed_deliveries = total_deliveries - successful_deliveries;
-        
+
         let total_duration: Duration = log.iter().map(|r| r.duration).sum();
         let average_duration = if total_deliveries > 0 {
             total_duration / total_deliveries as u32
@@ -382,7 +382,7 @@ impl NotificationTestingHarness {
     /// Create a new testing harness
     pub fn new() -> Self {
         let (test_events, _) = broadcast::channel(1000);
-        
+
         Self {
             mock_channels: Arc::new(RwLock::new(HashMap::new())),
             notification_system: None,
@@ -406,7 +406,7 @@ impl NotificationTestingHarness {
     #[instrument(level = "info", skip(self, scenario))]
     pub async fn run_scenario(&self, scenario: TestScenario) -> Result<TestScenarioResults, TestHarnessError> {
         info!("Starting test scenario: {}", scenario.name);
-        
+
         // Emit scenario started event
         let _ = self.test_events.send(TestEvent::ScenarioStarted {
             scenario_name: scenario.name.clone(),
@@ -436,7 +436,7 @@ impl NotificationTestingHarness {
                 for i in 0..scenario.notification_count {
                     let notification_type = scenario.notification_types[i % scenario.notification_types.len()].clone();
                     let channels = self.get_mock_channels_for_scenario(&scenario).await;
-                    
+
                     let notification = Notification::new(
                         notification_type,
                         format!("Test Notification {}", i),
@@ -446,14 +446,14 @@ impl NotificationTestingHarness {
 
                     let notification_id = notification.id.clone();
                     let send_start = Instant::now();
-                    
+
                     match notification_system.send(notification).await {
                         Ok(_) => {
                             notifications_sent += 1;
                             successful_deliveries += 1;
                             let latency = send_start.elapsed();
                             latencies.push(latency);
-                            
+
                             // Emit notification sent event
                             let _ = self.test_events.send(TestEvent::NotificationSent {
                                 notification_id: notification_id.clone(),
@@ -463,7 +463,7 @@ impl NotificationTestingHarness {
                         Err(e) => {
                             failed_deliveries += 1;
                             failure_reasons.push(format!("Send failed: {}", e));
-                            
+
                             let _ = self.test_events.send(TestEvent::TestError {
                                 scenario: scenario.name.clone(),
                                 error: e.to_string(),
@@ -475,20 +475,20 @@ impl NotificationTestingHarness {
                 // Concurrent sending
                 let mut tasks = Vec::new();
                 let notifications_per_sender = scenario.notification_count / scenario.concurrent_senders;
-                
+
                 for sender_id in 0..scenario.concurrent_senders {
                     let system = notification_system.clone();
                     let scenario_clone = scenario.clone();
                     let test_events = self.test_events.clone();
-                    
+
                     let task = tokio::spawn(async move {
                         let mut sender_results = Vec::new();
-                        
+
                         for i in 0..notifications_per_sender {
                             let notification_type = scenario_clone.notification_types[i % scenario_clone.notification_types.len()].clone();
                             // Note: In a full implementation, we'd need to get channels differently for concurrent scenarios
                             let channels = vec![NotificationChannel::CLI]; // Simplified
-                            
+
                             let notification = Notification::new(
                                 notification_type,
                                 format!("Concurrent Test {}-{}", sender_id, i),
@@ -498,12 +498,12 @@ impl NotificationTestingHarness {
 
                             let notification_id = notification.id.clone();
                             let send_start = Instant::now();
-                            
+
                             match system.send(notification).await {
                                 Ok(_) => {
                                     let latency = send_start.elapsed();
                                     sender_results.push((true, latency, None));
-                                    
+
                                     let _ = test_events.send(TestEvent::NotificationSent {
                                         notification_id,
                                         scenario: scenario_clone.name.clone(),
@@ -514,10 +514,10 @@ impl NotificationTestingHarness {
                                 }
                             }
                         }
-                        
+
                         sender_results
                     });
-                    
+
                     tasks.push(task);
                 }
 
@@ -554,7 +554,7 @@ impl NotificationTestingHarness {
         }
 
         let total_duration = start_time.elapsed();
-        
+
         // Calculate metrics
         let actual_success_rate = if notifications_sent > 0 {
             successful_deliveries as f64 / notifications_sent as f64
@@ -644,7 +644,7 @@ impl NotificationTestingHarness {
     ) -> Result<TestScenarioResults, TestHarnessError> {
         let scenario = TestScenario {
             name: "Stress Test".to_string(),
-            description: format!("Stress test: {} notifications/sec for {}s", 
+            description: format!("Stress test: {} notifications/sec for {}s",
                                notifications_per_second, duration_seconds),
             notification_count: (notifications_per_second * duration_seconds as u32) as usize,
             notification_types: vec![NotificationType::Info, NotificationType::Warning],
@@ -673,12 +673,12 @@ impl NotificationTestingHarness {
     async fn collect_channel_stats(&self) -> HashMap<String, MockChannelStats> {
         let mut stats = HashMap::new();
         let channels = self.mock_channels.read().await;
-        
+
         for (channel_id, channel) in channels.iter() {
             let channel_stats = channel.get_delivery_stats().await;
             stats.insert(channel_id.clone(), channel_stats);
         }
-        
+
         stats
     }
 }
