@@ -5,6 +5,8 @@
 
 pub mod api;
 pub mod classification;
+pub mod claude_code_provider;
+pub mod claude_code_integration_example;
 pub mod multi_provider_research_engine;
 pub mod pipeline;
 pub mod prompts;
@@ -22,6 +24,7 @@ mod integration_tests;
 // Re-export specific types to avoid naming conflicts
 pub use api::{ApiClient, ApiConfig, HealthStatus, RateLimitConfig, RequestCost, RetryConfig};
 pub use classification::*;
+pub use claude_code_provider::{ClaudeCodeProvider, ClaudeCodeProviderConfig};
 pub use multi_provider_research_engine::{
     MultiProviderConfig, MultiProviderResearchEngine, MultiProviderResearchError,
 };
