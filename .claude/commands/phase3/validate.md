@@ -46,9 +46,11 @@
 
 ### <step-5>Update Project State and Loop State</step-5>
 **State Management**:
-- **Update docs/ce-dps-state.json** (using jq):
+- Read current state file using Read tool
+- Update docs/ce-dps-state.json using Edit tool:
   - Add 3 to phases_completed array
-  - Set phase_3_completed timestamp
+  - Set phase_3_completed: current timestamp (use `date -u +%Y-%m-%dT%H:%M:%SZ`)
+  - Update last_updated: current timestamp
   - Set ready_for_production = true
 - **Update docs/sprints/sprint-001/implementation/implementation-status.json**:
   - Set status to "completed"

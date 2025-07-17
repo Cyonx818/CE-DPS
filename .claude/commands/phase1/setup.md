@@ -56,11 +56,13 @@
 
 ### <step-6>Update Project State</step-6>
 **State Management** (docs/ce-dps-state.json):
-- If jq available, update with:
-  - current_phase = 1
-  - phase_1_started timestamp
-  - last_updated timestamp
-- If jq not available, warn user about manual state management
+- Read current state file using Read tool
+- Update specific fields using Edit tool:
+  - current_phase: 1
+  - phase_1_started: current timestamp (use `date -u +%Y-%m-%dT%H:%M:%SZ`)
+  - last_updated: current timestamp
+- Validate update was successful by reading the file again
+- If update fails, provide clear error message and manual steps
 
 ### <step-7>Provide Clear Next Steps</step-7>
 **Next Actions**:

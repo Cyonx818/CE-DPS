@@ -76,11 +76,11 @@
 
 **Context Rebuilding**:
 1. Display "🧠 Regenerating Working Context..." message
-2. Read current phase from `docs/ce-dps-state.json` using `jq -r '.current_phase'`
-3. Read current sprint from loop state file using `jq -r '.current_sprint'`
-4. Check if sprint directory exists: `docs/sprints/sprint-XXX/`
+2. Read current phase from docs/ce-dps-state.json using Read tool
+3. Read current sprint from loop state file using Read tool
+4. Check if sprint directory exists using LS tool: `docs/sprints/sprint-XXX/`
 5. Display recent git activity: `git log --oneline -5`
-6. Read sprint goals from `sprint-info.json` if available
+6. Read sprint goals from sprint-info.json if available using Read tool
 
 ### <step-6>Update Loop State for Recovery</step-6>
 **Recovery State Update**:
@@ -106,8 +106,8 @@
 - Resume autonomous operation
 
 **Command Execution**:
-1. Get next command from loop state: `jq -r '.next_command' docs/skynet-loop-state.json`
-2. Get loop position: `jq -r '.loop_position' docs/skynet-loop-state.json`
+1. Get next command from loop state using Read tool to read docs/skynet-loop-state.json
+2. Get loop position from same file using Read tool
 3. Display recovery completion message:
    ```
    ✅ Recovery Complete - Resuming Autonomous Operation

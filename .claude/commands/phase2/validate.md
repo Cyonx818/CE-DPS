@@ -61,12 +61,15 @@
 
 ### <step-6>Update Project State for Phase 3 Transition</step-6>
 **State Management**:
-- **If jq available**, update docs/ce-dps-state.json with:
+- Read current state file using Read tool
+- Update specific fields using Edit tool:
   - Add 2 to phases_completed array
-  - Set phase_2_completed timestamp
-  - Set ready_for_phase_3 = true
-  - Update current_sprint = 1
-- **If jq not available**: warn about manual state management
+  - Set phase_2_completed: current timestamp (use `date -u +%Y-%m-%dT%H:%M:%SZ`)
+  - Set ready_for_phase_3: true
+  - Update current_sprint: 1
+  - Update last_updated: current timestamp
+- Validate update was successful by reading the file again
+- If update fails, provide clear error message and manual steps
 - **Update sprint tracking** (docs/sprints/sprint-001/sprint-info.json):
   - Set status = "approved"
   - Set planning_completed timestamp

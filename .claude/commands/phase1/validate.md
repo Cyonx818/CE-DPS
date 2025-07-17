@@ -57,13 +57,15 @@
 
 ### <step-6>Update Project State for Phase 2 Transition</step-6>
 **State Management** (docs/ce-dps-state.json):
-- **If jq available**, update with:
+- Read current state file using Read tool
+- Update specific fields using Edit tool:
   - Add 1 to phases_completed array
-  - Set phase_1_completed timestamp
-  - Set ready_for_phase_2 = true
-  - Update current_phase to 2
-  - Update last_updated timestamp
-- **If jq not available**: warn about manual state management
+  - Set phase_1_completed: current timestamp (use `date -u +%Y-%m-%dT%H:%M:%SZ`)
+  - Set ready_for_phase_2: true
+  - Update current_phase: 2
+  - Update last_updated: current timestamp
+- Validate update was successful by reading the file again
+- If update fails, provide clear error message and manual steps
 
 ### <step-7>Handle SKYNET Auto-Transition</step-7>
 **Transition Management**:

@@ -20,9 +20,10 @@
 
 ### <step-1>Validate Phase Completion</step-1>
 **Prerequisites Validation**:
-- Check Phases 1-2 complete using jq on docs/ce-dps-state.json
-- Verify docs/phases/phase-2-completion-report.md exists
-- Ensure Phase 3 template exists at methodology/templates/phase-3-template.md
+- Use Read tool to check docs/ce-dps-state.json exists
+- Validate Phases 1-2 complete using: `jq -r '.phases_completed[]' docs/ce-dps-state.json | grep -c '^[12]$'` (should return 2)
+- Verify docs/phases/phase-2-completion-report.md exists using Read tool
+- Ensure Phase 3 template exists at methodology/templates/phase-3-template.md using Read tool
 - Check if Phase 3 already initialized (exit if docs/phases/phase-3-implementation.md exists)
 
 ### <step-2>Set Environment Variables</step-2>
@@ -34,8 +35,13 @@
 
 ### <step-3>Update Project State</step-3>
 **State Management**:
-- Use jq to update docs/ce-dps-state.json with current_phase=3, phase_3_started timestamp
-- Copy methodology/templates/phase-3-template.md to docs/phases/phase-3-implementation.md
+- Read current state file using Read tool
+- Update specific fields using Edit tool:
+  - current_phase: 3
+  - phase_3_started: current timestamp (use `date -u +%Y-%m-%dT%H:%M:%SZ`)
+  - last_updated: current timestamp
+- Use Read tool to get methodology/templates/phase-3-template.md content
+- Use Write tool to create docs/phases/phase-3-implementation.md with template content
 
 ### <step-4>Create Working Directories</step-4>
 **Directory Creation**:

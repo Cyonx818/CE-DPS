@@ -27,8 +27,12 @@
 
 ### <step-2>Update Project State</step-2>
 **State Management**:
-- Use jq to update docs/ce-dps-state.json with phase_3_implementation_started timestamp
-- Update docs/sprints/sprint-001/implementation/implementation-status.json status to "implementing"
+- Read current state file using Read tool
+- Update docs/ce-dps-state.json using Edit tool:
+  - phase_3_implementation_started: current timestamp (use `date -u +%Y-%m-%dT%H:%M:%SZ`)
+  - last_updated: current timestamp
+- Update docs/sprints/sprint-001/implementation/implementation-status.json using Edit tool:
+  - status: "implementing"
 
 ### <step-3>Trigger Claude Code Implementation</step-3>
 **Context Loading**:
