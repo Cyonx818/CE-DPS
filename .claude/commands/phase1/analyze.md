@@ -82,11 +82,14 @@
 - Include risk assessment approval with mitigation strategies
 - Mark sections clearly for human strategic review
 
-### <step-9>Handle SKYNET Auto-Approval</step-9>
+### <step-9>Handle SKYNET Auto-Approval and Execute Auto-Progression</step-9>
 **SKYNET Mode** (if enabled):
 - Automatically populate approval sections with best-practice decisions
 - Mark approvals as "✅ Approved - SKYNET: [reasoning based on best practices]"
-- Execute automatic progression to validation phase (/phase1:validate)
+- Display message "🤖 SKYNET autonomous mode - auto-progressing to /phase1:validate"
+- **CRITICAL**: Read the /phase1:validate command file using Read tool: `.claude/commands/phase1/validate.md`
+- Execute the /phase1:validate command instructions directly within same Claude session context
+- This implements the autonomous loop progression without human intervention while maintaining context consistency
 **Non-SKYNET Mode**: Provide clear instructions for human review process
 
 ### <step-10>Update Planning Document</step-10>

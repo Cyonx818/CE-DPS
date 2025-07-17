@@ -88,11 +88,10 @@
 - Actionable improvement recommendations
 - Results saved for trend analysis and continuous improvement
 
-### <step-10>SKYNET Mode Auto-Loop and Sprint Increment</step-10>
+### <step-10>SKYNET Mode Auto-Loop and Sprint Increment with Auto-Progression</step-10>
 **Autonomous Continuous Development** (if SKYNET=true):
 - After successful quality validation, automatically trigger next sprint loop
 - Increment sprint number and prepare new sprint environment
-- Execute automatic command progression: /phase2:setup (next sprint)
 - Continue autonomous development cycle indefinitely
 - Only stop loop if quality gates fail or technical issues detected
 - Maintain sprint tracking and project state across iterations
@@ -102,7 +101,10 @@
    - Use the Bash tool to run: `./tools/skynet-loop-manager.sh increment-sprint`
    - Display "🚀 SKYNET AUTO-LOOP: Quality gates passed!"
    - Show sprint completion details from the utility output
-   - Display "Executing: /phase2:setup" to indicate next command
+   - Display message "🤖 SKYNET autonomous mode - auto-progressing to /phase2:setup"
+   - **CRITICAL**: Read the /phase2:setup command file using Read tool: `.claude/commands/phase2/setup.md`
+   - Execute the /phase2:setup command instructions directly within same Claude session context
+   - This implements the autonomous loop progression without human intervention while maintaining context consistency
 2. The loop will automatically continue to the next sprint setup
 
 ## <expected-output priority="medium">Quality Validation Results</expected-output>

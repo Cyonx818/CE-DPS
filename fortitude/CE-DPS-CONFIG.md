@@ -187,7 +187,7 @@ delivery_verification = true
     "fortitude": {
       "command": "cargo",
       "args": ["run", "--bin", "fortitude-mcp-server"],
-      "cwd": "/home/cyonx/Documents/GitHub/CE-DPS/fortitude"
+      "cwd": "./fortitude"
     }
   }
 }

@@ -105,12 +105,15 @@
 - Mark sections clearly for human strategic review with approval checkboxes
 - Provide rationale and alternatives for each major decision
 
-### <step-11>Handle SKYNET Auto-Approval</step-11>
+### <step-11>Handle SKYNET Auto-Approval and Execute Auto-Progression</step-11>
 **SKYNET Mode** (if enabled):
 - Auto-populate all approval sections with "✅ Approved - SKYNET: [reasoning]"
 - Include best-practice reasoning for each approval decision
 - Mark document as ready for immediate validation
-- Execute automatic progression to Phase 2 validation (/phase2:validate)
+- Display message "🤖 SKYNET autonomous mode - auto-progressing to /phase2:validate"
+- **CRITICAL**: Read the /phase2:validate command file using Read tool: `.claude/commands/phase2/validate.md`
+- Execute the /phase2:validate command instructions directly within same Claude session context
+- This implements the autonomous loop progression without human intervention while maintaining context consistency
 **Non-SKYNET Mode**: Provide clear instructions for human review process
 
 ### <step-12>Update Planning Document</step-12>

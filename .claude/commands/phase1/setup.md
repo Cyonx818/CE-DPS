@@ -46,7 +46,7 @@
 - Set success metrics (>50% faster delivery, >95% test coverage, zero critical vulnerabilities)
 - Define technical requirements (API <200ms, 10k+ users, security-first, comprehensive testing)
 - Mark template as "Manifested by SKYNET"
-- Announce auto-progression to analysis phase
+- **IMPORTANT**: After completing auto-population, automatically read and execute /phase1:analyze command instructions within same Claude session to continue the autonomous loop
 
 ### <step-5>Initialize Knowledge Management</step-5>
 **Fortitude Integration**:
@@ -64,12 +64,16 @@
 - Validate update was successful by reading the file again
 - If update fails, provide clear error message and manual steps
 
-### <step-7>Provide Clear Next Steps</step-7>
+### <step-7>Provide Clear Next Steps and Execute Auto-Progression</step-7>
 **Next Actions**:
 - **Non-SKYNET mode**: Guide user to fill out template sections (Problem Statement, Target Users, Success Metrics, Technical Requirements)
 - Explain validation checklist for template completion
 - Direct user to run /phase1:analyze when template is complete
-- **SKYNET mode**: Execute automatic progression to analysis (/phase1:analyze)
+- **SKYNET mode**: 
+  - Display message "🤖 SKYNET autonomous mode - auto-progressing to /phase1:analyze"
+  - **CRITICAL**: Read the /phase1:analyze command file using Read tool: `.claude/commands/phase1/analyze.md`
+  - Execute the /phase1:analyze command instructions directly within same Claude session context
+  - This implements the autonomous loop progression without human intervention while maintaining context consistency
 
 ## <expected-behavior priority="medium">Command Operation</expected-behavior>
 

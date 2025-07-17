@@ -67,11 +67,14 @@
 - Validate update was successful by reading the file again
 - If update fails, provide clear error message and manual steps
 
-### <step-7>Handle SKYNET Auto-Transition</step-7>
+### <step-7>Handle SKYNET Auto-Transition and Execute Auto-Progression</step-7>
 **Transition Management**:
-- **SKYNET mode**: Execute automatic progression to Phase 2 setup (/phase2:setup)
-- Auto-inject any missing approval markers with best-practice reasoning
-- Display autonomous transition messaging
+- **SKYNET mode**: 
+  - Auto-inject any missing approval markers with best-practice reasoning
+  - Display message "🤖 SKYNET autonomous mode - auto-progressing to /phase2:setup"
+  - **CRITICAL**: Read the /phase2:setup command file using Read tool: `.claude/commands/phase2/setup.md`
+  - Execute the /phase2:setup command instructions directly within same Claude session context
+  - This implements the autonomous loop progression without human intervention while maintaining context consistency
 - **Non-SKYNET mode**: Provide clear guidance for manual Phase 2 initiation
 
 ### <step-8>Validate Phase 2 Readiness</step-8>

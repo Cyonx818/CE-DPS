@@ -74,7 +74,7 @@
   - 4-5 week sprint duration
   - 80% implementation, 15% QA, 5% documentation split
   - Success criteria including functionality, quality, performance, documentation
-- Execute auto-progression to planning phase (/phase2:plan)
+- **IMPORTANT**: After completing auto-population, automatically read and execute /phase2:plan command instructions within same Claude session to continue the autonomous loop
 
 ### <step-6>Create Working Environment</step-6>
 **Directory Creation**:
@@ -123,9 +123,13 @@
 - Log: "Fortitude integration available/unavailable for implementation planning"
 - This step is optional and shouldn't block Phase 2 setup completion
 
-### <step-10>Provide Next Steps</step-10>
+### <step-10>Provide Next Steps and Execute Auto-Progression</step-10>
 **Next Actions**:
-- **SKYNET mode**: Display message "🤖 SKYNET autonomous mode - run /phase2:plan to continue"
+- **SKYNET mode**: 
+  - Display message "🤖 SKYNET autonomous mode - auto-progressing to /phase2:plan"
+  - **CRITICAL**: Read the /phase2:plan command file using Read tool: `.claude/commands/phase2/plan.md`
+  - Execute the /phase2:plan command instructions directly within same Claude session context
+  - This implements the autonomous loop progression without human intervention while maintaining context consistency
 - **Human mode**: Provide detailed instructions for feature selection:
   - Reviewing available features from Phase 1 roadmap
   - Selecting 2-4 features based on business priority, dependencies, team capacity, user value

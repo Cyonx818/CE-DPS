@@ -391,6 +391,17 @@ echo "✅ Quality validation complete!"
 - Deployment + configuration guides
 - Troubleshooting + error resolution guides
 
+### <file-path-requirements priority="critical">File Path Standards</file-path-requirements>
+**Mandatory Path Requirements**:
+- **ALWAYS use relative file paths**, never absolute paths
+- **Examples**: Use `.claude/commands/phase1/setup.md` not `/home/user/project/.claude/commands/phase1/setup.md`
+- **Rationale**: Ensures portability across different machines and environments
+- **Scope**: All slash commands, documentation, configuration files, and code references
+
+### <file-exclusions>Excluded Files</file-exclusions>
+**Files to Ignore**:
+- `methodology/human-oversight/prompt_scratchpad.md` - Working notes file, not part of CE-DPS methodology
+
 ### <llm-documentation priority="critical">LLM Documentation Requirements</llm-documentation>
 
 #### <documentation-mandate>Mandatory Documentation Standards</documentation-mandate>

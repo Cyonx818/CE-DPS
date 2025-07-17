@@ -79,13 +79,15 @@
   - Production readiness assessment
 - **Create docs/phases/phase-3-artifacts/production-deployment-checklist.md**
 
-### <step-8>SKYNET Mode Auto-Transition</step-8>
+### <step-8>SKYNET Mode Auto-Transition and Execute Auto-Progression</step-8>
 **Autonomous Transition** (if SKYNET=true):
 - Automatically run quality check and prepare next sprint loop
-- Exit with special code (42) to trigger /quality-check
+- Display message "🤖 SKYNET autonomous mode - auto-progressing to /quality-check"
+- **CRITICAL**: Read the /quality-check command file using Read tool: `.claude/commands/quality-check.md`
+- Execute the /quality-check command instructions directly within same Claude session context
+- This implements the autonomous loop progression without human intervention while maintaining context consistency
 - Auto-transition to Phase 2 setup for continuous development
 - Increment sprint number for next iteration
-- Execute automatic command progression: /quality-check → /phase2:setup (next sprint)
 
 ## <expected-output priority="medium">Validation Results</expected-output>
 

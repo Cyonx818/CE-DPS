@@ -90,9 +90,15 @@
 - Success confirmation with file locations
 - SKYNET mode auto-transition if enabled
 
-## <human-actions priority="high">Required Follow-up</human-actions>
+## <human-actions priority="high">Required Follow-up and Auto-Progression</human-actions>
 
-**Post-Setup Actions**:
+**SKYNET Mode**:
+- Display message "🤖 SKYNET autonomous mode - auto-progressing to /phase3:implement"
+- **CRITICAL**: Read the /phase3:implement command file using Read tool: `.claude/commands/phase3/implement.md`
+- Execute the /phase3:implement command instructions directly within same Claude session context
+- This implements the autonomous loop progression without human intervention while maintaining context consistency
+
+**Non-SKYNET Mode Post-Setup Actions**:
 1. Review pre-implementation checklist at docs/phases/phase-3-artifacts/pre-implementation-checklist.md
 2. Confirm sprint backlog at docs/phases/phase-3-artifacts/implementation-backlog.md
 3. Validate development environment and tools

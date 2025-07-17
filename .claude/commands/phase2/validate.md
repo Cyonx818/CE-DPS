@@ -85,13 +85,14 @@
 - Files created during Phase 2
 - Ready for Phase 3 confirmation
 
-### <step-8>Handle SKYNET Auto-Transition</step-8>
+### <step-8>Handle SKYNET Auto-Transition and Execute Auto-Progression</step-8>
 **Transition Management**:
 - **SKYNET mode** (if enabled):
-  - Execute automatic progression to Phase 3 setup (/phase3:setup)
   - Auto-inject any missing approval markers with best-practice reasoning
-  - Display autonomous transition messaging
-  - Note about continuing to Phase 3 implementation setup
+  - Display message "🤖 SKYNET autonomous mode - auto-progressing to /phase3:setup"
+  - **CRITICAL**: Read the /phase3:setup command file using Read tool: `.claude/commands/phase3/setup.md`
+  - Execute the /phase3:setup command instructions directly within same Claude session context
+  - This implements the autonomous loop progression without human intervention while maintaining context consistency
 - **Non-SKYNET mode**: Provide clear guidance for manual Phase 3 initiation
 
 ### <step-9>Validate Sprint Environment Readiness</step-9>

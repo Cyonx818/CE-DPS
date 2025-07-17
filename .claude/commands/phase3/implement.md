@@ -109,18 +109,22 @@
 - Generate comprehensive documentation
 - Update implementation tracking and project state
 
-## <human-actions priority="high">Required Validation</human-actions>
+## <human-actions priority="high">Required Validation and Auto-Progression</human-actions>
+
+**SKYNET Mode**:
+- Auto-approves all business validations
+- Continues implementation autonomously
+- After implementation completion, display message "🤖 SKYNET autonomous mode - auto-progressing to /phase3:validate"
+- **CRITICAL**: Read the /phase3:validate command file using Read tool: `.claude/commands/phase3/validate.md`
+- Execute the /phase3:validate command instructions directly within same Claude session context
+- This implements the autonomous loop progression without human intervention while maintaining context consistency
+- Only stops for technical failures or quality gate issues
 
 **Normal Mode**:
 - Claude will request validation after each feature implementation
 - Review demo environment and validate business value
 - Approve features before Claude proceeds to next one
 - Provide feedback if changes needed
-
-**SKYNET Mode**:
-- Auto-approves all business validations
-- Continues implementation autonomously
-- Only stops for technical failures or quality gate issues
 
 ## <parameters priority="low">Command Configuration</parameters>
 **Configuration Details**:

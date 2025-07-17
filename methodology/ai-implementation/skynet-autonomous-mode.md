@@ -204,6 +204,7 @@ Phase1 (one-time) → Phase2 → Phase3 → Quality Check → Phase2 (next sprin
   <phase-commands>
     <behavior>Auto-populate templates when SKYNET=true, skip human approval sections</behavior>
     <state-tracking>Update loop state with position and next command</state-tracking>
+    <autonomous-progression>Execute next command instructions directly within same Claude session</autonomous-progression>
   </phase-commands>
   
   <quality-check>
@@ -211,6 +212,29 @@ Phase1 (one-time) → Phase2 → Phase3 → Quality Check → Phase2 (next sprin
     <failure-handling>Pause loop, require human intervention for quality failures</failure-handling>
   </quality-check>
 </command-modifications>
+```
+
+### <method>Autonomous Command Progression Implementation</method>
+
+**Command Chaining Architecture**:
+```xml
+<command-progression>
+  <principle>Master orchestrator Claude instance remains consistent across all loop steps</principle>
+  <mechanism>Commands read and execute next command's instructions directly within same session context</mechanism>
+  <implementation>
+    <step>Complete current command tasks</step>
+    <step>Read next command markdown file content using Read tool</step>
+    <step>Execute next command instructions directly without spawning subtasks</step>
+    <step>Update loop state with progression tracking</step>
+  </implementation>
+  
+  <anti-pattern>DO NOT use Task tool to spawn subtasks for command progression</anti-pattern>
+  <rationale>
+    <context-preservation>Maintains Claude session context and memory across progression</context-preservation>
+    <state-consistency>Preserves environment variables and loop state</state-consistency>
+    <efficiency>Avoids context switching overhead and memory fragmentation</efficiency>
+  </rationale>
+</command-progression>
 ```
 
 ### <implementation priority="high">Template Auto-Population Strategy</implementation>
