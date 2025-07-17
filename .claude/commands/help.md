@@ -24,11 +24,11 @@
 
 ### <step-2>Show Complete Command Reference</step-2>
 **Command Categories**:
-- **Project Management**: /cedps-init, /cedps-status, /cedps-tools, /cedps-help
-- **Phase 1**: /cedps-phase1-setup, /cedps-phase1-analyze, /cedps-phase1-validate  
-- **Phase 2**: /cedps-phase2-setup, /cedps-phase2-plan, /cedps-phase2-validate
-- **Phase 3**: /cedps-phase3-setup, /cedps-phase3-implement, /cedps-phase3-validate
-- **SKYNET**: /skynet-enable, /skynet-disable, /skynet-status
+- **Project Management**: /init, /project-status, /quality-check, /tools, /help
+- **Phase 1**: /phase1:setup, /phase1:analyze, /phase1:validate  
+- **Phase 2**: /phase2:setup, /phase2:plan, /phase2:validate
+- **Phase 3**: /phase3:setup, /phase3:implement, /phase3:validate
+- **SKYNET**: /skynet:enable, /skynet:disable, /skynet:status
 
 ### <step-3>Provide Detailed Usage Patterns</step-3>
 - Show typical workflow with numbered steps
