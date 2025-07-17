@@ -18,12 +18,16 @@
 
 ## <instructions priority="high">Quality Validation Process</instructions>
 
-### <step-1>Pre-Flight Validation</step-1>
+### <step-1>Pre-Flight Validation and Loop State Update</step-1>
 **Environment Checks**:
 - Project state and current phase validation
 - Tool and dependency availability verification
 - Git working directory cleanliness (offer stash if dirty)
 - Environment configuration validation
+
+**Loop State Update Instructions** (if SKYNET=true):
+1. If SKYNET mode is enabled, use the Bash tool to run: `./tools/skynet-loop-manager.sh update-state "quality_check_started" "quality_check_running" ""`
+2. This will update the loop state to indicate quality check is in progress
 
 ### <step-2>Execute Comprehensive Test Suite</step-2>
 **Test Categories** (sequential execution):
@@ -84,7 +88,7 @@
 - Actionable improvement recommendations
 - Results saved for trend analysis and continuous improvement
 
-### <step-10>SKYNET Mode Auto-Loop</step-10>
+### <step-10>SKYNET Mode Auto-Loop and Sprint Increment</step-10>
 **Autonomous Continuous Development** (if SKYNET=true):
 - After successful quality validation, automatically trigger next sprint loop
 - Increment sprint number and prepare new sprint environment
@@ -92,6 +96,14 @@
 - Continue autonomous development cycle indefinitely
 - Only stop loop if quality gates fail or technical issues detected
 - Maintain sprint tracking and project state across iterations
+
+**Sprint Increment Instructions** (if SKYNET=true):
+1. If SKYNET mode is enabled and quality gates pass:
+   - Use the Bash tool to run: `./tools/skynet-loop-manager.sh increment-sprint`
+   - Display "🚀 SKYNET AUTO-LOOP: Quality gates passed!"
+   - Show sprint completion details from the utility output
+   - Display "Executing: /phase2:setup" to indicate next command
+2. The loop will automatically continue to the next sprint setup
 
 ## <expected-output priority="medium">Quality Validation Results</expected-output>
 

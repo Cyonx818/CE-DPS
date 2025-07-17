@@ -44,7 +44,7 @@
 - Run python3 tools/phase-validator.py --phase 3 --file docs/phases/phase-3-implementation.md
 - Validate phase completion criteria are met
 
-### <step-5>Update Project State</step-5>
+### <step-5>Update Project State and Loop State</step-5>
 **State Management**:
 - **Update docs/ce-dps-state.json** (using jq):
   - Add 3 to phases_completed array
@@ -54,6 +54,23 @@
   - Set status to "completed"
   - Set implementation_completed timestamp
   - Set quality_gates_passed and human_validation_complete to true
+
+**Loop State Update** (if SKYNET=true):
+```bash
+# Update loop state for phase 3 completion
+current_time=$(date -u +%Y-%m-%dT%H:%M:%SZ)
+if [[ "$SKYNET" == "true" ]]; then
+    jq --arg timestamp "$current_time" \
+       '.loop_position = "phase3:validate_complete" |
+        .next_command = "/quality-check" |
+        .last_execution = $timestamp |
+        .loop_history += [{
+          "action": "phase3_validation_complete",
+          "timestamp": $timestamp,
+          "next_step": "quality_check"
+        }]' docs/skynet-loop-state.json > tmp.json && mv tmp.json docs/skynet-loop-state.json
+fi
+```
 
 ### <step-6>Generate Quality Report</step-6>
 **Report Generation**:

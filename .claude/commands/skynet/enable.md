@@ -18,11 +18,16 @@
 
 ## <instructions priority="high">SKYNET Activation Process</instructions>
 
-### <step-1>Set Environment Variable</step-1>
+### <step-1>Set Environment Variable and Update Loop State</step-1>
 **Environment Configuration**:
-- Execute: export SKYNET=true
+- Use the Bash tool to execute: `export SKYNET=true`
+- Update the loop state file `docs/skynet-loop-state.json` with activation details
 - Display activation message with visual borders
 - Show autonomous operation confirmation
+
+**Loop State Update Instructions**:
+1. Use the Bash tool to run: `./tools/skynet-loop-manager.sh enable`
+2. This will automatically update the loop state file with SKYNET activation details
 
 ### <step-2>Display Activation Message</step-2>
 **Activation Announcement** ("🤖 SKYNET mode ENABLED"):
@@ -52,6 +57,7 @@
 **Control Commands**:
 - /skynet:disable to return to human oversight
 - /skynet:status to check current mode
+- /skynet:resume to recover from auto-compact interruptions
 
 **Autonomous Loop Workflow**:
 Phase1 (setup→analyze→validate) → Phase2 (setup→plan→validate) → Phase3 (setup→implement→validate) → Quality Check → Loop back to Phase2 (next sprint)

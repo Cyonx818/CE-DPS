@@ -17,9 +17,15 @@
 
 ## <instructions priority="high">Status Analysis Process</instructions>
 
-### <step-1>Check Project Initialization</step-1>
+### <step-1>Check Project Initialization and Auto-Compact Detection</step-1>
 - Check docs/ce-dps-state.json existence (error if missing)
 - Read project state using jq: current_phase, phases_completed, initialization status
+- **Auto-Compact Detection**: Check for interrupted SKYNET loops
+
+**Auto-Compact Detection Instructions**:
+1. Use the Bash tool to run: `./tools/skynet-loop-manager.sh display-auto-compact`
+2. Use the Bash tool to run: `./tools/skynet-loop-manager.sh check-auto-compact` to determine if auto-compact was detected
+3. Store the result to influence subsequent recommendations
 
 ### <step-2>Display Project Overview</step-2>
 **Status Elements**:
@@ -51,23 +57,34 @@
 - CE_DPS_QUALITY_GATES
 - CE_DPS_HUMAN_APPROVAL_REQUIRED
 
-### <step-6>Show SKYNET Mode Status</step-6>
+### <step-6>Show SKYNET Mode Status and Loop Information</step-6>
 **Mode Detection**:
 - 🟢 **ENABLED**: Autonomous Operation (SKYNET=true)
 - 🟡 **EXPLICITLY DISABLED**: Human Oversight (SKYNET=false)
 - 🔵 **NOT SET**: Default Human Oversight (SKYNET unset)
 
+**Loop State Information Instructions**:
+1. Use the Bash tool to run: `./tools/skynet-loop-manager.sh display-state`
+2. This will display comprehensive SKYNET loop state information if available
+
 ### <step-7>Display Git Status</step-7>
 - Show current git branch (git branch --show-current)
 - Identify branch type: implementation, planning, or main
 
-### <step-8>Provide Next Steps</step-8>
+### <step-8>Provide Next Steps with Auto-Compact Awareness</step-8>
 **Intelligent Recommendations**:
+- **Auto-compact detected**: /skynet:resume to continue autonomous operation
 - **Not initialized**: /init
 - **Phase 1 incomplete**: /phase1:setup or /phase1:analyze
 - **Phase 1 complete, Phase 2 incomplete**: /phase2:setup
 - **Phase 2 complete, Phase 3 incomplete**: /phase3:setup
 - **All phases complete**: quality validation or next sprint
+
+**Auto-Compact Priority Instructions**:
+1. If auto-compact was detected (from earlier check), prioritize recovery recommendations:
+   - Display "🚨 PRIORITY RECOMMENDATION: Auto-compact interruption detected"
+   - Show recovery options: `/skynet:resume`, `/skynet:status`, `/skynet:disable`
+2. Otherwise, proceed with normal phase-based recommendations
 
 ### <step-9>List Available Commands</step-9>
 - Show relevant CE-DPS commands for current phase

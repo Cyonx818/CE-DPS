@@ -18,11 +18,16 @@
 
 ## <instructions priority="high">SKYNET Deactivation Process</instructions>
 
-### <step-1>Set Environment Variable</step-1>
+### <step-1>Set Environment Variable and Update Loop State</step-1>
 **Environment Configuration**:
 - Execute: export SKYNET=false
+- Update loop state file with deactivation details
 - Display deactivation message with visual borders
 - Show human oversight restoration confirmation
+
+**Loop State Update Instructions**:
+1. Use the Bash tool to run: `./tools/skynet-loop-manager.sh disable`
+2. This will automatically update the loop state file with SKYNET deactivation details
 
 ### <step-2>Display Deactivation Message</step-2>
 **Deactivation Announcement** ("👨‍💼 SKYNET mode DISABLED"):

@@ -17,9 +17,38 @@
 
 ## <instructions priority="high">Setup Process</instructions>
 
-### <step-1>Validate Environment</step-1>
+### <step-1>Validate Environment and Check Auto-Compact</step-1>
 - Check CLAUDE.md exists in project root (required)
 - Display initialization message
+- **Auto-Compact Detection**: Check for interrupted SKYNET loops
+
+**Auto-Compact Detection Logic**:
+```bash
+# Check for auto-compact interruption
+if [[ -f "docs/skynet-loop-state.json" ]]; then
+    saved_skynet=$(jq -r '.skynet_active' docs/skynet-loop-state.json)
+    current_skynet=${SKYNET:-"unset"}
+    
+    if [[ "$saved_skynet" == "true" && "$current_skynet" != "true" ]]; then
+        echo "🔴 AUTO-COMPACT DETECTED: SKYNET loop was interrupted"
+        echo "   Last position: $(jq -r '.loop_position' docs/skynet-loop-state.json)"
+        echo "   Current sprint: $(jq -r '.current_sprint' docs/skynet-loop-state.json)"
+        echo ""
+        echo "💡 RECOVERY RECOMMENDED:"
+        echo "   Run '/skynet:resume' to continue autonomous operation"
+        echo "   Or continue with initialization if you want to restart"
+        echo ""
+        
+        # Ask for confirmation to continue with init
+        read -p "Continue with project initialization? (y/n): " -n 1 -r
+        echo
+        if [[ ! $REPLY =~ ^[Yy]$ ]]; then
+            echo "Initialization cancelled. Use /skynet:resume to recover."
+            exit 1
+        fi
+    fi
+fi
+```
 
 ### <step-2>Check System Dependencies</step-2>
 **Required Tools**:

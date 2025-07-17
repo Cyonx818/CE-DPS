@@ -18,10 +18,15 @@
 
 ## <instructions priority="high">Status Display Process</instructions>
 
-### <step-1>Display Status Header</step-1>
+### <step-1>Display Status Header and Check Auto-Compact</step-1>
 **Status Check Initialization**:
 - Show "🤖 SKYNET MODE STATUS CHECK" with visual separator lines
-- Check current SKYNET environment variable value
+- Use the Bash tool to check current SKYNET environment variable value
+- Compare with saved loop state for auto-compact detection
+
+**Auto-Compact Detection Instructions**:
+1. Use the Bash tool to run: `./tools/skynet-loop-manager.sh display-auto-compact`
+2. This will automatically detect and display any auto-compact interruption status
 
 ### <step-2>Check and Display Current Mode</step-2>
 **Mode Detection**:
@@ -49,13 +54,17 @@
 - Business validation: HUMAN REQUIRED
 - Standard CE-DPS collaborative workflow
 
-### <step-4>Show Environment Details</step-4>
+### <step-4>Show Environment Details and Loop State</step-4>
 **Environment Variables**:
 - SKYNET variable value
 - CE_DPS_PHASE
 - CE_DPS_FORTITUDE_ENABLED
 - CE_DPS_QUALITY_GATES
 - CE_DPS_HUMAN_APPROVAL_REQUIRED
+
+**Loop State Information Instructions**:
+1. Use the Bash tool to run: `./tools/skynet-loop-manager.sh display-state`
+2. This will display comprehensive loop state information if available
 
 ### <step-5>Display Quality Standards (Always Enforced)</step-5>
 **Quality Framework**:
