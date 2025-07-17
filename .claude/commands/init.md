@@ -62,10 +62,13 @@
 
 ### <step-6>Initialize Project State</step-6>
 **State File Creation** (docs/ce-dps-state.json):
-- project_initialized, current_phase, phases_completed
-- quality_gates_enabled, fortitude_enabled
-- SKYNET-specific fields based on current mode
-- created_at timestamp using date command
+- Check if docs/ce-dps-state.json already exists using Read tool
+- If file exists, inform user project is already initialized and exit
+- If file doesn't exist, use Write tool to create new state file with:
+  - project_initialized, current_phase, phases_completed
+  - quality_gates_enabled, fortitude_enabled
+  - SKYNET-specific fields based on current mode
+  - created_at timestamp using date command
 
 ### <step-7>Create Project Documentation Template</step-7>
 **Template Creation** (if docs/PROJECT.md missing):

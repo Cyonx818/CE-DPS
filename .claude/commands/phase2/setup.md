@@ -87,7 +87,9 @@
 
 ### <step-7>Initialize Sprint Tracking</step-7>
 **Sprint Info Creation** (docs/sprints/sprint-001/sprint-info.json):
-- Use Write tool to create sprint tracking file with structure:
+- Check if docs/sprints/sprint-001/sprint-info.json already exists using Read tool
+- If file exists, read current content and update status to "planning" using Edit tool
+- If file doesn't exist, use Write tool to create sprint tracking file with structure:
   - sprint_number: 1
   - phase: 2
   - status: "planning"
@@ -96,7 +98,7 @@
   - complexity_analysis: null
   - implementation_plan: null
   - human_approvals: empty array
-- Verify file was created successfully
+- Verify file was created or updated successfully
 
 ### <step-8>Update Project State and Loop State</step-8>
 **State Management** (docs/ce-dps-state.json):

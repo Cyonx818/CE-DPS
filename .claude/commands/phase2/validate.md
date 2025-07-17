@@ -71,9 +71,11 @@
 - Validate update was successful by reading the file again
 - If update fails, provide clear error message and manual steps
 - **Update sprint tracking** (docs/sprints/sprint-001/sprint-info.json):
-  - Set status = "approved"
-  - Set planning_completed timestamp
-  - Set ready_for_implementation = true
+  - Read current sprint info file using Read tool
+  - Update using Edit tool to set:
+    - status = "approved"
+    - planning_completed timestamp
+    - ready_for_implementation = true
 
 ### <step-7>Generate Phase 2 Completion Report</step-7>
 **Report Generation** (docs/phases/phase-2-completion-report.md):

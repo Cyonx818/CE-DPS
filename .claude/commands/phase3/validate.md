@@ -53,9 +53,11 @@
   - Update last_updated: current timestamp
   - Set ready_for_production = true
 - **Update docs/sprints/sprint-001/implementation/implementation-status.json**:
-  - Set status to "completed"
-  - Set implementation_completed timestamp
-  - Set quality_gates_passed and human_validation_complete to true
+  - Read current implementation status file using Read tool
+  - Update using Edit tool to set:
+    - status to "completed"
+    - implementation_completed timestamp
+    - quality_gates_passed and human_validation_complete to true
 
 **Loop State Update** (if SKYNET mode is enabled):
 - Check if SKYNET environment variable is set to "true"

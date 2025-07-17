@@ -26,13 +26,16 @@
 
 **Environment Configuration**:
 - Use the Bash tool to execute: `export SKYNET=true`
-- Update the loop state file `docs/skynet-loop-state.json` with activation details
+- Check if docs/skynet-loop-state.json exists using Read tool
+- If file exists, read current content and update skynet_active to true using Edit tool
+- If file doesn't exist, use Write tool to create initial loop state file
 - Display activation message with visual borders
 - Show autonomous operation confirmation
 
 **Loop State Update Instructions**:
 1. Use the Bash tool to run: `./tools/skynet-loop-manager.sh enable`
 2. This will automatically update the loop state file with SKYNET activation details
+3. If the utility fails, manually update the state file using Read tool first, then Edit tool
 
 ### <step-2>Display Activation Message</step-2>
 **Activation Announcement** ("🤖 SKYNET mode ENABLED"):

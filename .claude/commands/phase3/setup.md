@@ -51,8 +51,11 @@
 
 ### <step-5>Initialize Implementation Tracking</step-5>
 **Tracking Setup** (docs/sprints/sprint-001/implementation/implementation-status.json):
-- Sprint metadata with status "setup"
-- Initialize empty arrays for features and quality gates
+- Check if docs/sprints/sprint-001/implementation/implementation-status.json exists using Read tool
+- If file exists, read current content and update status to "setup" using Edit tool
+- If file doesn't exist, use Write tool to create tracking file with:
+  - Sprint metadata with status "setup"
+  - Initialize empty arrays for features and quality gates
 
 ### <step-6>Create Feature Branch</step-6>
 **Git Branch Management**:
