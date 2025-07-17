@@ -91,11 +91,12 @@
 **State Update**:
 1. Mark recovery as complete in the loop state file
 2. Update last execution timestamp
-3. Add recovery event to loop history using single-line command:
-   ```bash
-   current_time=$(date -u +%Y-%m-%dT%H:%M:%SZ)
-   jq --arg timestamp "$current_time" '.auto_compact_recovery = true | .last_execution = $timestamp | .loop_history += [{"action": "auto_compact_recovery", "timestamp": $timestamp}]' docs/skynet-loop-state.json > tmp.json && mv tmp.json docs/skynet-loop-state.json
-   ```
+3. Add recovery event to loop history:
+   - Get current timestamp in ISO format
+   - Update the loop state file to mark auto_compact_recovery as true
+   - Set last_execution timestamp to current time
+   - Add recovery action to loop_history array
+   - Save the updated state back to docs/skynet-loop-state.json using the Edit tool
 
 ### <step-7>Execute Next Command in Sequence</step-7>
 **Seamless Continuation**:

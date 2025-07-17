@@ -55,8 +55,8 @@
 
 ### <step-7>Initialize Quality Gates and Tools</step-7>
 **Tool Preparation**:
-- Build quality gates tool: cd tools/quality-gates && cargo build --release
-- Prepare Rust testing framework with cargo test --no-run
+- Build quality gates tool by navigating to tools/quality-gates directory and running cargo build --release
+- Prepare Rust testing framework by running cargo test --no-run in the project root
 - Query Fortitude for implementation patterns if available
 
 ### <step-8>Extract Sprint Backlog</step-8>

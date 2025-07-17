@@ -23,32 +23,17 @@
 - **Auto-Compact Detection**: Check for interrupted SKYNET loops
 
 **Auto-Compact Detection Logic**:
-```bash
-# Check for auto-compact interruption
-if [[ -f "docs/skynet-loop-state.json" ]]; then
-    saved_skynet=$(jq -r '.skynet_active' docs/skynet-loop-state.json)
-    current_skynet=${SKYNET:-"unset"}
-    
-    if [[ "$saved_skynet" == "true" && "$current_skynet" != "true" ]]; then
-        echo "🔴 AUTO-COMPACT DETECTED: SKYNET loop was interrupted"
-        echo "   Last position: $(jq -r '.loop_position' docs/skynet-loop-state.json)"
-        echo "   Current sprint: $(jq -r '.current_sprint' docs/skynet-loop-state.json)"
-        echo ""
-        echo "💡 RECOVERY RECOMMENDED:"
-        echo "   Run '/skynet:resume' to continue autonomous operation"
-        echo "   Or continue with initialization if you want to restart"
-        echo ""
-        
-        # Ask for confirmation to continue with init
-        read -p "Continue with project initialization? (y/n): " -n 1 -r
-        echo
-        if [[ ! $REPLY =~ ^[Yy]$ ]]; then
-            echo "Initialization cancelled. Use /skynet:resume to recover."
-            exit 1
-        fi
-    fi
-fi
-```
+1. Check if docs/skynet-loop-state.json exists
+2. If it exists, read the skynet_active field from the JSON file
+3. Check the current SKYNET environment variable value
+4. If saved state shows skynet_active is true but current environment is not true:
+   - Display "🔴 AUTO-COMPACT DETECTED: SKYNET loop was interrupted"
+   - Show last position from the loop state file
+   - Show current sprint from the loop state file
+   - Display recovery recommendation message
+   - Ask user if they want to continue with initialization or use recovery
+   - If user chooses not to continue, exit and suggest using /skynet:resume
+5. If auto-compact is not detected, continue with normal initialization
 
 ### <step-2>Check System Dependencies</step-2>
 **Required Tools**:

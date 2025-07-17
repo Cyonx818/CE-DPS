@@ -91,20 +91,17 @@
 
 ### <step-8>Update Project State and Loop State</step-8>
 **State Management** (docs/ce-dps-state.json):
-- **If jq available**, update with single command:
-  ```bash
-  current_time=$(date -u +%Y-%m-%dT%H:%M:%SZ)
-  jq --arg timestamp "$current_time" '.current_phase = 2 | .phase_2_started = $timestamp | .last_updated = $timestamp' docs/ce-dps-state.json > /tmp/state.json && mv /tmp/state.json docs/ce-dps-state.json
-  ```
-- **If jq not available**: warn about manual state management
+- Update the project state file to reflect Phase 2 start:
+  - Set current_phase to 2
+  - Set phase_2_started to current timestamp
+  - Set last_updated to current timestamp
+- Use Edit tool to update the JSON file directly
+- If jq available, can verify state with: `jq '.current_phase' docs/ce-dps-state.json`
 
 **Loop State Update** (if SKYNET=true):
-```bash
-# Update loop state for phase 2 setup using proper utility
-if [[ "$SKYNET" == "true" ]]; then
-    ./tools/skynet-loop-manager.sh update-state "phase2_setup_complete" "phase2:setup_complete" "/phase2:plan"
-fi
-```
+- If SKYNET mode is enabled, update the loop state using the skynet-loop-manager.sh utility
+- Call: `./tools/skynet-loop-manager.sh update-state "phase2_setup_complete" "phase2:setup_complete" "/phase2:plan"`
+- This tracks the autonomous loop progression for recovery purposes
 
 ### <step-9>Prepare Fortitude Integration</step-9>
 **Knowledge Management**:

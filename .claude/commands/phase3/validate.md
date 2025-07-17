@@ -55,13 +55,12 @@
   - Set implementation_completed timestamp
   - Set quality_gates_passed and human_validation_complete to true
 
-**Loop State Update** (if SKYNET=true):
-```bash
-# Update loop state for phase 3 completion using proper utility
-if [[ "$SKYNET" == "true" ]]; then
-    ./tools/skynet-loop-manager.sh update-state "phase3_validation_complete" "phase3:validate_complete" "/quality-check"
-fi
-```
+**Loop State Update** (if SKYNET mode is enabled):
+- Check if SKYNET environment variable is set to "true"
+- If enabled, use the skynet-loop-manager.sh tool to update the loop state
+- Mark phase3_validation_complete status
+- Set next command to /quality-check
+- Record completion in the loop state tracking
 
 ### <step-6>Generate Quality Report</step-6>
 **Report Generation**:
