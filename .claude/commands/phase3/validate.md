@@ -75,6 +75,8 @@
 - Automatically run quality check and prepare next sprint loop
 - Exit with special code (42) to trigger /quality-check
 - Auto-transition to Phase 2 setup for continuous development
+- Increment sprint number for next iteration
+- Execute automatic command progression: /quality-check → /phase2:setup (next sprint)
 
 ## <expected-output priority="medium">Validation Results</expected-output>
 
@@ -99,9 +101,11 @@
 - Consider next sprint planning
 
 **SKYNET Mode**:
-- Auto-transitions to comprehensive quality check
-- If quality gates pass, automatically loops to next sprint
+- Auto-transitions to comprehensive quality check (/quality-check)
+- If quality gates pass, automatically loops to next sprint (/phase2:setup)
+- Increments sprint number and continues development cycle indefinitely
 - No human intervention unless quality issues detected
+- Continuous loop: Phase3 → Quality Check → Phase2 → Phase3 → repeat
 
 ## <parameters priority="low">Command Configuration</parameters>
 **Configuration Details**:

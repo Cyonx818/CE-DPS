@@ -85,7 +85,7 @@
 ### <step-8>Handle SKYNET Auto-Transition</step-8>
 **Transition Management**:
 - **SKYNET mode** (if enabled):
-  - Announce automatic progression to Phase 3 setup
+  - Execute automatic progression to Phase 3 setup (/phase3:setup)
   - Auto-inject any missing approval markers with best-practice reasoning
   - Display autonomous transition messaging
   - Note about continuing to Phase 3 implementation setup

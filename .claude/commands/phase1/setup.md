@@ -67,7 +67,7 @@
 - **Non-SKYNET mode**: Guide user to fill out template sections (Problem Statement, Target Users, Success Metrics, Technical Requirements)
 - Explain validation checklist for template completion
 - Direct user to run /phase1:analyze when template is complete
-- **SKYNET mode**: Announce automatic progression to analysis
+- **SKYNET mode**: Execute automatic progression to analysis (/phase1:analyze)
 
 ## <expected-behavior priority="medium">Command Operation</expected-behavior>
 

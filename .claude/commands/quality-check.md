@@ -84,6 +84,15 @@
 - Actionable improvement recommendations
 - Results saved for trend analysis and continuous improvement
 
+### <step-10>SKYNET Mode Auto-Loop</step-10>
+**Autonomous Continuous Development** (if SKYNET=true):
+- After successful quality validation, automatically trigger next sprint loop
+- Increment sprint number and prepare new sprint environment
+- Execute automatic command progression: /phase2:setup (next sprint)
+- Continue autonomous development cycle indefinitely
+- Only stop loop if quality gates fail or technical issues detected
+- Maintain sprint tracking and project state across iterations
+
 ## <expected-output priority="medium">Quality Validation Results</expected-output>
 
 **Cargo Command Sequence**:

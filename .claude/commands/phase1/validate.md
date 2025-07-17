@@ -67,7 +67,7 @@
 
 ### <step-7>Handle SKYNET Auto-Transition</step-7>
 **Transition Management**:
-- **SKYNET mode**: Announce automatic progression to Phase 2 setup
+- **SKYNET mode**: Execute automatic progression to Phase 2 setup (/phase2:setup)
 - Auto-inject any missing approval markers with best-practice reasoning
 - Display autonomous transition messaging
 - **Non-SKYNET mode**: Provide clear guidance for manual Phase 2 initiation

@@ -69,7 +69,7 @@
   - 4-5 week sprint duration
   - 80% implementation, 15% QA, 5% documentation split
   - Success criteria including functionality, quality, performance, documentation
-- Announce auto-progression to planning phase
+- Execute auto-progression to planning phase (/phase2:plan)
 
 ### <step-6>Create Working Environment</step-6>
 **Directory Creation**:
@@ -106,7 +106,7 @@
 
 ### <step-10>Provide Next Steps</step-10>
 **Next Actions**:
-- **SKYNET mode**: Announce automatic progression to implementation planning
+- **SKYNET mode**: Execute automatic progression to implementation planning (/phase2:plan)
 - **Human mode**: Provide detailed instructions for feature selection:
   - Reviewing available features from Phase 1 roadmap
   - Selecting 2-4 features based on business priority, dependencies, team capacity, user value

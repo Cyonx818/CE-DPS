@@ -54,7 +54,10 @@
 - /skynet:status to check current mode
 
 **Autonomous Loop Workflow**:
-Auto-generate requirements → Auto-approve architecture → Auto-select features → Auto-implement with TDD → Auto-run quality check → Loop back
+Phase1 (setup→analyze→validate) → Phase2 (setup→plan→validate) → Phase3 (setup→implement→validate) → Quality Check → Loop back to Phase2 (next sprint)
+
+**Command Execution Flow**:
+/phase1:setup → /phase1:analyze → /phase1:validate → /phase2:setup → /phase2:plan → /phase2:validate → /phase3:setup → /phase3:implement → /phase3:validate → /quality-check → /phase2:setup (increment sprint) → repeat indefinitely
 
 ### <step-6>Document Quality Standards and Transparency</step-6>
 **Quality Framework**:

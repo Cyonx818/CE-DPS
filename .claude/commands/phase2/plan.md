@@ -110,7 +110,7 @@
 - Auto-populate all approval sections with "✅ Approved - SKYNET: [reasoning]"
 - Include best-practice reasoning for each approval decision
 - Mark document as ready for immediate validation
-- Announce automatic progression to Phase 2 validation
+- Execute automatic progression to Phase 2 validation (/phase2:validate)
 **Non-SKYNET Mode**: Provide clear instructions for human review process
 
 ### <step-12>Update Planning Document</step-12>

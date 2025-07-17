@@ -86,7 +86,7 @@
 **SKYNET Mode** (if enabled):
 - Automatically populate approval sections with best-practice decisions
 - Mark approvals as "✅ Approved - SKYNET: [reasoning based on best practices]"
-- Announce automatic progression to validation phase
+- Execute automatic progression to validation phase (/phase1:validate)
 **Non-SKYNET Mode**: Provide clear instructions for human review process
 
 ### <step-10>Update Planning Document</step-10>
