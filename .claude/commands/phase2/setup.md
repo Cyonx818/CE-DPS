@@ -91,30 +91,18 @@
 
 ### <step-8>Update Project State and Loop State</step-8>
 **State Management** (docs/ce-dps-state.json):
-- **If jq available**, update with:
-  - current_phase = 2
-  - last_updated timestamp
-  - phase_2_started timestamp
+- **If jq available**, update with single command:
+  ```bash
+  current_time=$(date -u +%Y-%m-%dT%H:%M:%SZ)
+  jq --arg timestamp "$current_time" '.current_phase = 2 | .phase_2_started = $timestamp | .last_updated = $timestamp' docs/ce-dps-state.json > /tmp/state.json && mv /tmp/state.json docs/ce-dps-state.json
+  ```
 - **If jq not available**: warn about manual state management
 
 **Loop State Update** (if SKYNET=true):
 ```bash
-# Update loop state for phase 2 setup
-current_time=$(date -u +%Y-%m-%dT%H:%M:%SZ)
+# Update loop state for phase 2 setup using proper utility
 if [[ "$SKYNET" == "true" ]]; then
-    current_sprint=$(jq -r '.current_sprint // 1' docs/skynet-loop-state.json 2>/dev/null || echo "1")
-    jq --arg timestamp "$current_time" \
-       --arg sprint "$current_sprint" \
-       '.loop_position = "phase2:setup_complete" |
-        .next_command = "/phase2:plan" |
-        .last_execution = $timestamp |
-        .environment_vars.CE_DPS_PHASE = "2" |
-        .loop_history += [{
-          "action": "phase2_setup_complete",
-          "timestamp": $timestamp,
-          "sprint": $sprint,
-          "next_step": "phase2_plan"
-        }]' docs/skynet-loop-state.json > tmp.json && mv tmp.json docs/skynet-loop-state.json
+    ./tools/skynet-loop-manager.sh update-state "phase2_setup_complete" "phase2:setup_complete" "/phase2:plan"
 fi
 ```
 
@@ -127,7 +115,7 @@ fi
 
 ### <step-10>Provide Next Steps</step-10>
 **Next Actions**:
-- **SKYNET mode**: Execute automatic progression to implementation planning (/phase2:plan)
+- **SKYNET mode**: Display message "🤖 SKYNET autonomous mode - run /phase2:plan to continue"
 - **Human mode**: Provide detailed instructions for feature selection:
   - Reviewing available features from Phase 1 roadmap
   - Selecting 2-4 features based on business priority, dependencies, team capacity, user value

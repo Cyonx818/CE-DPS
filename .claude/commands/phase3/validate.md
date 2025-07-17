@@ -57,18 +57,9 @@
 
 **Loop State Update** (if SKYNET=true):
 ```bash
-# Update loop state for phase 3 completion
-current_time=$(date -u +%Y-%m-%dT%H:%M:%SZ)
+# Update loop state for phase 3 completion using proper utility
 if [[ "$SKYNET" == "true" ]]; then
-    jq --arg timestamp "$current_time" \
-       '.loop_position = "phase3:validate_complete" |
-        .next_command = "/quality-check" |
-        .last_execution = $timestamp |
-        .loop_history += [{
-          "action": "phase3_validation_complete",
-          "timestamp": $timestamp,
-          "next_step": "quality_check"
-        }]' docs/skynet-loop-state.json > tmp.json && mv tmp.json docs/skynet-loop-state.json
+    ./tools/skynet-loop-manager.sh update-state "phase3_validation_complete" "phase3:validate_complete" "/quality-check"
 fi
 ```
 

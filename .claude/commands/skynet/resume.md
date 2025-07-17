@@ -55,30 +55,10 @@
 - Check for manual changes during interruption
 
 **Consistency Checks**:
-```bash
-# Validate project state consistency
-if [[ ! -f "docs/ce-dps-state.json" ]]; then
-    echo "❌ Project state file missing. Run /init to reinitialize."
-    exit 1
-fi
-
-# Check for git working directory changes
-if ! git diff --quiet; then
-    echo "⚠️  Working directory has uncommitted changes."
-    echo "Consider stashing or committing changes before recovery."
-    read -p "Continue with recovery anyway? (y/n): " -n 1 -r
-    echo
-    if [[ ! $REPLY =~ ^[Yy]$ ]]; then
-        exit 1
-    fi
-fi
-
-# Validate sprint directory exists
-current_sprint=$(jq -r '.current_sprint' docs/skynet-loop-state.json)
-if [[ ! -d "docs/sprints/sprint-$(printf "%03d" $current_sprint)" ]]; then
-    echo "⚠️  Sprint directory missing. Will create during recovery."
-fi
-```
+1. Check if `docs/ce-dps-state.json` exists - if not, display "❌ Project state file missing. Run /init to reinitialize." and exit
+2. Check git working directory status: `git diff --quiet` - if dirty, warn about uncommitted changes
+3. Check current sprint directory exists using loop state file data
+4. Display any warnings found during validation
 
 ### <step-4>Restore Environment Variables</step-4>
 **Environment Restoration Instructions**:
@@ -95,31 +75,12 @@ fi
 - Rebuild understanding of current tasks
 
 **Context Rebuilding**:
-```bash
-# Regenerate working context
-echo "🧠 Regenerating Working Context..."
-
-# Read current phase state
-current_phase=$(jq -r '.current_phase' docs/ce-dps-state.json)
-echo "  Current Phase: $current_phase"
-
-# Check sprint status
-current_sprint=$(jq -r '.current_sprint' docs/skynet-loop-state.json)
-sprint_dir="docs/sprints/sprint-$(printf "%03d" $current_sprint)"
-if [[ -d "$sprint_dir" ]]; then
-    echo "  Sprint $current_sprint: Active"
-    if [[ -f "$sprint_dir/sprint-info.json" ]]; then
-        echo "  Sprint Goals: $(jq -r '.goals[]' "$sprint_dir/sprint-info.json" | head -3)"
-    fi
-else
-    echo "  Sprint $current_sprint: Directory missing (will create)"
-fi
-
-# Check recent git activity
-echo "  Recent Commits:"
-git log --oneline -5 | sed 's/^/    /'
-echo ""
-```
+1. Display "🧠 Regenerating Working Context..." message
+2. Read current phase from `docs/ce-dps-state.json` using `jq -r '.current_phase'`
+3. Read current sprint from loop state file using `jq -r '.current_sprint'`
+4. Check if sprint directory exists: `docs/sprints/sprint-XXX/`
+5. Display recent git activity: `git log --oneline -5`
+6. Read sprint goals from `sprint-info.json` if available
 
 ### <step-6>Update Loop State for Recovery</step-6>
 **Recovery State Update**:
@@ -128,19 +89,13 @@ echo ""
 - Add recovery event to loop history
 
 **State Update**:
-```bash
-# Update loop state with recovery
-current_time=$(date -u +%Y-%m-%dT%H:%M:%SZ)
-jq --arg timestamp "$current_time" \
-   '.auto_compact_recovery = true |
-    .last_execution = $timestamp |
-    .loop_history += [{
-      "action": "auto_compact_recovery",
-      "timestamp": $timestamp,
-      "recovered_from": .loop_position,
-      "next_command": .next_command
-    }]' docs/skynet-loop-state.json > tmp.json && mv tmp.json docs/skynet-loop-state.json
-```
+1. Mark recovery as complete in the loop state file
+2. Update last execution timestamp
+3. Add recovery event to loop history using single-line command:
+   ```bash
+   current_time=$(date -u +%Y-%m-%dT%H:%M:%SZ)
+   jq --arg timestamp "$current_time" '.auto_compact_recovery = true | .last_execution = $timestamp | .loop_history += [{"action": "auto_compact_recovery", "timestamp": $timestamp}]' docs/skynet-loop-state.json > tmp.json && mv tmp.json docs/skynet-loop-state.json
+   ```
 
 ### <step-7>Execute Next Command in Sequence</step-7>
 **Seamless Continuation**:
@@ -150,25 +105,17 @@ jq --arg timestamp "$current_time" \
 - Resume autonomous operation
 
 **Command Execution**:
-```bash
-# Get next command and execute
-next_command=$(jq -r '.next_command' docs/skynet-loop-state.json)
-loop_position=$(jq -r '.loop_position' docs/skynet-loop-state.json)
-
-echo "✅ Recovery Complete - Resuming Autonomous Operation"
-echo "=================================================="
-echo "Continuing from: $loop_position"
-echo "Executing next command: $next_command"
-echo ""
-
-# Execute next command
-if [[ -n "$next_command" && "$next_command" != "null" ]]; then
-    echo "🚀 Executing: $next_command"
-    # The next command will be executed automatically
-else
-    echo "⚠️  No next command specified. Use /project-status to determine next steps."
-fi
-```
+1. Get next command from loop state: `jq -r '.next_command' docs/skynet-loop-state.json`
+2. Get loop position: `jq -r '.loop_position' docs/skynet-loop-state.json`
+3. Display recovery completion message:
+   ```
+   ✅ Recovery Complete - Resuming Autonomous Operation
+   ==================================================
+   Continuing from: [loop_position]
+   Next command to run: [next_command]
+   ```
+4. Instruct user to manually execute the next command (slash commands cannot be auto-executed from bash)
+5. If no next command, display "⚠️  No next command specified. Use /project-status to determine next steps."
 
 ### <step-8>Display Recovery Summary</step-8>
 **Recovery Completion**:
