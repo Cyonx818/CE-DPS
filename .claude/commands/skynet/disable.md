@@ -1,60 +1,78 @@
-# Disable SKYNET Mode
+# <context>Disable SKYNET Mode</context>
 
-Disable autonomous CE-DPS operation and restore human oversight checkpoints.
+<meta>
+  <title>SKYNET Mode Deactivation</title>
+  <type>slash-command</type>
+  <audience>ai_assistant</audience>
+  <complexity>basic</complexity>
+  <updated>2025-07-17</updated>
+  <scope>skynet-control</scope>
+  <mode>human-oversight-restoration</mode>
+</meta>
 
-## Instructions
+## <summary priority="critical">TL;DR</summary>
+- **Purpose**: Disable autonomous CE-DPS operation and restore human oversight checkpoints
+- **Core Benefits**: Human strategic control, manual approval gates, collaborative development
+- **Quality Standards**: All technical quality gates remain fully enforced
+- **Output**: Human oversight restoration with comprehensive workflow guidance
 
-1. **Set Environment Variable**
-   - Execute: export SKYNET=false
-   - Display deactivation message with visual borders
-   - Show human oversight restoration confirmation
+## <instructions priority="high">SKYNET Deactivation Process</instructions>
 
-2. **Display Deactivation Message**
-   - Show "👨‍💼 SKYNET mode DISABLED" with visual separator lines
-   - List restoration effects:
-     - 🔒 Human oversight restored
-     - 🔒 Manual approval checkpoints reactivated
-     - 🔒 Template completion requires human input
-     - 🔒 Business validation requires human confirmation
-     - 🔒 Technical quality gates remain fully enforced
+### <step-1>Set Environment Variable</step-1>
+**Environment Configuration**:
+- Execute: export SKYNET=false
+- Display deactivation message with visual borders
+- Show human oversight restoration confirmation
 
-3. **Validate Mode Disable**
-   - Check if SKYNET=false or unset successfully
-   - Display confirmation of human oversight restoration
-   - Show status of technical quality standards (MAINTAINED)
-   - Show human approval requirements (RESTORED)
-   - Show continuous development loops (DISABLED)
+### <step-2>Display Deactivation Message</step-2>
+**Deactivation Announcement** ("👨‍💼 SKYNET mode DISABLED"):
+- 🔒 **Human oversight restored**
+- 🔒 **Manual approval checkpoints reactivated**
+- 🔒 **Template completion requires human input**
+- 🔒 **Business validation requires human confirmation**
+- 🔒 **Technical quality gates remain fully enforced**
 
-4. **Explain Immediate Workflow Effects**
-   - Phase 1: Business requirements templates require manual completion
-   - Phase 2: Feature selection requires human prioritization and approval
-   - Phase 3: Business validation requires human confirmation of value delivery
-   - Quality: All technical quality gates continue to be enforced
-   - Progression: Manual command execution required between phases
+### <step-3>Validate Mode Disable</step-3>
+**Status Validation**:
+- Check if SKYNET=false or unset successfully
+- Display confirmation of human oversight restoration
+- **Technical quality standards**: MAINTAINED
+- **Human approval requirements**: RESTORED
+- **Continuous development loops**: DISABLED
 
-5. **Show Restored Human Approval Points**
-   - List all approval checkpoints that are restored:
-     - Business requirements definition and approval
-     - Architectural decision review and sign-off
-     - Feature selection and sprint scope approval
-     - Implementation approach validation
-     - Business value confirmation for delivered features
-     - Production readiness assessment
+### <step-4>Explain Immediate Workflow Effects</step-4>
+**Phase-Specific Effects**:
+- **Phase 1**: Business requirements templates require manual completion
+- **Phase 2**: Feature selection requires human prioritization and approval
+- **Phase 3**: Business validation requires human confirmation of value delivery
+- **Quality**: All technical quality gates continue to be enforced
+- **Progression**: Manual command execution required between phases
 
-6. **Display Standard CE-DPS Workflow**
-   - Show mermaid workflow diagram for human oversight mode
-   - Include manual command execution at each phase transition
-   - Show human validation points throughout workflow
+### <step-5>Show Restored Human Approval Points</step-5>
+**Approval Checkpoints Restored**:
+- Business requirements definition and approval
+- Architectural decision review and sign-off
+- Feature selection and sprint scope approval
+- Implementation approach validation
+- Business value confirmation for delivered features
+- Production readiness assessment
 
-7. **Show Human Oversight Benefits**
-   - Strategic authority maintained
-   - Quality collaboration between human and AI
-   - Risk mitigation through human validation
-   - Collaborative human-AI development model
+### <step-6>Display Standard CE-DPS Workflow</step-6>
+**Human Oversight Workflow**:
+- Show workflow diagram for human oversight mode
+- Include manual command execution at each phase transition
+- Show human validation points throughout workflow
 
-## Expected Output
+### <step-7>Show Human Oversight Benefits</step-7>
+**Collaborative Benefits**:
+- Strategic authority maintained
+- Quality collaboration between human and AI
+- Risk mitigation through human validation
+- Collaborative human-AI development model
 
-The command will execute bash commands that:
+## <expected-output priority="medium">Deactivation Results</expected-output>
+
+**Command Execution**:
 - Export SKYNET=false environment variable
 - Display deactivation message with visual borders and lock icons
 - Validate the environment variable was set correctly
@@ -63,15 +81,17 @@ The command will execute bash commands that:
 - Display standard CE-DPS workflow diagram with human oversight
 - Show benefits of human oversight and collaborative development
 
-## Parameters
+## <parameters priority="low">Command Configuration</parameters>
+**Configuration Details**:
 - No parameters required
 - Sets SKYNET=false environment variable for current session
 - Restores all human approval checkpoints and manual workflows
 
-## Notes
-- Uses actual bash commands with export and echo statements
+## <implementation-notes priority="low">Technical Details</implementation-notes>
+**Technical Implementation**:
+- Uses bash commands with export and echo statements
 - Includes validation checks with if statements for SKYNET=false or unset
 - Maintains all technical quality requirements
 - Provides clear visual feedback with separator lines
-- Shows mermaid workflow diagram for human oversight mode
+- Shows workflow diagram for human oversight mode
 - Emphasizes collaborative human-AI development benefits

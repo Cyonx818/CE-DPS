@@ -1,86 +1,102 @@
-# CE-DPS Phase 3 Implementation
+# <context>CE-DPS Phase 3 Implementation</context>
 
-Trigger Phase 3 AI implementation with test-driven development and quality gates.
+<meta>
+  <title>CE-DPS Phase 3 Implementation</title>
+  <type>slash-command</type>
+  <audience>ai_assistant</audience>
+  <complexity>advanced</complexity>
+  <updated>2025-07-17</updated>
+  <scope>phase3-implementation</scope>
+  <phase>code-implementation</phase>
+</meta>
 
-## Instructions
+## <summary priority="critical">TL;DR</summary>
+- **Purpose**: Trigger Phase 3 AI implementation with test-driven development and quality gates
+- **Core Benefits**: TDD implementation cycle, security-first patterns, comprehensive quality validation
+- **Prerequisites**: Completed Phase 2 with implementation backlog and sprint-001-implementation branch
+- **Output**: Production-ready code with >95% test coverage and comprehensive validation
 
-1. **Validate Implementation Setup**
-   - Check that docs/phases/phase-3-implementation.md exists (run /cedps-phase3-setup if missing)
-   - Verify docs/phases/phase-3-artifacts/implementation-backlog.md exists from Phase 2
-   - Confirm on sprint-001-implementation branch using git branch --show-current
-   - Validate quality gates using cargo run --bin quality-gates -- --validate-environment
+## <instructions priority="high">Implementation Execution Process</instructions>
 
-2. **Update Project State**
-   - Use jq to update docs/ce-dps-state.json with phase_3_implementation_started timestamp
-   - Update docs/sprints/sprint-001/implementation/implementation-status.json status to "implementing"
+### <step-1>Validate Implementation Setup</step-1>
+**Setup Validation**:
+- Check docs/phases/phase-3-implementation.md exists (run /cedps-phase3-setup if missing)
+- Verify docs/phases/phase-3-artifacts/implementation-backlog.md exists from Phase 2
+- Confirm on sprint-001-implementation branch (git branch --show-current)
+- Validate quality gates (cargo run --bin quality-gates -- --validate-environment)
 
-3. **Trigger Claude Code Implementation**
-   This command serves as a comprehensive prompt to Claude Code to execute:
-   
-   **Context Loading**:
-   - Load implementation backlog: @docs/phases/phase-3-artifacts/implementation-backlog.md
-   - Load Phase 1 planning: @docs/phases/phase-1-planning.md  
-   - Load Phase 2 sprint planning: @docs/phases/phase-2-sprint-planning.md
+### <step-2>Update Project State</step-2>
+**State Management**:
+- Use jq to update docs/ce-dps-state.json with phase_3_implementation_started timestamp
+- Update docs/sprints/sprint-001/implementation/implementation-status.json status to "implementing"
 
-   **TDD Implementation Cycle**:
-   - Write failing tests first (unit, integration, security, performance)
-   - Implement minimal code to pass tests
-   - Refactor for quality while maintaining test coverage
-   - Target >95% test coverage for all business logic
+### <step-3>Trigger Claude Code Implementation</step-3>
+**Context Loading**:
+- Load implementation backlog: @docs/phases/phase-3-artifacts/implementation-backlog.md
+- Load Phase 1 planning: @docs/phases/phase-1-planning.md
+- Load Phase 2 sprint planning: @docs/phases/phase-2-sprint-planning.md
 
-   **Sequential Implementation Approach**:
-   - Database layer: migrations, models, repository patterns
-   - Business logic: core functionality with error handling
-   - API layer: endpoints with validation and authentication
-   - Integration layer: external system connections
-   - Quality validation: comprehensive testing and security
+**TDD Implementation Cycle**:
+- Write failing tests first (unit, integration, security, performance)
+- Implement minimal code to pass tests
+- Refactor for quality while maintaining test coverage
+- Target >95% test coverage for all business logic
 
-   **Security-First Patterns**:
-   - JWT authentication with proper expiration
-   - Role-based authorization at all endpoints
-   - Comprehensive input validation and sanitization
-   - SQL injection prevention with parameterized queries
-   - Rate limiting and error handling without data leakage
+**Sequential Implementation Approach**:
+- **Database layer**: migrations, models, repository patterns
+- **Business logic**: core functionality with error handling
+- **API layer**: endpoints with validation and authentication
+- **Integration layer**: external system connections
+- **Quality validation**: comprehensive testing and security
 
-   **Quality Gates Integration**:
-   - Run tests after each significant change
-   - Comprehensive validation before moving to next feature
-   - Pre-commit validation before human review
-   - Performance requirements (<200ms response time)
-   - Security vulnerability scanning
+**Security-First Patterns**:
+- JWT authentication with proper expiration
+- Role-based authorization at all endpoints
+- Comprehensive input validation and sanitization
+- SQL injection prevention with parameterized queries
+- Rate limiting and error handling without data leakage
 
-   **Human Validation Points**:
-   - Provide demo environment after each feature
-   - Document business value delivered
-   - Request human validation against requirements
-   - Address feedback before proceeding (bypass in SKYNET mode)
+**Quality Gates Integration**:
+- Run tests after each significant change
+- Comprehensive validation before moving to next feature
+- Pre-commit validation before human review
+- Performance requirements (<200ms response time)
+- Security vulnerability scanning
 
-   **Anchor Test Creation**:
-   - Create permanent regression tests for critical functionality
-   - Mark with ANCHOR: comments explaining importance
-   - Cover external APIs, data persistence, auth flows, core business logic
+**Human Validation Points**:
+- Provide demo environment after each feature
+- Document business value delivered
+- Request human validation against requirements
+- Address feedback before proceeding (bypass in SKYNET mode)
 
-   **Error Handling Requirements**:
-   - Use structured error types (thiserror crate pattern)
-   - Comprehensive error propagation and context
-   - User-friendly error responses without sensitive data leakage
+**Anchor Test Creation**:
+- Create permanent regression tests for critical functionality
+- Mark with ANCHOR: comments explaining importance
+- Cover external APIs, data persistence, auth flows, core business logic
 
-4. **Implementation Workflow**:
-   - Environment preparation and validation
-   - Feature implementation loop with TDD
-   - Integration validation across features
-   - Human business validation (or SKYNET auto-approval)
-   - Quality gate finalization
+**Error Handling Requirements**:
+- Use structured error types (thiserror crate pattern)
+- Comprehensive error propagation and context
+- User-friendly error responses without sensitive data leakage
 
-5. **Fortitude Integration**:
-   - Query existing implementation patterns before creating new ones
-   - Apply proven security and performance patterns
-   - Document new patterns discovered during implementation
-   - Update knowledge base with successful approaches
+### <step-4>Implementation Workflow</step-4>
+**Workflow Steps**:
+- Environment preparation and validation
+- Feature implementation loop with TDD
+- Integration validation across features
+- Human business validation (or SKYNET auto-approval)
+- Quality gate finalization
 
-## Expected Output
+### <step-5>Fortitude Integration</step-5>
+**Knowledge Management**:
+- Query existing implementation patterns before creating new ones
+- Apply proven security and performance patterns
+- Document new patterns discovered during implementation
+- Update knowledge base with successful approaches
 
-This command triggers Claude Code to begin comprehensive implementation. Claude will:
+## <expected-output priority="medium">Implementation Results</expected-output>
+
+**Claude Code Execution**:
 - Validate environment and load context from implementation backlog
 - Execute systematic TDD implementation of all approved features
 - Apply security-first patterns throughout implementation
@@ -89,20 +105,21 @@ This command triggers Claude Code to begin comprehensive implementation. Claude 
 - Generate comprehensive documentation
 - Update implementation tracking and project state
 
-## Human Action Required
+## <human-actions priority="high">Required Validation</human-actions>
 
-In normal mode:
+**Normal Mode**:
 - Claude will request validation after each feature implementation
 - Review demo environment and validate business value
 - Approve features before Claude proceeds to next one
 - Provide feedback if changes needed
 
-In SKYNET mode:
+**SKYNET Mode**:
 - Auto-approves all business validations
 - Continues implementation autonomously
 - Only stops for technical failures or quality gate issues
 
-## Parameters
+## <parameters priority="low">Command Configuration</parameters>
+**Configuration Details**:
 - No parameters required
 - Checks for SKYNET environment variable for autonomous validation
 - Uses jq for state management

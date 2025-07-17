@@ -1,55 +1,80 @@
-# CE-DPS Phase 3 Setup
+# <context>CE-DPS Phase 3 Setup</context>
 
-Initialize Phase 3 implementation environment with comprehensive development workflow and quality gates.
+<meta>
+  <title>CE-DPS Phase 3 Implementation Setup</title>
+  <type>slash-command</type>
+  <audience>ai_assistant</audience>
+  <complexity>intermediate</complexity>
+  <updated>2025-07-17</updated>
+  <scope>phase3-setup</scope>
+  <phase>code-implementation</phase>
+</meta>
 
-## Instructions
+## <summary priority="critical">TL;DR</summary>
+- **Purpose**: Initialize Phase 3 implementation environment with comprehensive development workflow and quality gates
+- **Core Benefits**: Environment setup, branch creation, quality tools preparation, implementation tracking
+- **Prerequisites**: Completed Phases 1-2 with completion reports
+- **Output**: Complete development environment ready for TDD implementation
 
-1. **Validate Phase Completion**
-   - Check that Phases 1-2 are complete using jq on docs/ce-dps-state.json
-   - Verify docs/phases/phase-2-completion-report.md exists
-   - Ensure Phase 3 template exists at methodology/templates/phase-3-template.md
-   - Check if Phase 3 already initialized (exit if docs/phases/phase-3-implementation.md exists)
+## <instructions priority="high">Phase 3 Setup Process</instructions>
 
-2. **Set Environment Variables**
-   - Export CE_DPS_PHASE=3
-   - Export CE_DPS_FORTITUDE_ENABLED=true
-   - Export CE_DPS_QUALITY_GATES=true
-   - Export CE_DPS_HUMAN_APPROVAL_REQUIRED=true
+### <step-1>Validate Phase Completion</step-1>
+**Prerequisites Validation**:
+- Check Phases 1-2 complete using jq on docs/ce-dps-state.json
+- Verify docs/phases/phase-2-completion-report.md exists
+- Ensure Phase 3 template exists at methodology/templates/phase-3-template.md
+- Check if Phase 3 already initialized (exit if docs/phases/phase-3-implementation.md exists)
 
-3. **Update Project State**
-   - Use jq to update docs/ce-dps-state.json with current_phase=3, phase_3_started timestamp
-   - Copy methodology/templates/phase-3-template.md to docs/phases/phase-3-implementation.md
+### <step-2>Set Environment Variables</step-2>
+**Environment Configuration**:
+- CE_DPS_PHASE=3
+- CE_DPS_FORTITUDE_ENABLED=true
+- CE_DPS_QUALITY_GATES=true
+- CE_DPS_HUMAN_APPROVAL_REQUIRED=true
 
-4. **Create Working Directories**
-   - Create docs/phases/phase-3-artifacts
-   - Create docs/sprints/sprint-001/implementation
-   - Create docs/quality-reports/sprint-001
+### <step-3>Update Project State</step-3>
+**State Management**:
+- Use jq to update docs/ce-dps-state.json with current_phase=3, phase_3_started timestamp
+- Copy methodology/templates/phase-3-template.md to docs/phases/phase-3-implementation.md
 
-5. **Initialize Implementation Tracking**
-   - Create docs/sprints/sprint-001/implementation/implementation-status.json with sprint metadata
-   - Set status to "setup", initialize empty arrays for features and quality gates
+### <step-4>Create Working Directories</step-4>
+**Directory Creation**:
+- docs/phases/phase-3-artifacts
+- docs/sprints/sprint-001/implementation
+- docs/quality-reports/sprint-001
 
-6. **Create Feature Branch**
-   - Create or switch to sprint-001-implementation branch using git
-   - Handle case where branch already exists
+### <step-5>Initialize Implementation Tracking</step-5>
+**Tracking Setup** (docs/sprints/sprint-001/implementation/implementation-status.json):
+- Sprint metadata with status "setup"
+- Initialize empty arrays for features and quality gates
 
-7. **Initialize Quality Gates and Tools**
-   - Build quality gates tool: cd tools/quality-gates && cargo build --release
-   - Prepare Rust testing framework with cargo test --no-run
-   - Query Fortitude for implementation patterns if available
+### <step-6>Create Feature Branch</step-6>
+**Git Branch Management**:
+- Create or switch to sprint-001-implementation branch
+- Handle case where branch already exists
 
-8. **Extract Sprint Backlog**
-   - Copy docs/sprints/sprint-001/backlog/sprint-backlog.md to docs/phases/phase-3-artifacts/implementation-backlog.md
+### <step-7>Initialize Quality Gates and Tools</step-7>
+**Tool Preparation**:
+- Build quality gates tool: cd tools/quality-gates && cargo build --release
+- Prepare Rust testing framework with cargo test --no-run
+- Query Fortitude for implementation patterns if available
 
-9. **Create Pre-Implementation Checklist**
-   - Generate docs/phases/phase-3-artifacts/pre-implementation-checklist.md with comprehensive checklist
-   - Include environment setup, implementation planning, quality standards, human validation points
+### <step-8>Extract Sprint Backlog</step-8>
+**Backlog Preparation**:
+- Copy docs/sprints/sprint-001/backlog/sprint-backlog.md to docs/phases/phase-3-artifacts/implementation-backlog.md
 
-## Expected Output
+### <step-9>Create Pre-Implementation Checklist</step-9>
+**Checklist Generation** (docs/phases/phase-3-artifacts/pre-implementation-checklist.md):
+- Environment setup verification
+- Implementation planning validation
+- Quality standards confirmation
+- Human validation points identification
 
-Output will show:
+## <expected-output priority="medium">Setup Results</expected-output>
+
+**Command Output**:
 - Prerequisites validation (with specific error messages if missing jq, git, or templates)
-- Environment variable setup and project state updates  
+- Environment variable setup and project state updates
 - Directory creation and file copying operations
 - Feature branch creation or switching
 - Quality gates compilation and tool preparation
@@ -59,15 +84,16 @@ Output will show:
 - Success confirmation with file locations
 - SKYNET mode auto-transition if enabled
 
-## Human Action Required
+## <human-actions priority="high">Required Follow-up</human-actions>
 
-After setup completes:
+**Post-Setup Actions**:
 1. Review pre-implementation checklist at docs/phases/phase-3-artifacts/pre-implementation-checklist.md
-2. Confirm sprint backlog at docs/phases/phase-3-artifacts/implementation-backlog.md  
+2. Confirm sprint backlog at docs/phases/phase-3-artifacts/implementation-backlog.md
 3. Validate development environment and tools
 4. When ready, run /cedps-phase3-implement to begin implementation
 
-## Parameters
+## <parameters priority="low">Command Configuration</parameters>
+**Configuration Details**:
 - No parameters required
 - Checks for SKYNET environment variable for autonomous mode
 - Uses jq for JSON processing (warns if not available)

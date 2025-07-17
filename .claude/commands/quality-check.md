@@ -1,88 +1,112 @@
-# CE-DPS Quality Check
+# <context>CE-DPS Quality Check</context>
 
-Run complete CI/CD test suite with auto-fix capabilities and comprehensive validation.
+<meta>
+  <title>CE-DPS Quality Check System</title>
+  <type>slash-command</type>
+  <audience>ai_assistant</audience>
+  <complexity>advanced</complexity>
+  <updated>2025-07-17</updated>
+  <scope>quality-validation</scope>
+  <requirements>comprehensive-testing</requirements>
+</meta>
 
-## Instructions
+## <summary priority="critical">TL;DR</summary>
+- **Purpose**: Complete CI/CD test suite with auto-fix capabilities and comprehensive validation
+- **Core Benefits**: Automated quality enforcement, intelligent failure remediation, comprehensive reporting
+- **Quality Gates**: >95% test coverage, zero critical vulnerabilities, <200ms response times
+- **Auto-Fix**: Formatting, linting, security patterns, documentation
 
-1. **Pre-Flight Validation**
-   - Check project state and current phase
-   - Verify all necessary tools and dependencies are available
-   - Ensure git working directory is clean (or offer to stash changes)
-   - Validate environment configuration
+## <instructions priority="high">Quality Validation Process</instructions>
 
-2. **Execute Comprehensive Test Suite**
-   - Run all test categories in sequence:
-     - Unit tests with coverage reporting
-     - Integration tests with database validation
-     - Security tests with vulnerability scanning
-     - Performance tests with benchmarking
-     - End-to-end tests if applicable
+### <step-1>Pre-Flight Validation</step-1>
+**Environment Checks**:
+- Project state and current phase validation
+- Tool and dependency availability verification
+- Git working directory cleanliness (offer stash if dirty)
+- Environment configuration validation
 
-3. **Code Quality Validation**
-   - Run linting with auto-fix where possible
-   - Execute code formatting (auto-fix formatting issues)
-   - Check code complexity and maintainability metrics
-   - Validate coding standards compliance
+### <step-2>Execute Comprehensive Test Suite</step-2>
+**Test Categories** (sequential execution):
+- **Unit tests**: Coverage reporting
+- **Integration tests**: Database validation
+- **Security tests**: Vulnerability scanning
+- **Performance tests**: Benchmarking
+- **End-to-end tests**: If applicable
 
-4. **Security and Compliance Checks**
-   - Run comprehensive security vulnerability scan
-   - Check for secrets or sensitive data in code
-   - Validate input sanitization and validation patterns
-   - Check authentication and authorization implementation
-   - Verify compliance with security standards
+### <step-3>Code Quality Validation</step-3>
+**Quality Checks** (with auto-fix):
+- Linting with automatic fixes
+- Code formatting corrections
+- Code complexity and maintainability metrics
+- Coding standards compliance validation
 
-5. **Performance and Scalability Validation**
-   - Execute performance benchmarks
-   - Validate response time requirements
-   - Check memory usage and resource efficiency
-   - Run load testing scenarios
-   - Validate database query performance
+### <step-4>Security and Compliance Checks</step-4>
+**Security Validation**:
+- Comprehensive vulnerability scanning
+- Secrets and sensitive data detection
+- Input sanitization and validation patterns
+- Authentication and authorization implementation
+- Security standards compliance verification
 
-6. **Documentation and API Validation**
-   - Check API documentation completeness
-   - Validate API contract compliance
-   - Verify code documentation coverage
-   - Check deployment and operations documentation
+### <step-5>Performance and Scalability Validation</step-5>
+**Performance Testing**:
+- Performance benchmarks execution
+- Response time requirements validation (<200ms)
+- Memory usage and resource efficiency
+- Load testing scenarios
+- Database query performance validation
 
-7. **Auto-Fix Capabilities**
-   - Automatically fix code formatting issues
-   - Apply linting auto-fixes where safe
-   - Update documentation templates where needed
-   - Fix minor security issues that can be automatically resolved
+### <step-6>Documentation and API Validation</step-6>
+**Documentation Checks**:
+- API documentation completeness (>90% coverage)
+- API contract compliance
+- Code documentation coverage
+- Deployment and operations documentation
 
-8. **Quality Gate Enforcement**
-   - Fail fast on critical issues (security vulnerabilities, test failures)
-   - Provide detailed failure reports with remediation steps
-   - Only pass if all quality gates meet CE-DPS standards
-   - Generate pass/fail status with comprehensive reasoning
+### <step-7>Auto-Fix Capabilities</step-7>
+**Automated Remediation**:
+- Code formatting issues
+- Safe linting auto-fixes
+- Documentation template updates
+- Minor security issues (automatically resolvable)
 
-9. **Reporting and Recommendations**
-   - Generate detailed quality report with metrics
-   - Provide specific remediation steps for any failures
-   - Create actionable improvement recommendations
-   - Save results for trend analysis and continuous improvement
+### <step-8>Quality Gate Enforcement</step-8>
+**Gate Criteria**:
+- **Fail fast**: Critical issues (security vulnerabilities, test failures)
+- **Detailed reporting**: Failure reports with remediation steps
+- **CE-DPS standards**: All quality gates must pass
+- **Status generation**: Pass/fail with comprehensive reasoning
 
-## Expected Output
+### <step-9>Reporting and Recommendations</step-9>
+**Output Generation**:
+- Detailed quality report with metrics
+- Specific remediation steps for failures
+- Actionable improvement recommendations
+- Results saved for trend analysis and continuous improvement
 
-The command will execute specific cargo commands in sequence:
-- Run cargo fmt --all -- --check (auto-fix with cargo fmt --all if failed)
-- Run cargo clippy with warnings as errors (auto-fix with --fix flags if failed)
-- Run cargo build --workspace --verbose (resolve compilation errors if failed)
-- Run cargo test --workspace --verbose (fix tests or code optimally if failed)
-- Run cargo audit (implement secure patterns if vulnerabilities found)
-- Run cargo doc --workspace --no-deps (fix documentation build if failed)
-- Run extended quality gates (quality-gates tool, Python tests, Fortitude integration)
-- Execute complete pipeline twice for back-to-back validation
+## <expected-output priority="medium">Quality Validation Results</expected-output>
 
-## Parameters
+**Cargo Command Sequence**:
+- **cargo fmt --all -- --check** (auto-fix with cargo fmt --all if failed)
+- **cargo clippy** with warnings as errors (auto-fix with --fix flags if failed)
+- **cargo build --workspace --verbose** (resolve compilation errors if failed)
+- **cargo test --workspace --verbose** (fix tests or code optimally if failed)
+- **cargo audit** (implement secure patterns if vulnerabilities found)
+- **cargo doc --workspace --no-deps** (fix documentation build if failed)
+- **Extended quality gates** (quality-gates tool, Python tests, Fortitude integration)
+- **Back-to-back validation** (complete pipeline twice)
+
+## <parameters priority="low">Command Configuration</parameters>
+**Configuration Requirements**:
 - No parameters required
 - Uses specific cargo commands with exact flags
 - Implements auto-fix protocol for each failure type
 - Requires 100% pass rate in back-to-back runs
 
-## Notes
-- AI must fix ALL failures using optimal architectural solutions
-- Choose architectural improvements over quick patches
-- Sequential execution with auto-fix between failures
-- Back-to-back validation ensures stability and repeatability
-- Non-negotiable requirement: ALL quality gates must pass cleanly
+## <implementation-notes priority="critical">Quality Standards</implementation-notes>
+**Critical Requirements**:
+- **AI must fix ALL failures** using optimal architectural solutions
+- **Choose architectural improvements** over quick patches
+- **Sequential execution** with auto-fix between failures
+- **Back-to-back validation** ensures stability and repeatability
+- **Non-negotiable**: ALL quality gates must pass cleanly

@@ -1,50 +1,66 @@
-# CE-DPS Help
+# <context>CE-DPS Help</context>
 
-Show comprehensive help for CE-DPS methodology and available commands.
+<meta>
+  <title>CE-DPS Help System</title>
+  <type>slash-command</type>
+  <audience>ai_assistant</audience>
+  <complexity>basic</complexity>
+  <updated>2025-07-17</updated>
+  <scope>comprehensive-help</scope>
+</meta>
 
-## Instructions
+## <summary priority="critical">TL;DR</summary>
+- **Purpose**: Comprehensive help system for CE-DPS methodology and command reference
+- **Core Benefits**: Complete command documentation, workflow guidance, troubleshooting support
+- **Output**: Formatted help display with methodology overview, commands, and next steps
+- **Usage**: Execute series of echo commands for comprehensive help information
 
-1. **Display Comprehensive Help System**
-   - Execute series of echo commands to show methodology overview
-   - Display CE-DPS core principles and AI-as-implementer philosophy
-   - Show three-phase development process with durations
+## <instructions priority="high">Implementation Steps</instructions>
 
-2. **Show Complete Command Reference**
-   - Project Management commands: /cedps-init, /cedps-status, /cedps-tools, /cedps-help
-   - Phase 1 commands: /cedps-phase1-setup, /cedps-phase1-analyze, /cedps-phase1-validate
-   - Phase 2 commands: /cedps-phase2-setup, /cedps-phase2-plan, /cedps-phase2-validate
-   - Phase 3 commands: /cedps-phase3-setup, /cedps-phase3-implement, /cedps-phase3-validate
-   - SKYNET commands: /skynet-enable, /skynet-disable, /skynet-status
+### <step-1>Display Comprehensive Help System</step-1>
+- Execute echo commands for methodology overview
+- Display CE-DPS core principles and AI-as-implementer philosophy  
+- Show three-phase development process with durations
 
-3. **Provide Detailed Usage Patterns**
-   - Show typical workflow with numbered steps
-   - Include human action points between commands
-   - Display command usage patterns and dependencies
+### <step-2>Show Complete Command Reference</step-2>
+**Command Categories**:
+- **Project Management**: /cedps-init, /cedps-status, /cedps-tools, /cedps-help
+- **Phase 1**: /cedps-phase1-setup, /cedps-phase1-analyze, /cedps-phase1-validate  
+- **Phase 2**: /cedps-phase2-setup, /cedps-phase2-plan, /cedps-phase2-validate
+- **Phase 3**: /cedps-phase3-setup, /cedps-phase3-implement, /cedps-phase3-validate
+- **SKYNET**: /skynet-enable, /skynet-disable, /skynet-status
 
-4. **Document Human Actions Required**
-   - Phase 1: Define business problem, review architecture, approve roadmap
-   - Phase 2: Select features, review implementation plans, approve sprint scope
-   - Phase 3: Validate features, test user experience, approve production
+### <step-3>Provide Detailed Usage Patterns</step-3>
+- Show typical workflow with numbered steps
+- Include human action points between commands
+- Display command usage patterns and dependencies
 
-5. **Show Quality Standards Framework**
-   - Security requirements: authentication, authorization, input validation, SQL injection prevention
-   - Testing requirements: >95% coverage, unit/integration/security/performance tests
-   - Performance requirements: response times, database optimization, scalability
+### <step-4>Document Human Actions Required</step-4>
+**By Phase**:
+- **Phase 1**: Define business problem, review architecture, approve roadmap
+- **Phase 2**: Select features, review implementation plans, approve sprint scope  
+- **Phase 3**: Validate features, test user experience, approve production
 
-6. **Display Project File Structure**
-   - Show docs/ directory structure with ce-dps-state.json, phases/, sprints/, quality-reports/
-   - Show tools/ directory with quality-gates/, phase-validator.py, fortitude-integration/
+### <step-5>Show Quality Standards Framework</step-5>
+**Requirements Matrix**:
+- **Security**: authentication, authorization, input validation, SQL injection prevention
+- **Testing**: >95% coverage, unit/integration/security/performance tests
+- **Performance**: response times, database optimization, scalability
 
-7. **Provide Environment Variables and Troubleshooting**
-   - List CE_DPS environment variables and their purposes
-   - Show common issues and solutions
-   - Provide getting started workflow for new and existing projects
+### <step-6>Display Project File Structure</step-6>
+- Show docs/ directory: ce-dps-state.json, phases/, sprints/, quality-reports/
+- Show tools/ directory: quality-gates/, phase-validator.py, fortitude-integration/
 
-## Expected Output
+### <step-7>Provide Environment Variables and Troubleshooting</step-7>
+- List CE_DPS environment variables and their purposes
+- Show common issues and solutions
+- Provide getting started workflow for new and existing projects
 
-The command will execute a series of echo commands that display:
+## <expected-output priority="medium">Command Results</expected-output>
+
+**Output Content**:
 - CE-DPS methodology overview with core principles
-- Three-phase development process with detailed descriptions and durations
+- Three-phase development process with detailed descriptions and durations  
 - Complete command reference organized by category
 - Typical workflow patterns with numbered steps
 - Human action requirements for each phase
@@ -55,14 +71,15 @@ The command will execute a series of echo commands that display:
 - Getting started workflows for new and existing projects
 - Documentation references and next steps
 
-## Parameters
+## <parameters priority="low">Command Parameters</parameters>
+**Configuration**:
 - No parameters required
 - Uses echo commands to display formatted help information
 - Provides comprehensive methodology and command reference
 
-## Notes
-- Uses actual bash echo commands to display comprehensive help
+## <implementation-notes priority="low">Technical Details</implementation-notes>
+**Technical Implementation**:
+- Uses bash echo commands for comprehensive help display
 - Organizes information with clear headers and bullet points
-- Follows the detailed structure from the legacy backup version
 - Includes all specific command names and usage patterns
 - Provides practical troubleshooting and getting started guidance

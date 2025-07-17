@@ -1,85 +1,103 @@
-# CE-DPS Project Status
+# <context>CE-DPS Project Status</context>
 
-Display comprehensive CE-DPS project status and phase progress with actionable next steps.
+<meta>
+  <title>CE-DPS Project Status Display</title>
+  <type>slash-command</type>
+  <audience>ai_assistant</audience>
+  <complexity>intermediate</complexity>
+  <updated>2025-07-17</updated>
+  <scope>status-monitoring</scope>
+</meta>
 
-## Instructions
+## <summary priority="critical">TL;DR</summary>
+- **Purpose**: Comprehensive project status display with phase progress and actionable next steps
+- **Core Benefits**: Real-time status monitoring, SKYNET mode detection, intelligent recommendations
+- **Prerequisites**: Initialized CE-DPS project with state tracking
+- **Output**: Formatted status report with environment details and next actions
 
-1. **Check Project Initialization**
-   - Check if docs/ce-dps-state.json exists (error if not initialized)
-   - Read project state using jq to get current_phase, phases_completed, project initialization status
+## <instructions priority="high">Status Analysis Process</instructions>
 
-2. **Display Project Overview**
-   - Show project_initialized status
-   - Display current_phase from state file
-   - List phases_completed array
-   - Show production_ready status if available
+### <step-1>Check Project Initialization</step-1>
+- Check docs/ce-dps-state.json existence (error if missing)
+- Read project state using jq: current_phase, phases_completed, initialization status
 
-3. **Analyze Phase Status**
-   - Check if 1 is in phases_completed array for Phase 1 status
-   - Check if 2 is in phases_completed array for Phase 2 status  
-   - Check if 3 is in phases_completed array for Phase 3 status
-   - Display appropriate status icons:
-     - ✅ Phase complete
-     - 🔄 Phase available/in progress
-     - ⏸️ Phase blocked (prerequisites not met)
+### <step-2>Display Project Overview</step-2>
+**Status Elements**:
+- project_initialized status
+- current_phase from state file
+- phases_completed array
+- production_ready status if available
 
-4. **Check Sprint Status** 
-   - Look for docs/sprints/sprint-001/ directory
-   - Check for sprint planning and implementation files
-   - Display sprint progress if available
+### <step-3>Analyze Phase Status</step-3>
+**Phase Validation**:
+- Check Phase 1: 1 in phases_completed array
+- Check Phase 2: 2 in phases_completed array
+- Check Phase 3: 3 in phases_completed array
 
-5. **Display Environment Status**
-   - Show CE_DPS_PHASE environment variable
-   - Show CE_DPS_FORTITUDE_ENABLED status
-   - Show CE_DPS_QUALITY_GATES status
-   - Show CE_DPS_HUMAN_APPROVAL_REQUIRED status
+**Status Icons**:
+- ✅ Phase complete
+- 🔄 Phase available/in progress
+- ⏸️ Phase blocked (prerequisites not met)
 
-6. **Show SKYNET Mode Status**
-   - Check SKYNET environment variable value
-   - Display appropriate status:
-     - 🟢 SKYNET MODE: ENABLED (Autonomous Operation) if true
-     - 🟡 SKYNET MODE: EXPLICITLY DISABLED (Human Oversight) if false
-     - 🔵 SKYNET MODE: NOT SET (Default: Human Oversight) if unset
+### <step-4>Check Sprint Status</step-4>
+- Look for docs/sprints/sprint-001/ directory
+- Check sprint planning and implementation files
+- Display sprint progress if available
 
-7. **Display Git Status**
-   - Show current git branch using git branch --show-current
-   - Identify if on implementation, planning, or main branch
+### <step-5>Display Environment Status</step-5>
+**Environment Variables**:
+- CE_DPS_PHASE
+- CE_DPS_FORTITUDE_ENABLED
+- CE_DPS_QUALITY_GATES
+- CE_DPS_HUMAN_APPROVAL_REQUIRED
 
-8. **Provide Next Steps**
-   - Based on current phase and completion status, recommend next command:
-     - If not initialized: /cedps-init
-     - If Phase 1 incomplete: /cedps-phase1-setup or /cedps-phase1-analyze
-     - If Phase 1 complete, Phase 2 incomplete: /cedps-phase2-setup
-     - If Phase 2 complete, Phase 3 incomplete: /cedps-phase3-setup
-     - If all phases complete: quality validation or next sprint
+### <step-6>Show SKYNET Mode Status</step-6>
+**Mode Detection**:
+- 🟢 **ENABLED**: Autonomous Operation (SKYNET=true)
+- 🟡 **EXPLICITLY DISABLED**: Human Oversight (SKYNET=false)
+- 🔵 **NOT SET**: Default Human Oversight (SKYNET unset)
 
-9. **List Available Commands**
-   - Show relevant CE-DPS commands for current phase
-   - Include SKYNET control commands
-   - Show documentation and help commands
+### <step-7>Display Git Status</step-7>
+- Show current git branch (git branch --show-current)
+- Identify branch type: implementation, planning, or main
 
-## Expected Output
+### <step-8>Provide Next Steps</step-8>
+**Intelligent Recommendations**:
+- **Not initialized**: /cedps-init
+- **Phase 1 incomplete**: /cedps-phase1-setup or /cedps-phase1-analyze
+- **Phase 1 complete, Phase 2 incomplete**: /cedps-phase2-setup
+- **Phase 2 complete, Phase 3 incomplete**: /cedps-phase3-setup
+- **All phases complete**: quality validation or next sprint
 
-The command will execute bash commands that:
-- Check for docs/ce-dps-state.json existence
+### <step-9>List Available Commands</step-9>
+- Show relevant CE-DPS commands for current phase
+- Include SKYNET control commands
+- Show documentation and help commands
+
+## <expected-output priority="medium">Status Report Format</expected-output>
+
+**Command Execution Flow**:
+- Check docs/ce-dps-state.json existence
 - Use jq to read project state and parse JSON
 - Display formatted project overview with current phase and completed phases
 - Show phase status with appropriate icons based on completion
 - Check for sprint files and display sprint status
-- Show environment variables with their current values
+- Show environment variables with current values
 - Display SKYNET mode status with conditional logic
 - Show current git branch
 - Provide phase-appropriate next step recommendations
 - List available commands organized by category
 
-## Parameters
+## <parameters priority="low">Command Configuration</parameters>
+**Configuration Details**:
 - No parameters required
 - Uses jq for JSON parsing (warns if not available)
 - Uses git commands for branch status
 - Checks environment variables for configuration status
 
-## Notes
-- Comprehensive status display using actual bash commands with conditionals
+## <implementation-notes priority="low">Technical Details</implementation-notes>
+**Technical Implementation**:
+- Comprehensive status display using bash commands with conditionals
 - Uses jq for reliable JSON parsing of project state
 - Provides actionable next steps based on current project status
 - Includes error handling for uninitialized projects
