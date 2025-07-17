@@ -5,68 +5,73 @@ Disable autonomous CE-DPS operation and restore human oversight checkpoints.
 ## Instructions
 
 1. **Set Environment Variable**
-   - Set SKYNET=false for current session
-   - This disables autonomous operation mode
+   - Execute: export SKYNET=false
+   - Display deactivation message with visual borders
+   - Show human oversight restoration confirmation
 
 2. **Display Deactivation Message**
-   - Show clear confirmation that SKYNET mode is disabled
-   - Explain what human oversight restoration means:
-     - Human approval checkpoints restored
-     - Manual template completion required
-     - Business validation requires human confirmation
-     - Technical quality gates remain fully enforced
+   - Show "👨‍💼 SKYNET mode DISABLED" with visual separator lines
+   - List restoration effects:
+     - 🔒 Human oversight restored
+     - 🔒 Manual approval checkpoints reactivated
+     - 🔒 Template completion requires human input
+     - 🔒 Business validation requires human confirmation
+     - 🔒 Technical quality gates remain fully enforced
 
-3. **Update Project State**
-   - Update docs/ce-dps-state.json to set:
-     - "skynet_mode": "false" 
-     - "human_approval_required": true
-     - "skynet_disabled": current timestamp
-     - "last_updated": current timestamp
+3. **Validate Mode Disable**
+   - Check if SKYNET=false or unset successfully
+   - Display confirmation of human oversight restoration
+   - Show status of technical quality standards (MAINTAINED)
+   - Show human approval requirements (RESTORED)
+   - Show continuous development loops (DISABLED)
 
-4. **Explain Immediate Effects**
+4. **Explain Immediate Workflow Effects**
    - Phase 1: Business requirements templates require manual completion
    - Phase 2: Feature selection requires human prioritization and approval
    - Phase 3: Business validation requires human confirmation of value delivery
    - Quality: All technical quality gates continue to be enforced
    - Progression: Manual command execution required between phases
 
-5. **Show Workflow Return**
-   - Explain return to standard CE-DPS collaborative workflow
-   - Human strategic oversight restored
-   - AI technical implementation authority maintained
+5. **Show Restored Human Approval Points**
+   - List all approval checkpoints that are restored:
+     - Business requirements definition and approval
+     - Architectural decision review and sign-off
+     - Feature selection and sprint scope approval
+     - Implementation approach validation
+     - Business value confirmation for delivered features
+     - Production readiness assessment
+
+6. **Display Standard CE-DPS Workflow**
+   - Show mermaid workflow diagram for human oversight mode
+   - Include manual command execution at each phase transition
+   - Show human validation points throughout workflow
+
+7. **Show Human Oversight Benefits**
+   - Strategic authority maintained
+   - Quality collaboration between human and AI
+   - Risk mitigation through human validation
+   - Collaborative human-AI development model
 
 ## Expected Output
 
-```
-👨‍💼 SKYNET mode DISABLED
-━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-🔒 Human oversight restored
-🔒 Manual approval checkpoints reactivated
-🔒 Template completion requires human input
-🔒 Business validation requires human confirmation
-🔒 Technical quality gates remain fully enforced
-━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+The command will execute bash commands that:
+- Export SKYNET=false environment variable
+- Display deactivation message with visual borders and lock icons
+- Validate the environment variable was set correctly
+- Show immediate workflow effects for all three phases
+- List all restored human approval points
+- Display standard CE-DPS workflow diagram with human oversight
+- Show benefits of human oversight and collaborative development
 
-✅ SKYNET mode disabled: Human oversight restored
-📊 Technical quality standards: MAINTAINED
-👨‍💼 Human approval requirements: RESTORED
-⏸️ Continuous development loops: DISABLED
-
-Human approval points restored:
-✅ Business requirements definition and approval
-✅ Architectural decision review and sign-off  
-✅ Feature selection and sprint scope approval
-✅ Implementation approach validation
-✅ Business value confirmation for delivered features
-✅ Production readiness assessment
-
-Control commands:
-- /skynet-enable: Enable autonomous operation
-- /skynet-status: Check current mode status
-```
+## Parameters
+- No parameters required
+- Sets SKYNET=false environment variable for current session
+- Restores all human approval checkpoints and manual workflows
 
 ## Notes
-- Only update environment variable and state file
-- Avoid complex shell scripting
-- Focus on clear communication of restored human control
-- Emphasize collaborative human-AI development model
+- Uses actual bash commands with export and echo statements
+- Includes validation checks with if statements for SKYNET=false or unset
+- Maintains all technical quality requirements
+- Provides clear visual feedback with separator lines
+- Shows mermaid workflow diagram for human oversight mode
+- Emphasizes collaborative human-AI development benefits

@@ -1,109 +1,109 @@
 # CE-DPS Phase 3 Implementation
 
-Execute comprehensive TDD implementation of approved sprint features with quality gates.
+Trigger Phase 3 AI implementation with test-driven development and quality gates.
 
 ## Instructions
 
-1. **Validate Implementation Readiness**
-   - Check that Phase 3 environment is set up
-   - Verify we're on the implementation branch
-   - Confirm implementation plan is available and detailed
-   - Ensure all quality gates are configured and active
+1. **Validate Implementation Setup**
+   - Check that docs/phases/phase-3-implementation.md exists (run /cedps-phase3-setup if missing)
+   - Verify docs/phases/phase-3-artifacts/implementation-backlog.md exists from Phase 2
+   - Confirm on sprint-001-implementation branch using git branch --show-current
+   - Validate quality gates using cargo run --bin quality-gates -- --validate-environment
 
-2. **Execute TDD Implementation Process**
-   - For each approved feature in dependency order:
-     a. **Write Tests First**
-        - Create comprehensive unit tests for business logic
-        - Write integration tests for API endpoints
-        - Add security tests for input validation
-        - Create performance tests for critical paths
-     
-     b. **Implement Feature**
-        - Write minimal code to make tests pass
-        - Follow security-first implementation patterns
-        - Implement comprehensive error handling
-        - Add proper logging and monitoring
-     
-     c. **Refactor and Optimize**
-        - Improve code quality and maintainability
-        - Optimize performance to meet requirements
-        - Ensure proper separation of concerns
-        - Update documentation and comments
+2. **Update Project State**
+   - Use jq to update docs/ce-dps-state.json with phase_3_implementation_started timestamp
+   - Update docs/sprints/sprint-001/implementation/implementation-status.json status to "implementing"
 
-3. **Quality Gate Validation**
-   - After each feature implementation:
-     - Run complete test suite (must achieve >95% coverage)
-     - Execute security vulnerability scanning
-     - Perform performance benchmarking
-     - Validate API documentation coverage
-     - Check code quality and linting compliance
+3. **Trigger Claude Code Implementation**
+   This command serves as a comprehensive prompt to Claude Code to execute:
+   
+   **Context Loading**:
+   - Load implementation backlog: @docs/phases/phase-3-artifacts/implementation-backlog.md
+   - Load Phase 1 planning: @docs/phases/phase-1-planning.md  
+   - Load Phase 2 sprint planning: @docs/phases/phase-2-sprint-planning.md
 
-4. **Continuous Integration**
-   - Commit feature implementations with comprehensive tests
-   - Run automated quality validation pipeline
-   - Update implementation tracking and metrics
-   - Document any issues encountered and resolutions
+   **TDD Implementation Cycle**:
+   - Write failing tests first (unit, integration, security, performance)
+   - Implement minimal code to pass tests
+   - Refactor for quality while maintaining test coverage
+   - Target >95% test coverage for all business logic
 
-5. **Feature Integration Testing**
-   - Test feature interactions and integration points
-   - Validate end-to-end workflows with new features
-   - Perform regression testing to ensure no breakage
-   - Test error handling and edge cases thoroughly
+   **Sequential Implementation Approach**:
+   - Database layer: migrations, models, repository patterns
+   - Business logic: core functionality with error handling
+   - API layer: endpoints with validation and authentication
+   - Integration layer: external system connections
+   - Quality validation: comprehensive testing and security
 
-6. **Documentation Generation**
-   - Update API documentation for new endpoints
-   - Generate code documentation from comments
-   - Create deployment guides for new features
-   - Update troubleshooting documentation
+   **Security-First Patterns**:
+   - JWT authentication with proper expiration
+   - Role-based authorization at all endpoints
+   - Comprehensive input validation and sanitization
+   - SQL injection prevention with parameterized queries
+   - Rate limiting and error handling without data leakage
 
-7. **Implementation Progress Tracking**
-   - Update implementation status for each completed feature
-   - Track quality metrics and test coverage
-   - Monitor performance benchmarks
-   - Document lessons learned and patterns discovered
+   **Quality Gates Integration**:
+   - Run tests after each significant change
+   - Comprehensive validation before moving to next feature
+   - Pre-commit validation before human review
+   - Performance requirements (<200ms response time)
+   - Security vulnerability scanning
+
+   **Human Validation Points**:
+   - Provide demo environment after each feature
+   - Document business value delivered
+   - Request human validation against requirements
+   - Address feedback before proceeding (bypass in SKYNET mode)
+
+   **Anchor Test Creation**:
+   - Create permanent regression tests for critical functionality
+   - Mark with ANCHOR: comments explaining importance
+   - Cover external APIs, data persistence, auth flows, core business logic
+
+   **Error Handling Requirements**:
+   - Use structured error types (thiserror crate pattern)
+   - Comprehensive error propagation and context
+   - User-friendly error responses without sensitive data leakage
+
+4. **Implementation Workflow**:
+   - Environment preparation and validation
+   - Feature implementation loop with TDD
+   - Integration validation across features
+   - Human business validation (or SKYNET auto-approval)
+   - Quality gate finalization
+
+5. **Fortitude Integration**:
+   - Query existing implementation patterns before creating new ones
+   - Apply proven security and performance patterns
+   - Document new patterns discovered during implementation
+   - Update knowledge base with successful approaches
 
 ## Expected Output
 
-```
-⚡ Executing CE-DPS Phase 3: TDD Implementation...
+This command triggers Claude Code to begin comprehensive implementation. Claude will:
+- Validate environment and load context from implementation backlog
+- Execute systematic TDD implementation of all approved features
+- Apply security-first patterns throughout implementation
+- Run quality gates after each feature completion
+- Request human validation for business value (unless SKYNET mode)
+- Generate comprehensive documentation
+- Update implementation tracking and project state
 
-🔄 Implementation Progress:
-   [Feature 1]: ✅ Tests Written → ✅ Implemented → ✅ Quality Gates Passed
-   [Feature 2]: ✅ Tests Written → ✅ Implemented → ✅ Quality Gates Passed
-   [Feature N]: 🔄 In Progress...
+## Human Action Required
 
-📊 Quality Metrics:
-   ✅ Test Coverage: 97.3% (Target: >95%)
-   ✅ Security Scan: 0 critical vulnerabilities
-   ✅ Performance: API responses <150ms (Target: <200ms)
-   ✅ Code Quality: All linting checks passed
+In normal mode:
+- Claude will request validation after each feature implementation
+- Review demo environment and validate business value
+- Approve features before Claude proceeds to next one
+- Provide feedback if changes needed
 
-🔧 Implementation Results:
-   - Files Created: [Number] new files
-   - Files Modified: [Number] existing files  
-   - Tests Added: [Number] test cases
-   - API Endpoints: [Number] new endpoints
+In SKYNET mode:
+- Auto-approves all business validations
+- Continues implementation autonomously
+- Only stops for technical failures or quality gate issues
 
-📋 Documentation Generated:
-   ✅ API documentation updated
-   ✅ Code documentation generated
-   ✅ Deployment guides created
-   ✅ Troubleshooting docs updated
-
-Sprint Implementation Status: [Complete/In Progress]
-📊 Implementation tracking: docs/sprints/sprint-001/implementation/
-
-Next Steps:
-- If complete: Run /phase3:validate for final validation
-- If in progress: Continue with remaining features
-- Quality gates must pass before proceeding to validation
-
-💡 All features implemented with TDD and comprehensive quality validation
-```
-
-## Notes
-- Strict TDD process with tests-first approach
-- Comprehensive quality gate validation for each feature
-- Security-first implementation with input validation
-- Performance optimization to meet response time targets
-- Complete documentation generation throughout process
+## Parameters
+- No parameters required
+- Checks for SKYNET environment variable for autonomous validation
+- Uses jq for state management
+- Requires implementation backlog from Phase 2

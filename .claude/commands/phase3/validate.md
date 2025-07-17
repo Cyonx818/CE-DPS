@@ -4,118 +4,85 @@ Validate Phase 3 implementation completion and prepare for production deployment
 
 ## Instructions
 
-1. **Validate Implementation Completeness**
-   - Check that all approved features from Phase 2 are implemented
-   - Verify comprehensive test coverage (>95% for business logic)
-   - Confirm all quality gates have passed successfully
-   - Ensure documentation is complete and current
+1. **Validate Prerequisites**
+   - Check that docs/phases/phase-3-implementation.md exists
+   - Verify on sprint-001-implementation branch using git branch --show-current
+   - Confirm implementation completion indicators in phase-3-implementation.md
+   - Check for required human validation sections (Feature Testing, Business Value Assessment, Production Readiness)
 
-2. **Execute Final Quality Validation**
-   - Run complete test suite including:
-     - Unit tests (>95% coverage requirement)
-     - Integration tests (100% API endpoint coverage)
-     - Security tests (input validation, authentication, authorization)
-     - Performance tests (response time <200ms requirement)
-     - Anchor tests (regression protection for critical functionality)
+2. **Validate Human Approvals**
+   - Look for "✅ Approved" markers in docs/phases/phase-3-implementation.md
+   - Ensure no "❌ Requires Changes" sections remain
+   - In SKYNET mode: auto-inject approval markers if missing
+   - Validate all business validation sections are complete
 
-3. **Security and Compliance Validation**
-   - Run comprehensive security vulnerability scan
-   - Verify all user inputs are validated and sanitized
-   - Check authentication and authorization implementation
-   - Validate error handling doesn't expose sensitive information
-   - Confirm compliance requirements are met
+3. **Run Comprehensive Quality Gates**
+   - Execute cargo run --bin quality-gates -- --comprehensive-validation
+   - Run full test suite with cargo test --quiet
+   - Check test coverage using cargo-tarpaulin if available (must be >=95%)
+   - Validate no failing tests or quality issues
 
-4. **Performance and Scalability Validation**
-   - Execute performance benchmarking for all new features
-   - Validate response time requirements (<200ms for 95th percentile)
-   - Test system under expected load conditions
-   - Verify memory usage and resource efficiency
-   - Check database query optimization
+4. **Execute Phase Validator Tool**
+   - Run python3 tools/phase-validator.py --phase 3 --file docs/phases/phase-3-implementation.md
+   - Validate phase completion criteria are met
 
-5. **Business Value Validation**
-   - Test all implemented features against original business requirements
-   - Verify user stories and acceptance criteria are met
-   - Validate feature functionality delivers expected business value
-   - Check integration with existing systems works as planned
+5. **Update Project State**
+   - Use jq to update docs/ce-dps-state.json:
+     - Add 3 to phases_completed array
+     - Set phase_3_completed timestamp
+     - Set ready_for_production = true
+   - Update docs/sprints/sprint-001/implementation/implementation-status.json:
+     - Set status to "completed"
+     - Set implementation_completed timestamp
+     - Set quality_gates_passed and human_validation_complete to true
 
-6. **Generate Comprehensive Quality Report**
-   - Create docs/quality-reports/sprint-001/final-quality-report.json
-   - Document all quality metrics and validation results
-   - Include test coverage reports and performance benchmarks
-   - Record security scan results and compliance status
-   - Document any known issues and recommended resolutions
+6. **Generate Quality Report**
+   - Run cargo run --bin quality-gates -- --generate-report --output docs/quality-reports/sprint-001/final-quality-report.json
+   - Document comprehensive quality metrics
 
-7. **Prepare Production Deployment**
-   - Create production deployment checklist
-   - Generate deployment documentation and runbooks
-   - Prepare rollback procedures and contingency plans
-   - Document monitoring and alerting requirements
-   - Create post-deployment validation procedures
+7. **Create Completion Documentation**
+   - Generate docs/phases/phase-3-completion-report.md with:
+     - Implementation summary and metrics
+     - Features delivered with business value
+     - Quality gates results
+     - Human validation results
+     - Production readiness assessment
+   - Create docs/phases/phase-3-artifacts/production-deployment-checklist.md
 
-8. **Update Project State**
-   - Add 3 to phases_completed array in docs/ce-dps-state.json
-   - Set phase_3_completed = true
-   - Set ready_for_production = true (if all validations pass)
-   - Add phase_3_completion_date timestamp
-   - Update sprint status to "completed"
+8. **SKYNET Mode Auto-Transition**
+   - If SKYNET=true, automatically run quality check and prepare next sprint loop
+   - Exit with special code (42) to trigger /cedps-quality-check
+   - Auto-transition to Phase 2 setup for continuous development
 
 ## Expected Output
 
-```
-✅ Validating CE-DPS Phase 3 Implementation...
+Output will show:
+- Prerequisites validation with specific error messages if issues found
+- Human approval validation (or SKYNET auto-approval injection)
+- Comprehensive quality gates execution results
+- Test coverage validation and metrics
+- Phase validator tool results
+- Project state updates with completion timestamps
+- Quality report generation
+- Completion documentation creation
+- Success confirmation with file locations
+- SKYNET mode auto-transition to quality check if enabled
 
-📊 Quality Validation Results:
-   ✅ Test Coverage: 97.8% (Exceeds >95% requirement)
-   ✅ Security Scan: 0 critical, 0 high vulnerabilities
-   ✅ Performance: 95th percentile <180ms (Meets <200ms requirement)
-   ✅ API Documentation: 100% coverage
-   ✅ Code Quality: All standards met
+## Human Action Required
 
-🔒 Security & Compliance:
-   ✅ Input validation comprehensive
-   ✅ Authentication/authorization implemented
-   ✅ Error handling secure
-   ✅ Compliance requirements met
+In normal mode:
+- Phase 3 validation complete, ready for production deployment
+- Review completion report and deployment checklist
+- Execute production deployment when ready
+- Consider next sprint planning
 
-⚡ Performance & Scalability:
-   ✅ Response times within targets
-   ✅ Load testing passed
-   ✅ Resource efficiency validated
-   ✅ Database queries optimized
+In SKYNET mode:
+- Auto-transitions to comprehensive quality check
+- If quality gates pass, automatically loops to next sprint
+- No human intervention unless quality issues detected
 
-💼 Business Value Validation:
-   ✅ All features meet acceptance criteria
-   ✅ Business requirements satisfied
-   ✅ Integration testing successful
-   ✅ User story validation complete
-
-🚀 Production Readiness:
-   ✅ Deployment checklist created
-   ✅ Documentation complete
-   ✅ Rollback procedures documented
-   ✅ Monitoring requirements defined
-
-Phase 3 Implementation COMPLETE! 🎉
-
-📊 Final Quality Report: docs/quality-reports/sprint-001/final-quality-report.json
-📋 Deployment Guide: docs/phases/phase-3-artifacts/production-deployment-checklist.md
-
-🎯 Project Status: READY FOR PRODUCTION
-✅ All quality gates passed
-✅ Business value validated
-✅ Production deployment prepared
-
-Next Steps:
-1. Human validation of business value delivery
-2. Review and approve production deployment
-3. Execute deployment using provided checklist
-4. OR start next sprint with /phase2:setup
-
-💡 Use /cedps-status to see final project status
-```
-
-## Notes
-- Comprehensive validation of all quality dimensions
-- Strict enforcement of quality gate requirements
-- Human business validation still required for production approval
-- Complete production readiness assessment and documentation
+## Parameters
+- No parameters required
+- Checks for SKYNET environment variable for autonomous mode
+- Uses jq for JSON state management
+- Requires cargo, python3, and quality tools to be available

@@ -53,58 +53,29 @@ Run CE-DPS quality gates and validation tools with comprehensive reporting.
 
 ## Expected Output
 
-```
-🔧 Running CE-DPS Quality Tools...
+The command will execute bash commands and conditional checks that:
+- Display "🔧 CE-DPS Quality Gates and Tools" header
+- Check project initialization and read current phase with jq
+- Run quality gates tool with cargo build and execution
+- Execute test suite with cargo test and optional coverage reporting
+- Perform security validation with cargo audit and pattern checking
+- Run performance benchmarks if benches/ directory exists
+- Execute phase validation tool with Python
+- Check Fortitude integration connectivity
+- Run code quality checks with clippy and fmt
+- Validate documentation completeness
+- Generate summary report with tool availability status
+- Provide installation tips for missing tools
 
-📊 Code Quality Checks:
-   ✅ Linting: All files pass
-   ✅ Formatting: Consistent style maintained
-   ✅ Complexity: All functions within limits
-   ✅ Documentation: 94% API coverage
-
-🧪 Test Suite Results:
-   ✅ Unit Tests: 287 passed, 0 failed
-   ✅ Integration Tests: 45 passed, 0 failed  
-   ✅ Security Tests: 23 passed, 0 failed
-   ✅ Coverage: 97.3% (Exceeds >95% requirement)
-
-🔒 Security Validation:
-   ✅ Vulnerability Scan: 0 critical, 2 low issues
-   ✅ Input Validation: Comprehensive coverage
-   ✅ Authentication: Properly implemented
-   ✅ Authorization: Role-based access working
-
-⚡ Performance Testing:
-   ✅ API Response Times: 95th percentile 167ms
-   ✅ Memory Usage: Within acceptable limits
-   ✅ Database Performance: All queries optimized
-   ✅ Load Testing: Handles expected traffic
-
-📚 Documentation Validation:
-   ✅ API Documentation: 100% endpoint coverage
-   ✅ Code Comments: Adequate coverage
-   ✅ Deployment Guides: Complete and current
-   ⚠️ README: Needs minor updates
-
-Quality Report Generated: docs/quality-reports/quality-check-[timestamp].json
-
-🎯 Overall Quality Score: 96/100
-
-Recommendations:
-1. Address 2 low-priority security findings
-2. Update README with recent feature additions
-3. Consider adding more integration test scenarios
-
-Next Steps:
-- Address identified issues
-- Re-run quality check to validate fixes
-- Continue with current phase development
-
-💡 All critical quality gates are passing ✅
-```
+## Parameters
+- No parameters required
+- Uses jq to read project state and current phase
+- Checks for various tool availability before execution
+- Provides conditional execution based on tool availability
 
 ## Notes
-- Comprehensive quality validation across all dimensions
-- Generate actionable reports with specific recommendations
-- Adapt quality checks based on current project phase
-- Provide clear guidance for addressing any issues found
+- Comprehensive quality validation using actual bash commands
+- Tool availability affects which checks can be executed
+- Provides installation instructions for missing tools
+- Supports all CE-DPS phases with appropriate quality standards
+- Generates actionable reports with success/failure indicators

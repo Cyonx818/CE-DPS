@@ -5,57 +5,64 @@ Enable autonomous CE-DPS operation without human approval checkpoints.
 ## Instructions
 
 1. **Set Environment Variable**
-   - Set SKYNET=true for current session
-   - This enables autonomous operation mode
+   - Execute: export SKYNET=true
+   - Display activation message with visual borders
+   - Show autonomous operation confirmation
 
 2. **Display Activation Message**
-   - Show clear confirmation that SKYNET mode is enabled
-   - Explain what autonomous operation means:
-     - Human approval checkpoints will be bypassed
-     - Templates will be auto-populated with contextual values  
-     - Technical quality gates remain fully enforced
-     - Continuous development loops enabled
+   - Show "🤖 SKYNET mode ENABLED" with visual separator lines
+   - List immediate effects:
+     - ⚡ Autonomous operation activated
+     - ⚡ Human approval checkpoints will be bypassed
+     - ⚡ Templates will be auto-populated with contextual values
+     - ⚡ Technical quality gates remain fully enforced
+     - ⚡ All documents modified by AI will be marked 'Manifested by SKYNET'
 
-3. **Update Project State** 
-   - Update docs/ce-dps-state.json to set:
-     - "skynet_mode": "true"
-     - "human_approval_required": false
-     - "last_updated": current timestamp
+3. **Validate Mode Setting**
+   - Check if SKYNET=true successfully set
+   - Display confirmation or error if failed
+   - Show status of technical quality standards (MAINTAINED)
+   - Show human approval requirements (BYPASSED)
+   - Show continuous development loops (ENABLED)
 
-4. **Explain Immediate Effects**
-   - Phase 1: Business requirements will be auto-generated from project context
-   - Phase 2: Features will be auto-selected based on complexity and dependencies
-   - Phase 3: Business validation will be auto-approved with logical justification
-   - Quality: All technical quality gates remain fully enforced
+4. **Explain Immediate Workflow Effects**
+   - Phase 1: Business requirements auto-generated from project context
+   - Phase 2: Features auto-selected based on complexity and dependencies  
+   - Phase 3: Business validation auto-approved with logical justification
+   - Quality: All technical quality gates remain fully enforced (>95% coverage, security, performance)
+   - Continuous: After Phase 3 + quality check, automatically loops back to Phase 2
 
-5. **Show Control Commands**
-   - Mention `/skynet-disable` to return to human oversight
-   - Mention `/skynet-status` to check current mode
+5. **Show Control Commands and Workflow**
+   - List /skynet-disable to return to human oversight
+   - List /skynet-status to check current mode
+   - Include workflow diagram showing autonomous loop:
+     - Auto-generate requirements → Auto-approve architecture → Auto-select features → Auto-implement with TDD → Auto-run quality check → Loop back
+
+6. **Document Quality Standards and Transparency**
+   - Technical standards maintained: test coverage, security, performance, code quality
+   - Business logic automation: requirements, feature selection, approvals
+   - Audit trail: all SKYNET-modified documents marked with headers
+   - Environment variable state tracked in project files
 
 ## Expected Output
 
-```
-🤖 SKYNET mode ENABLED
-━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-⚡ Autonomous operation activated
-⚡ Human approval checkpoints will be bypassed
-⚡ Templates will be auto-populated with contextual values
-⚡ Technical quality gates remain fully enforced
-⚡ All documents modified by AI will be marked 'Manifested by SKYNET'
-━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+The command will execute bash commands that:
+- Export SKYNET=true environment variable
+- Display activation message with visual borders and status indicators
+- Validate the environment variable was set correctly
+- Show immediate workflow effects for all three phases
+- Display quality standards that remain enforced
+- Show transparency and audit trail information
+- Provide control commands and workflow diagram
 
-✅ SKYNET mode confirmed
-📊 Technical quality standards: MAINTAINED
-🚀 Human approval requirements: BYPASSED
-🔄 Continuous development loops: ENABLED
-
-Control commands:
-- /skynet-disable: Return to human oversight
-- /skynet-status: Check current mode status
-```
+## Parameters
+- No parameters required
+- Sets SKYNET environment variable for current session
+- Displays comprehensive status and workflow information
 
 ## Notes
-- Only update environment variable and state file
-- Avoid complex shell scripting
-- Focus on clear communication of what changed
-- Maintain all technical quality requirements
+- Uses actual bash commands with export and echo statements
+- Includes validation checks with if statements
+- Maintains all technical quality requirements
+- Provides clear visual feedback with separator lines
+- Shows mermaid workflow diagram for autonomous operation

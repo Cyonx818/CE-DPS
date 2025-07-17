@@ -1,92 +1,79 @@
 # CE-DPS Project Initialization
 
-Initialize a new CE-DPS project with required directory structure and configuration.
+Initialize a new CE-DPS project with complete environment setup and documentation structure.
 
 ## Instructions
 
 1. **Validate Environment**
-   - Check that we're in a git repository (git rev-parse --git-dir)
-   - Verify CLAUDE.md exists in project root
-   - Confirm we have write permissions for creating directories
+   - Check CLAUDE.md exists in project root (required)
+   - Display initialization message
 
-2. **Create Directory Structure**
-   - Create docs/ directory if it doesn't exist
-   - Create subdirectories:
-     - docs/phases/
-     - docs/phases/phase-1-artifacts/
-     - docs/phases/phase-2-artifacts/  
-     - docs/phases/phase-3-artifacts/
-     - docs/sprints/
-     - docs/quality-reports/
+2. **Check System Dependencies**
+   - Check for jq availability (recommended for state management)
+   - Check for git availability (required for CE-DPS)
+   - Check for python3 availability (optional)
+   - Display dependency status with checkmarks/warnings
 
-3. **Initialize Project State**
-   - Create docs/ce-dps-state.json with initial state:
-     ```json
-     {
-       "project_initialized": true,
-       "current_phase": 0,
-       "project_type": "default",
-       "phases_completed": [],
-       "quality_gates_enabled": true,
-       "fortitude_enabled": true,
-       "human_approval_required": true,
-       "skynet_mode": "false",
-       "created_at": "current_timestamp",
-       "last_updated": "current_timestamp"
-     }
-     ```
+3. **Create Directory Structure**
+   - Execute mkdir -p commands to create:
+     - docs/phases
+     - docs/architecture  
+     - docs/sprints
+     - docs/quality-reports
 
-4. **Set Initial Environment**
-   - Set CE_DPS environment variables:
-     - CE_DPS_PHASE=0
-     - CE_DPS_FORTITUDE_ENABLED=true
-     - CE_DPS_QUALITY_GATES=true
-     - CE_DPS_HUMAN_APPROVAL_REQUIRED=true
+4. **Set Environment Variables**
+   - Export CE_DPS_PHASE=0
+   - Export CE_DPS_FORTITUDE_ENABLED=true
+   - Export CE_DPS_QUALITY_GATES=true
+   - Export CE_DPS_HUMAN_APPROVAL_REQUIRED=true
 
-5. **Verify Methodology Templates**
-   - Check that methodology/templates/ directory exists
-   - Verify presence of phase templates:
-     - phase-1-template.md
-     - phase-2-template.md
-     - phase-3-template.md
-   - If missing, inform user to ensure complete CE-DPS installation
+5. **Detect SKYNET Mode**
+   - Display current SKYNET mode status
+   - Show autonomous operation or human oversight mode
 
-6. **Initialize Git Integration**
-   - Check git status and current branch
-   - Ensure docs/ directory will be tracked by git
+6. **Initialize Project State**
+   - Create docs/ce-dps-state.json using echo commands
+   - Include project_initialized, current_phase, phases_completed, quality_gates_enabled, fortitude_enabled
+   - Set SKYNET-specific fields based on current SKYNET mode
+   - Add created_at timestamp using date command
+
+7. **Create Project Documentation Template**
+   - Check if docs/PROJECT.md exists
+   - If not, create comprehensive PROJECT.md with:
+     - CE-DPS methodology overview
+     - Development phases description
+     - Current status and next actions
+     - Quality standards
+     - Tools integration information
+
+8. **Display Success Summary**
+   - Show successful initialization message
+   - List created documentation structure
+   - Confirm environment variables configured
+   - Note project state tracking enabled
 
 ## Expected Output
 
-```
-🚀 Initializing CE-DPS Project...
+The command will execute bash commands that:
+- Display initialization message and check CLAUDE.md
+- Show system dependency status with checkmarks/warnings
+- Create directory structure using mkdir -p commands
+- Export environment variables with echo confirmations
+- Display SKYNET mode status
+- Create docs/ce-dps-state.json using echo commands with timestamps
+- Create docs/PROJECT.md template if it doesn't exist
+- Show success summary with created structure
 
-✅ Git repository validated
-✅ CLAUDE.md found  
-✅ Directory structure created
-✅ Project state initialized
-✅ Environment variables configured
-✅ Methodology templates validated
+## Human Action Required
 
-CE-DPS project initialized successfully!
+After initialization:
+1. Review project structure in docs/
+2. Customize docs/PROJECT.md with project details
+3. Run /cedps-status to see current state
+4. Run /cedps-phase1-setup to begin strategic planning
 
-📂 Created directories:
-   - docs/phases/ (phase documentation)
-   - docs/sprints/ (sprint tracking)
-   - docs/quality-reports/ (quality metrics)
-
-📄 Project state: docs/ce-dps-state.json
-🎯 Current phase: 0 (Ready to start)
-
-Next Steps:
-1. Run /cedps-status to see current project state
-2. Run /phase1:setup to begin strategic planning
-3. Review CLAUDE.md for project-specific guidance
-
-💡 Need help? Run /cedps-help for command overview
-```
-
-## Notes
-- Ensure clean initialization without conflicts
-- Validate all prerequisites before creating files
-- Provide clear next steps for getting started
-- Handle errors gracefully with helpful messages
+## Parameters
+- No parameters required
+- Checks for SKYNET environment variable
+- Uses date command for timestamps
+- Creates comprehensive project structure and documentation

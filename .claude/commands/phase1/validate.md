@@ -1,83 +1,63 @@
 # CE-DPS Phase 1 Validation
 
-Validate Phase 1 completion and prepare transition to Phase 2 sprint planning.
+Validate Phase 1 strategic planning completion and authorize transition to Phase 2 sprint planning.
 
 ## Instructions
 
-1. **Validate Phase 1 Requirements**
-   - Check that docs/phases/phase-1-planning.md exists and is complete
-   - Verify all business requirements sections are filled out
-   - Confirm AI analysis sections are populated with detailed recommendations
-   - Check for human approval markers (✅ Approved) in review sections
+1. **Validate Phase 1 Completion Requirements**
+   - Confirm `docs/phases/phase-1-planning.md` exists and contains complete analysis
+   - Verify all business requirements sections are filled out by human or SKYNET
+   - Check that AI analysis sections are populated with architectural recommendations
+   - Ensure all required approval sections exist in the document
 
-2. **Verify Human Approvals**
-   - Architecture Approval section must show "✅ Approved"
-   - Feature Roadmap Approval section must show "✅ Approved"  
-   - Risk Acceptance section must show "✅ Approved"
-   - Final Phase 1 Sign-off must be complete with name, title, date
+2. **Verify Strategic Approvals**
+   - Check for Architecture Approval section with "✅ Approved" marker
+   - Validate Feature Roadmap Approval section is approved
+   - Confirm Risk Acceptance section shows approval
+   - Verify Final Phase 1 Sign-off is complete
+   - If SKYNET mode: auto-inject approval markers if missing with "✅ Approved - SKYNET: [best practice reasoning]"
 
-3. **Validate Technical Foundation**
-   - Confirm architecture addresses all business requirements
-   - Verify technology choices align with constraints
-   - Check that feature roadmap prioritization is complete
-   - Ensure risk mitigation strategies are acceptable
+3. **Run Phase Validation Tool**
+   - If `tools/phase-validator.py` exists and python3 is available, run phase validation
+   - Validate that all Phase 1 deliverables meet CE-DPS standards
+   - Check documentation completeness and quality
+   - Ensure strategic decisions are properly documented
 
-4. **Generate Completion Report**
-   - Create docs/phases/phase-1-completion-report.md
-   - Summarize approved architecture and technology decisions
-   - Document final feature roadmap with priorities
-   - Record approved risk mitigation strategies
-   - Include transition readiness assessment
+4. **Validate Technical Foundation**
+   - Confirm proposed architecture addresses all stated business requirements
+   - Verify technology stack choices align with technical constraints
+   - Check that feature roadmap prioritization matches business objectives
+   - Ensure risk mitigation strategies are actionable and comprehensive
 
-5. **Update Project State**
-   - Add 1 to phases_completed array in docs/ce-dps-state.json
-   - Set phase_1_completed = true
-   - Update current_phase = 2 (ready for Phase 2)
-   - Add phase_1_completion_date timestamp
-   - Update last_updated timestamp
+5. **Generate Phase 1 Completion Report**
+   - Create `docs/phases/phase-1-completion-report.md` with comprehensive summary
+   - Document approved architecture approach and key design decisions
+   - Record final technology stack selections with rationale
+   - Include complete feature roadmap with business value priorities
+   - List all identified risks with approved mitigation strategies
+   - Add completion metrics and quality validation results
 
-6. **Prepare Phase 2 Transition**
-   - Verify Phase 2 template availability
-   - Check that all Phase 1 artifacts are properly documented
-   - Confirm readiness for sprint planning activities
+6. **Update Project State for Phase 2 Transition**
+   - If jq available: update `docs/ce-dps-state.json` with:
+     - Add 1 to phases_completed array
+     - Set phase_1_completed timestamp
+     - Set ready_for_phase_2 = true
+     - Update current_phase to 2
+     - Update last_updated timestamp
+   - If jq not available: warn about manual state management
 
-## Expected Output
+7. **Handle SKYNET Auto-Transition**
+   - If SKYNET mode: announce automatic progression to Phase 2 setup
+   - Auto-inject any missing approval markers with best-practice reasoning
+   - Display autonomous transition messaging
+   - If not SKYNET: provide clear guidance for manual Phase 2 initiation
 
-```
-✅ Validating CE-DPS Phase 1 Completion...
+8. **Validate Phase 2 Readiness**
+   - Confirm all Phase 1 artifacts are properly documented and approved
+   - Verify project state correctly reflects Phase 1 completion
+   - Check that strategic foundation is complete for sprint planning
+   - Ensure human approval authority is maintained for strategic decisions
 
-📋 Requirements Validation:
-   ✅ Business requirements complete
-   ✅ AI analysis sections populated
-   ✅ Human approvals confirmed
-   ✅ Technical foundation validated
+## Expected Behavior
 
-📊 Completion Report Generated:
-   - Architecture: [Approved architecture summary]
-   - Technology: [Approved technology stack]
-   - Features: [Final roadmap with priorities]
-   - Risks: [Accepted risks and mitigations]
-
-🎯 Project State Updated:
-   ✅ Phase 1 marked complete
-   ✅ Current phase set to 2
-   ✅ Transition authorized
-
-Phase 1 Strategic Planning COMPLETE! 🎉
-
-📋 Completion report: docs/phases/phase-1-completion-report.md
-🚀 Ready for Phase 2: Sprint Planning
-
-Next Steps:
-1. Run /phase2:setup to initialize sprint planning
-2. Select features for first sprint implementation
-3. Create detailed implementation plan
-
-💡 Use /cedps-status to see updated project status
-```
-
-## Notes
-- Strict validation of human approvals required
-- Generate comprehensive completion documentation
-- Only proceed if all requirements fully satisfied
-- Clear transition authorization to Phase 2
+Perform strict validation of Phase 1 completion with comprehensive approval verification. Generate detailed completion documentation and update project state. Handle both human oversight mode (requiring explicit approvals) and SKYNET autonomous mode (auto-approving with best-practice reasoning). Only authorize Phase 2 transition when all validation criteria are satisfied.

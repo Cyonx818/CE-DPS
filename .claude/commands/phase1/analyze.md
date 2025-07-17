@@ -1,88 +1,78 @@
 # CE-DPS Phase 1 Analysis
 
-Perform comprehensive AI analysis of business requirements and generate architectural recommendations.
+Trigger comprehensive AI analysis of business requirements with architectural research and strategic planning.
 
 ## Instructions
 
-1. **Validate Prerequisites**
-   - Check that docs/phases/phase-1-planning.md exists
-   - Verify business requirements sections are filled out by human
-   - Ensure we're in Phase 1 (check docs/ce-dps-state.json)
+Based on the completed business requirements in `docs/phases/phase-1-planning.md`, perform comprehensive Phase 1 strategic analysis including:
 
-2. **Read Business Requirements**
-   - Parse problem statement and target users
-   - Analyze success metrics and constraints
-   - Review technical requirements and compliance needs
-   - Extract budget and timeline constraints
+1. **Validate Analysis Prerequisites**
+   - Confirm `docs/phases/phase-1-planning.md` exists from Phase 1 setup
+   - If not SKYNET mode, verify all template placeholders are replaced with actual content
+   - Check that business requirements sections are complete
+   - Update project state to mark analysis started
 
-3. **Query Fortitude for Patterns**
-   - If available, search Fortitude knowledge base for similar architectural patterns
-   - Look for proven solutions to identified problems
-   - Research best practices for the technology stack
+2. **Read and Parse Business Requirements**
+   - Load the business requirements document
+   - Extract problem statement, target users, and success metrics
+   - Analyze technical requirements and performance constraints
+   - Identify integration needs and security requirements
+   - Note budget and timeline constraints
 
-4. **Generate Architecture Analysis**
-   - Propose system architecture based on requirements
-   - Recommend technology stack with rationale
-   - Design integration strategy for existing systems
-   - Address scalability and performance requirements
+3. **Query Fortitude Knowledge Base**
+   - Search for existing architectural patterns matching the problem domain
+   - Research proven security and performance patterns
+   - Look up integration approaches for similar systems
+   - Find relevant technology stack recommendations from past projects
 
-5. **Create Implementation Strategy**
-   - Break down development into phases
-   - Identify technical dependencies and critical path
-   - Estimate effort and timeline for major components
-   - Plan team skill requirements
+4. **Perform Comprehensive Architectural Analysis**
+   - Design system architecture with security-first approach
+   - Propose component relationships and data flow
+   - Address scalability requirements from business needs
+   - Plan integration points with existing systems
+   - Include authentication and authorization strategies
 
-6. **Perform Risk Assessment**
-   - Identify technical, business, and timeline risks
-   - Propose mitigation strategies for each risk
-   - Create contingency plans for critical risks
-   - Assess feasibility and recommend adjustments
+5. **Evaluate Technology Stack Options**
+   - Research and compare technology alternatives for each layer
+   - Provide specific recommendations with detailed rationale
+   - Consider team constraints and organizational preferences
+   - Address deployment and infrastructure needs
+   - Include development tooling and testing frameworks
 
-7. **Generate Feature Roadmap**
-   - Prioritize features by business value and dependencies
-   - Create detailed feature list with complexity estimates
-   - Plan MVP and future iterations
-   - Align features with business objectives
+6. **Create Implementation Roadmap**
+   - Break features into development phases prioritized by business value
+   - Estimate complexity and effort for each major component
+   - Identify critical path dependencies
+   - Plan MVP and subsequent iterations
+   - Define testing and quality assurance approach (>95% coverage target)
 
-8. **Update Planning Document**
-   - Fill in all AI analysis sections in the template
-   - Provide detailed rationale for recommendations
-   - Include research citations and pattern references
-   - Mark document ready for human review
+7. **Conduct Risk Assessment**
+   - Identify technical risks (performance, scalability, integration)
+   - Assess business risks (timeline, resource, market)
+   - Evaluate operational risks (deployment, maintenance, security)
+   - Provide specific mitigation strategies for each identified risk
+   - Create contingency plans for critical failure scenarios
 
-## Expected Output
+8. **Generate Human Approval Sections**
+   - Create structured approval sections for architecture decisions
+   - Include technology stack approval with alternatives
+   - Add feature roadmap approval with prioritization rationale
+   - Include risk assessment approval with mitigation strategies
+   - Mark sections clearly for human strategic review
 
-```
-🧠 Performing CE-DPS Phase 1 Analysis...
+9. **Handle SKYNET Auto-Approval**
+   - If SKYNET mode: automatically populate approval sections with best-practice decisions
+   - Mark approvals as "✅ Approved - SKYNET: [reasoning based on best practices]"
+   - Announce automatic progression to validation phase
+   - If not SKYNET: provide clear instructions for human review process
 
-✅ Business requirements validated
-✅ Fortitude knowledge patterns researched
-✅ System architecture designed
-✅ Technology stack evaluated
-✅ Implementation strategy created
-✅ Risk assessment completed
-✅ Feature roadmap generated
-✅ Planning document updated
+10. **Update Planning Document**
+    - Fill all AI analysis sections with comprehensive details
+    - Include architecture diagrams and component descriptions
+    - Provide technology evaluation matrices and decision rationale
+    - Add implementation timeline with realistic estimates
+    - Include complete risk register with mitigation plans
 
-Phase 1 analysis complete!
+## Expected Behavior
 
-📊 Analysis Results:
-   - Architecture: [Summary of proposed architecture]
-   - Technology: [Key technology recommendations]
-   - Timeline: [Estimated development timeline]
-   - Features: [Number of features identified and prioritized]
-
-📋 Document: docs/phases/phase-1-planning.md (updated with AI analysis)
-
-Next Steps:
-1. Human review of architectural recommendations
-2. Approval/feedback on technology choices
-3. Validation of feature roadmap priorities
-4. Run /phase1:validate when human review complete
-```
-
-## Notes
-- Focus on thorough analysis based on human-provided requirements
-- Use Fortitude patterns when available for proven solutions
-- Provide detailed rationale for all recommendations
-- Prepare comprehensive foundation for Phase 2 planning
+Execute comprehensive strategic analysis covering architecture, technology, implementation planning, and risk management. The analysis should provide complete foundation for Phase 2 sprint planning with either human approval points (normal mode) or auto-approved decisions (SKYNET mode). All recommendations must be based on business requirements and include detailed rationale.

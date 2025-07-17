@@ -4,109 +4,65 @@ Show comprehensive help for CE-DPS methodology and available commands.
 
 ## Instructions
 
-1. **Display Overview**
-   - Explain CE-DPS methodology purpose and phases
-   - Show the AI-as-implementer philosophy
-   - Explain human-AI collaboration model
+1. **Display Comprehensive Help System**
+   - Execute series of echo commands to show methodology overview
+   - Display CE-DPS core principles and AI-as-implementer philosophy
+   - Show three-phase development process with durations
 
-2. **List Available Commands**
-   - **Phase 1 Commands**:
-     - `/phase1:setup` - Initialize strategic planning
-     - `/phase1:analyze` - Analyze business requirements  
-     - `/phase1:validate` - Validate phase completion
-   - **Phase 2 Commands**:
-     - `/phase2:setup` - Initialize sprint planning
-     - `/phase2:plan` - Create implementation plan
-     - `/phase2:validate` - Validate phase completion
-   - **Phase 3 Commands**:
-     - `/phase3:setup` - Initialize implementation
-     - `/phase3:implement` - Execute TDD implementation
-     - `/phase3:validate` - Validate phase completion
-   - **SKYNET Commands**:
-     - `/skynet:enable` - Enable autonomous operation
-     - `/skynet:disable` - Restore human oversight
-     - `/skynet:status` - Check current mode
-   - **Utility Commands**:
-     - `/tools` - Run quality gates and validation
-     - `/quality-check` - Complete CI/CD test suite
-     - `/init` - Initialize new CE-DPS project
+2. **Show Complete Command Reference**
+   - Project Management commands: /cedps-init, /cedps-status, /cedps-tools, /cedps-help
+   - Phase 1 commands: /cedps-phase1-setup, /cedps-phase1-analyze, /cedps-phase1-validate
+   - Phase 2 commands: /cedps-phase2-setup, /cedps-phase2-plan, /cedps-phase2-validate
+   - Phase 3 commands: /cedps-phase3-setup, /cedps-phase3-implement, /cedps-phase3-validate
+   - SKYNET commands: /skynet-enable, /skynet-disable, /skynet-status
 
-3. **Explain Workflow**
-   - Phase 1: Strategic Planning (Human-led with AI analysis)
-   - Phase 2: Sprint Development (AI-led with human approval)  
-   - Phase 3: Code Implementation (AI-led with human validation)
+3. **Provide Detailed Usage Patterns**
+   - Show typical workflow with numbered steps
+   - Include human action points between commands
+   - Display command usage patterns and dependencies
 
-4. **Show Quality Standards**
-   - >95% test coverage requirement
-   - Security-first implementation
-   - Performance targets (<200ms response time)
-   - Comprehensive documentation
+4. **Document Human Actions Required**
+   - Phase 1: Define business problem, review architecture, approve roadmap
+   - Phase 2: Select features, review implementation plans, approve sprint scope
+   - Phase 3: Validate features, test user experience, approve production
 
-5. **Provide Troubleshooting**
-   - Common issues and solutions
-   - When to use each command
-   - How to recover from errors
+5. **Show Quality Standards Framework**
+   - Security requirements: authentication, authorization, input validation, SQL injection prevention
+   - Testing requirements: >95% coverage, unit/integration/security/performance tests
+   - Performance requirements: response times, database optimization, scalability
+
+6. **Display Project File Structure**
+   - Show docs/ directory structure with ce-dps-state.json, phases/, sprints/, quality-reports/
+   - Show tools/ directory with quality-gates/, phase-validator.py, fortitude-integration/
+
+7. **Provide Environment Variables and Troubleshooting**
+   - List CE_DPS environment variables and their purposes
+   - Show common issues and solutions
+   - Provide getting started workflow for new and existing projects
 
 ## Expected Output
 
-```
-🛠️ CE-DPS Methodology Help
-==========================
+The command will execute a series of echo commands that display:
+- CE-DPS methodology overview with core principles
+- Three-phase development process with detailed descriptions and durations
+- Complete command reference organized by category
+- Typical workflow patterns with numbered steps
+- Human action requirements for each phase
+- Quality standards framework (security, testing, performance)
+- Project file structure and organization
+- Environment variables configuration
+- Comprehensive troubleshooting guide
+- Getting started workflows for new and existing projects
+- Documentation references and next steps
 
-📋 Overview
------------
-CE-DPS (Comprehensive Engineering Development Process System) is a three-phase 
-methodology for AI-assisted software development with human strategic oversight.
-
-Phase 1: Strategic Planning - Define vision, approve architecture
-Phase 2: Sprint Development - Select features, plan implementation  
-Phase 3: Code Implementation - TDD development with quality gates
-
-🎯 Available Commands
-====================
-
-SKYNET Commands:
-- /skynet:enable      Enable autonomous operation mode
-- /skynet:disable     Restore human oversight mode
-- /skynet:status      Check current operation mode
-
-Phase 1 (Strategic Planning):
-- /phase1:setup       Initialize strategic planning template
-- /phase1:analyze     Analyze business requirements 
-- /phase1:validate    Complete Phase 1 validation
-
-Phase 2 (Sprint Planning):
-- /phase2:setup       Initialize sprint planning template
-- /phase2:plan        Create detailed implementation plan
-- /phase2:validate    Complete Phase 2 validation
-
-Phase 3 (Implementation):
-- /phase3:setup       Initialize implementation environment
-- /phase3:implement   Execute TDD implementation
-- /phase3:validate    Complete Phase 3 validation
-
-Quality & Tools:
-- /tools              Run validation tools
-- /quality-check      Complete quality gate validation
-- /init               Initialize new CE-DPS project
-
-📚 Documentation Locations
-===========================
-- Project state: docs/ce-dps-state.json
-- Phase documents: docs/phases/
-- Sprint tracking: docs/sprints/
-- Quality reports: docs/quality-reports/
-
-🆘 Troubleshooting
-==================
-- Use /skynet:status to check current operation mode
-- Each phase must complete before the next can begin
-- Use /skynet:enable for autonomous operation
-- Check CLAUDE.md for project-specific guidance
-```
+## Parameters
+- No parameters required
+- Uses echo commands to display formatted help information
+- Provides comprehensive methodology and command reference
 
 ## Notes
-- Provide comprehensive but concise help
-- Focus on practical command usage
-- Include troubleshooting guidance
-- Keep output well-formatted and easy to scan
+- Uses actual bash echo commands to display comprehensive help
+- Organizes information with clear headers and bullet points
+- Follows the detailed structure from the legacy backup version
+- Includes all specific command names and usage patterns
+- Provides practical troubleshooting and getting started guidance
