@@ -102,7 +102,7 @@
 # Update loop state for phase 2 setup
 current_time=$(date -u +%Y-%m-%dT%H:%M:%SZ)
 if [[ "$SKYNET" == "true" ]]; then
-    current_sprint=$(jq -r '.current_sprint // 1' docs/skynet-loop-state.json)
+    current_sprint=$(jq -r '.current_sprint // 1' docs/skynet-loop-state.json 2>/dev/null || echo "1")
     jq --arg timestamp "$current_time" \
        --arg sprint "$current_sprint" \
        '.loop_position = "phase2:setup_complete" |
