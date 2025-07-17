@@ -47,7 +47,7 @@ echo "━━━━━━━━━━━━━━━━━━━━━━━━�
 ### <validation>Mode Confirmation</validation>
 «validation-check»
 ```bash
-if [[ "$SKYNET" == "false" ]] || [[ -z "$SKYNET" ]]; then
+if [ "$SKYNET" = "false" ] || [ -z "$SKYNET" ]; then
     echo "✅ SKYNET mode disabled: Human oversight restored"
     echo "📊 Technical quality standards: MAINTAINED"
     echo "👨‍💼 Human approval requirements: RESTORED"

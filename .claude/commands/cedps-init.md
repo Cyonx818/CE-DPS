@@ -43,44 +43,14 @@ CE-DPS Project Initialization
 
 ### <method>Dependency Validation</method>
 !echo "🔍 Checking system dependencies..."
-!MISSING_DEPS=""
 
-# Check for jq (recommended for state management)
-!if ! command -v jq >/dev/null 2>&1; then
-    echo "⚠️  jq not found (recommended for automatic state management)"
-    echo "   Install: sudo apt-get install jq  # or brew install jq"
-    MISSING_DEPS="${MISSING_DEPS}jq "
-fi
+!echo "📋 Dependency Status:"
+!which jq >/dev/null 2>&1 && echo "✅ jq: Available" || echo "⚠️  jq: Not found (recommended for state management)"
+!which git >/dev/null 2>&1 && echo "✅ git: Available" || echo "❌ git: Not found (required for CE-DPS)"
+!which python3 >/dev/null 2>&1 && echo "✅ python3: Available" || echo "⚠️  python3: Not found (optional)"
 
-# Check for git (required for branch management)
-!if ! command -v git >/dev/null 2>&1; then
-    echo "❌ git not found (required for CE-DPS workflow)"
-    echo "   Install: sudo apt-get install git  # or download from https://git-scm.com/"
-    MISSING_DEPS="${MISSING_DEPS}git "
-fi
-
-# Check if we're in a git repository
-!if ! git rev-parse --git-dir >/dev/null 2>&1; then
-    echo "⚠️  Not in a git repository (recommended for CE-DPS)"
-    echo "   Initialize: git init && git add . && git commit -m 'Initial commit'"
-fi
-
-# Check for python3 (optional for phase validator)
-!if ! command -v python3 >/dev/null 2>&1; then
-    echo "⚠️  python3 not found (optional for phase validation tools)"
-    echo "   Install: sudo apt-get install python3"
-    MISSING_DEPS="${MISSING_DEPS}python3 "
-fi
-
-# Summary message
-!if [ -n "$MISSING_DEPS" ]; then
-    echo ""
-    echo "💡 Some dependencies are missing but CE-DPS will still work"
-    echo "   Missing: $MISSING_DEPS"
-    echo "   CE-DPS will provide fallback functionality where possible"
-else
-    echo "✅ All dependencies found"
-fi
+!echo ""
+!echo "💡 CE-DPS will work with available dependencies"
 !echo ""
 
 <!-- CHUNK-BOUNDARY: structure -->
@@ -102,43 +72,22 @@ fi
 «/environment-variables»
 
 ### <method priority="high">SKYNET Mode Detection</method>
-!SKYNET_STATUS="${SKYNET:-false}"
-!SKYNET_STATUS="${SKYNET:-false}"
-!echo "🤖 SKYNET mode status: $SKYNET_STATUS"
-
-# If SKYNET is enabled, configure autonomous operation
-!if [[ "$SKYNET" == "true" ]]; then
-    echo "⚡ SKYNET mode detected - configuring autonomous operation"
-    export CE_DPS_HUMAN_APPROVAL_REQUIRED=false
-    echo "⚡ Human approval requirements bypassed for autonomous development"
-    echo "⚡ Templates will be auto-populated with contextual values"
-    echo "⚡ Technical quality gates remain fully enforced"
-fi
+!echo "🤖 SKYNET mode status: ${SKYNET:-false}"
+!test "$SKYNET" = "true" && echo "⚡ SKYNET mode: Autonomous operation enabled" || echo "👤 Human oversight mode: Approval required for strategic decisions"
 
 <!-- CHUNK-BOUNDARY: state-file -->
 
 ### <pattern>Project State Initialization</pattern>
 """
-Project state tracking with SKYNET mode configuration
+Project state tracking with current timestamp
 """
-!cat > docs/ce-dps-state.json << EOF
-{
-  "project_initialized": true,
-  "current_phase": 0,
-  "phases_completed": [],
-  "quality_gates_enabled": true,
-  "fortitude_enabled": true,
-  "human_approval_required": $(if [[ "$SKYNET" == "true" ]]; then echo "false"; else echo "true"; fi),
-  "skynet_mode": "$SKYNET_STATUS",
-  "created_at": "$(date -u +%Y-%m-%dT%H:%M:%SZ)"
-}
-EOF
+!echo '{"project_initialized":true,"current_phase":0,"phases_completed":[],"quality_gates_enabled":true,"fortitude_enabled":true,"human_approval_required":true,"skynet_mode":"false","created_at":"'$(date -u +%Y-%m-%dT%H:%M:%SZ)'"}' > docs/ce-dps-state.json
+!test "$SKYNET" = "true" && echo '{"project_initialized":true,"current_phase":0,"phases_completed":[],"quality_gates_enabled":true,"fortitude_enabled":true,"human_approval_required":false,"skynet_mode":"true","created_at":"'$(date -u +%Y-%m-%dT%H:%M:%SZ)'"}' > docs/ce-dps-state.json
 
 <!-- CHUNK-BOUNDARY: project-readme -->
 
 ### <method>Project Documentation Template</method>
-!if [ ! -f "docs/PROJECT.md" ]; then
-cat > docs/PROJECT.md << 'EOF'
+!test ! -f "docs/PROJECT.md" && cat > docs/PROJECT.md << 'EOF'
 # CE-DPS Project
 
 ## Overview
@@ -164,7 +113,6 @@ This project follows the CE-DPS (Context Engineered Development Process Suite) m
 - **Quality Gates**: Automated testing and validation
 - **Phase Validator**: Completion criteria verification
 EOF
-fi
 
 «success-summary»
 !echo "✅ CE-DPS project initialized successfully!"

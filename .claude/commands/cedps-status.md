@@ -183,14 +183,14 @@ fi
 !echo "🤖 SKYNET Mode Status"
 !echo "====================="
 !SKYNET_STATUS="${SKYNET:-false}"
-!if [[ "$SKYNET" == "true" ]]; then
+!if [ "$SKYNET" = "true" ]; then
     echo "🟢 SKYNET MODE: ENABLED (Autonomous Operation)"
     echo "   ⚡ Human approval checkpoints: BYPASSED"
     echo "   ⚡ Template auto-population: ENABLED"
     echo "   ⚡ Continuous development loops: ENABLED"
     echo "   ⚡ Technical quality gates: MAINTAINED"
     echo "   ⚡ Next steps will execute automatically"
-elif [[ "$SKYNET" == "false" ]]; then
+elif [ "$SKYNET" = "false" ]; then
     echo "🟡 SKYNET MODE: EXPLICITLY DISABLED (Human Oversight)"
     echo "   👨‍💼 Human approval checkpoints: REQUIRED"
     echo "   👨‍💼 Template completion: MANUAL"
@@ -207,17 +207,15 @@ fi
 <!-- CHUNK-BOUNDARY: git-status -->
 
 ### <pattern>Git Repository Status</pattern>
-!if git rev-parse --git-dir >/dev/null 2>&1; then
+!git rev-parse --git-dir >/dev/null 2>&1
+!GIT_REPO=$?
+!if [ $GIT_REPO -eq 0 ]; then
     echo ""
     echo "📝 Git Status"
     echo "============="
     CURRENT_BRANCH=$(git branch --show-current)
     echo "Current branch: $CURRENT_BRANCH"
-    if [[ "$CURRENT_BRANCH" == *"sprint-001-implementation"* ]]; then
-        echo "🔧 On implementation branch"
-    else
-        echo "📋 On main/planning branch"
-    fi
+    echo "$CURRENT_BRANCH" | grep -q "sprint-001-implementation" && echo "🔧 On implementation branch" || echo "📋 On main/planning branch"
 fi
 
 <!-- CHUNK-BOUNDARY: next-steps -->

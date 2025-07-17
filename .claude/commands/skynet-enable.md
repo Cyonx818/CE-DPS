@@ -37,7 +37,7 @@ echo "━━━━━━━━━━━━━━━━━━━━━━━━�
 
 «validation-check»
 ```bash
-if [[ "$SKYNET" == "true" ]]; then
+if [ "$SKYNET" = "true" ]; then
     echo "✅ SKYNET mode confirmed: $SKYNET"
     echo "📊 Technical quality standards: MAINTAINED"
     echo "🚀 Human approval requirements: BYPASSED"

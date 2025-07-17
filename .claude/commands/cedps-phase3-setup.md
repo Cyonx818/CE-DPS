@@ -47,16 +47,20 @@ Phase 3 Implementation Setup
     exit 1
 fi
 
-!if ! command -v jq >/dev/null 2>&1; then
+!JQ_AVAILABLE=$(command -v jq >/dev/null 2>&1 && echo "true" || echo "false")
+!if [ "$JQ_AVAILABLE" = "false" ]; then
     echo "⚠️ Warning: jq not found. Cannot validate phase completion automatically."
     echo "💡 Install jq or manually verify Phases 1 and 2 are complete"
     if [ ! -f "docs/phases/phase-2-completion-report.md" ]; then
         echo "❌ Error: Phase 2 completion report not found. Complete Phases 1 and 2 first."
         exit 1
     fi
-elif ! jq -e '.phases_completed | contains([1, 2])' docs/ce-dps-state.json >/dev/null 2>&1; then
-    echo "❌ Error: Phases 1 and 2 not completed. Run '/cedps-phase2-validate' first."
-    exit 1
+else
+    PHASES_COMPLETE=$(jq -e '.phases_completed | contains([1, 2])' docs/ce-dps-state.json 2>/dev/null && echo "true" || echo "false")
+    if [ "$PHASES_COMPLETE" = "false" ]; then
+        echo "❌ Error: Phases 1 and 2 not completed. Run '/cedps-phase2-validate' first."
+        exit 1
+    fi
 fi
 
 # Check if Phase 3 already initialized
@@ -73,8 +77,10 @@ fi
 !export CE_DPS_HUMAN_APPROVAL_REQUIRED=true
 
 # Update project state
-!if command -v jq >/dev/null 2>&1; then
-    jq '.current_phase = 3 | .last_updated = now | .phase_3_started = now' docs/ce-dps-state.json > docs/ce-dps-state.tmp && mv docs/ce-dps-state.tmp docs/ce-dps-state.json
+!JQ_AVAILABLE=$(command -v jq >/dev/null 2>&1 && echo "true" || echo "false")
+!if [ "$JQ_AVAILABLE" = "true" ]; then
+    jq '.current_phase = 3 | .last_updated = now | .phase_3_started = now' docs/ce-dps-state.json > docs/ce-dps-state.tmp
+    mv docs/ce-dps-state.tmp docs/ce-dps-state.json
 else
     echo "⚠️ Warning: jq not found. State update skipped."
     echo "💡 Install jq for automatic state management"
@@ -111,8 +117,10 @@ EOF
 
 # Create feature branch for implementation
 !BRANCH_NAME="sprint-001-implementation"
-!if git rev-parse --git-dir >/dev/null 2>&1; then
-    if git rev-parse --verify "$BRANCH_NAME" >/dev/null 2>&1; then
+!GIT_AVAILABLE=$(git rev-parse --git-dir >/dev/null 2>&1 && echo "true" || echo "false")
+!if [ "$GIT_AVAILABLE" = "true" ]; then
+    BRANCH_EXISTS=$(git rev-parse --verify "$BRANCH_NAME" >/dev/null 2>&1 && echo "true" || echo "false")
+    if [ "$BRANCH_EXISTS" = "true" ]; then
         echo "📝 Feature branch $BRANCH_NAME already exists"
     else
         git checkout -b "$BRANCH_NAME"
@@ -124,9 +132,12 @@ else
 fi
 
 # Initialize quality gates
-!if command -v cargo >/dev/null 2>&1 && [ -f "tools/quality-gates/Cargo.toml" ]; then
+!CARGO_AVAILABLE=$(command -v cargo >/dev/null 2>&1 && echo "true" || echo "false")
+!if [ "$CARGO_AVAILABLE" = "true" ] && [ -f "tools/quality-gates/Cargo.toml" ]; then
     echo "🔧 Initializing quality gates..."
-    cd tools/quality-gates && cargo build --release && cd ../..
+    cd tools/quality-gates
+    cargo build --release
+    cd ../..
     echo "✅ Quality gates compiled and ready"
 fi
 
@@ -137,7 +148,8 @@ fi
 fi
 
 # Prepare Fortitude for implementation patterns
-!if command -v cargo >/dev/null 2>&1 && [ -f "tools/fortitude-integration/Cargo.toml" ]; then
+!CARGO_AVAILABLE=$(command -v cargo >/dev/null 2>&1 && echo "true" || echo "false")
+!if [ "$CARGO_AVAILABLE" = "true" ] && [ -f "tools/fortitude-integration/Cargo.toml" ]; then
     echo "🧠 Preparing Fortitude for implementation patterns..."
     cargo run --bin fortitude-integration -- query "implementation patterns" --quiet 2>/dev/null || echo "⚠️  Fortitude query skipped (optional)"
 fi
@@ -194,7 +206,7 @@ EOF
     echo "🤖 SKYNET MODE: Auto-transitioning to Phase 3 implementation"
     echo "✅ Approved - SKYNET: Environment setup validated and ready for implementation"
     echo "🚀 Proceeding to implementation execution..."
-    exec /home/cyonx/Documents/GitHub/CE-DPS/.claude/commands/cedps-phase3-implement.md
+    echo "Note: Exec transition would occur here in full implementation"
     exit 0
 fi
 </implementation>

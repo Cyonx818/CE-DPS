@@ -49,8 +49,9 @@ fi
 
 ### <method>Business Requirements Validation</method>
 «requirements-validation»
-!if [[ "$SKYNET" != "true" ]]; then
-    if grep -q "\[Enter" docs/phases/phase-1-planning.md; then
+!if [ "$SKYNET" != "true" ]; then
+    TEMPLATE_INCOMPLETE=$(grep -q "\[Enter" docs/phases/phase-1-planning.md && echo "true" || echo "false")
+    if [ "$TEMPLATE_INCOMPLETE" = "true" ]; then
         echo "❌ Error: Business requirements template not completed."
         echo "💡 Complete all [Enter...] sections in docs/phases/phase-1-planning.md"
         echo "📋 Required sections: Business Context, Strategic Requirements, Constraints"
@@ -76,7 +77,7 @@ fi
 
 ### <method priority="high">SKYNET Auto-Progression</method>
 «skynet-autoprogress»
-!if [[ "$SKYNET" == "true" ]]; then
+!if [ "$SKYNET" = "true" ]; then
     echo ""
     echo "🤖 SKYNET mode: AI analysis will auto-approve architectural decisions"
     echo "⚡ Strategic decisions will be made autonomously based on best practices"
@@ -247,7 +248,7 @@ Please begin the comprehensive Phase 1 analysis now. When complete:
 </claude-prompt>
 
 ## <human-action-required>
-!if [[ "$SKYNET" == "true" ]]; then
+!if [ "$SKYNET" = "true" ]; then
     echo "🤖 **SKYNET MODE**: AI analysis will auto-approve strategic decisions"
     echo "⚡ Architectural decisions made autonomously using best practices"
     echo "⚡ System will auto-proceed to Phase 1 validation"

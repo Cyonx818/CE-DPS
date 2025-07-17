@@ -60,10 +60,13 @@ fi
 # Quality Gates Tool
 !echo "🚀 Running Quality Gates Tool"
 !echo "============================="
-!if command -v cargo >/dev/null 2>&1 && [ -f "tools/quality-gates/Cargo.toml" ]; then
+!CARGO_AVAILABLE=$(command -v cargo >/dev/null 2>&1 && echo "true" || echo "false")
+!if [ "$CARGO_AVAILABLE" = "true" ] && [ -f "tools/quality-gates/Cargo.toml" ]; then
     echo "🔧 Building quality gates tool..."
     cd tools/quality-gates
-    if cargo build --release; then
+    cargo build --release
+    BUILD_SUCCESS=$?
+    if [ $BUILD_SUCCESS -eq 0 ]; then
         echo "✅ Quality gates tool built successfully"
         echo "🔍 Running comprehensive quality validation..."
         ./target/release/quality-gates --comprehensive-validation
@@ -94,13 +97,17 @@ fi
 # Test Suite Execution
 !echo "🧪 Running Test Suite"
 !echo "===================="
-!if command -v cargo >/dev/null 2>&1 && [ -f "Cargo.toml" ]; then
+!CARGO_AVAILABLE=$(command -v cargo >/dev/null 2>&1 && echo "true" || echo "false")
+!if [ "$CARGO_AVAILABLE" = "true" ] && [ -f "Cargo.toml" ]; then
     echo "🔍 Running comprehensive test suite..."
-    if cargo test --verbose; then
+    cargo test --verbose
+    TEST_SUCCESS=$?
+    if [ $TEST_SUCCESS -eq 0 ]; then
         echo "✅ All tests passed"
         
         # Test coverage if available
-        if command -v cargo-tarpaulin >/dev/null 2>&1; then
+        TARPAULIN_AVAILABLE=$(command -v cargo-tarpaulin >/dev/null 2>&1 && echo "true" || echo "false")
+        if [ "$TARPAULIN_AVAILABLE" = "true" ]; then
             echo "📊 Generating test coverage report..."
             cargo tarpaulin --out Html --output-dir target/tarpaulin-report
             COVERAGE=$(cargo tarpaulin --quiet 2>/dev/null | grep -o '[0-9]*\.[0-9]*%' | head -1)
@@ -130,10 +137,14 @@ fi
 # Security Validation
 !echo "🔒 Security Validation"
 !echo "====================="
-!if command -v cargo >/dev/null 2>&1 && [ -f "Cargo.toml" ]; then
+!CARGO_AVAILABLE=$(command -v cargo >/dev/null 2>&1 && echo "true" || echo "false")
+!if [ "$CARGO_AVAILABLE" = "true" ] && [ -f "Cargo.toml" ]; then
     echo "🔍 Running security audit..."
-    if command -v cargo-audit >/dev/null 2>&1; then
-        if cargo audit; then
+    AUDIT_AVAILABLE=$(command -v cargo-audit >/dev/null 2>&1 && echo "true" || echo "false")
+    if [ "$AUDIT_AVAILABLE" = "true" ]; then
+        cargo audit
+        AUDIT_SUCCESS=$?
+        if [ $AUDIT_SUCCESS -eq 0 ]; then
             echo "✅ Security audit passed"
         else
             echo "❌ Security audit found issues"
@@ -169,11 +180,14 @@ fi
 # Performance Benchmarks
 !echo "⚡ Performance Benchmarks"
 !echo "========================"
-!if command -v cargo >/dev/null 2>&1 && [ -f "Cargo.toml" ]; then
+!CARGO_AVAILABLE=$(command -v cargo >/dev/null 2>&1 && echo "true" || echo "false")
+!if [ "$CARGO_AVAILABLE" = "true" ] && [ -f "Cargo.toml" ]; then
     # Check for benchmark directory
     if [ -d "benches" ]; then
         echo "🔍 Running performance benchmarks..."
-        if cargo bench; then
+        cargo bench
+        BENCH_SUCCESS=$?
+        if [ $BENCH_SUCCESS -eq 0 ]; then
             echo "✅ Performance benchmarks completed"
             echo "📊 Benchmark results in target/criterion/"
         else
@@ -198,9 +212,12 @@ fi
 # Phase Validation Tool
 !echo "📋 Phase Validation"
 !echo "=================="
-!if command -v python3 >/dev/null 2>&1 && [ -f "tools/phase-validator.py" ]; then
+!PYTHON_AVAILABLE=$(command -v python3 >/dev/null 2>&1 && echo "true" || echo "false")
+!if [ "$PYTHON_AVAILABLE" = "true" ] && [ -f "tools/phase-validator.py" ]; then
     echo "🔍 Running phase validation tool..."
-    if python3 tools/phase-validator.py --phase "$CURRENT_PHASE"; then
+    python3 tools/phase-validator.py --phase "$CURRENT_PHASE"
+    VALIDATION_SUCCESS=$?
+    if [ $VALIDATION_SUCCESS -eq 0 ]; then
         echo "✅ Phase validation passed"
     else
         echo "❌ Phase validation failed"
@@ -221,10 +238,13 @@ fi
 # Fortitude Integration
 !echo "🧠 Fortitude Knowledge Management"
 !echo "================================"
-!if command -v cargo >/dev/null 2>&1 && [ -f "tools/fortitude-integration/Cargo.toml" ]; then
+!CARGO_AVAILABLE=$(command -v cargo >/dev/null 2>&1 && echo "true" || echo "false")
+!if [ "$CARGO_AVAILABLE" = "true" ] && [ -f "tools/fortitude-integration/Cargo.toml" ]; then
     echo "🔍 Running Fortitude integration check..."
     cd tools/fortitude-integration
-    if cargo run -- status; then
+    cargo run -- status
+    FORTITUDE_SUCCESS=$?
+    if [ $FORTITUDE_SUCCESS -eq 0 ]; then
         echo "✅ Fortitude integration functional"
     else
         echo "❌ Fortitude integration issues detected"
@@ -246,13 +266,17 @@ fi
 # Code Quality Checks
 !echo "✨ Code Quality Checks"
 !echo "====================="
-!if command -v cargo >/dev/null 2>&1 && [ -f "Cargo.toml" ]; then
+!CARGO_AVAILABLE=$(command -v cargo >/dev/null 2>&1 && echo "true" || echo "false")
+!if [ "$CARGO_AVAILABLE" = "true" ] && [ -f "Cargo.toml" ]; then
     echo "🔍 Running code quality checks..."
     
     # Clippy linting
-    if command -v cargo-clippy >/dev/null 2>&1; then
+    CLIPPY_AVAILABLE=$(command -v cargo-clippy >/dev/null 2>&1 && echo "true" || echo "false")
+    if [ "$CLIPPY_AVAILABLE" = "true" ]; then
         echo "🔍 Running Clippy linter..."
-        if cargo clippy -- -D warnings; then
+        cargo clippy -- -D warnings
+        CLIPPY_SUCCESS=$?
+        if [ $CLIPPY_SUCCESS -eq 0 ]; then
             echo "✅ Clippy linting passed"
         else
             echo "❌ Clippy found issues"
@@ -263,9 +287,12 @@ fi
     fi
     
     # Formatting check
-    if command -v cargo-fmt >/dev/null 2>&1; then
+    FMT_AVAILABLE=$(command -v cargo-fmt >/dev/null 2>&1 && echo "true" || echo "false")
+    if [ "$FMT_AVAILABLE" = "true" ]; then
         echo "🔍 Checking code formatting..."
-        if cargo fmt --check; then
+        cargo fmt --check
+        FMT_SUCCESS=$?
+        if [ $FMT_SUCCESS -eq 0 ]; then
             echo "✅ Code formatting is correct"
         else
             echo "❌ Code formatting issues found"
