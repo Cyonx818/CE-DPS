@@ -81,38 +81,51 @@ CE-DPS Project Initialization
 """
 Project state tracking with current timestamp
 """
-!echo '{"project_initialized":true,"current_phase":0,"phases_completed":[],"quality_gates_enabled":true,"fortitude_enabled":true,"human_approval_required":true,"skynet_mode":"false","created_at":"'$(date -u +%Y-%m-%dT%H:%M:%SZ)'"}' > docs/ce-dps-state.json
-!test "$SKYNET" = "true" && echo '{"project_initialized":true,"current_phase":0,"phases_completed":[],"quality_gates_enabled":true,"fortitude_enabled":true,"human_approval_required":false,"skynet_mode":"true","created_at":"'$(date -u +%Y-%m-%dT%H:%M:%SZ)'"}' > docs/ce-dps-state.json
+!echo '{' > docs/ce-dps-state.json
+!echo '  "project_initialized": true,' >> docs/ce-dps-state.json
+!echo '  "current_phase": 0,' >> docs/ce-dps-state.json
+!echo '  "phases_completed": [],' >> docs/ce-dps-state.json
+!echo '  "quality_gates_enabled": true,' >> docs/ce-dps-state.json
+!echo '  "fortitude_enabled": true,' >> docs/ce-dps-state.json
+!if [ "$SKYNET" = "true" ]; then
+    echo '  "human_approval_required": false,' >> docs/ce-dps-state.json
+    echo '  "skynet_mode": "true",' >> docs/ce-dps-state.json
+else
+    echo '  "human_approval_required": true,' >> docs/ce-dps-state.json
+    echo '  "skynet_mode": "false",' >> docs/ce-dps-state.json
+fi
+!echo '  "created_at": "'$(date -u +%Y-%m-%dT%H:%M:%SZ)'"' >> docs/ce-dps-state.json
+!echo '}' >> docs/ce-dps-state.json
 
 <!-- CHUNK-BOUNDARY: project-readme -->
 
 ### <method>Project Documentation Template</method>
-!test ! -f "docs/PROJECT.md" && cat > docs/PROJECT.md << 'EOF'
-# CE-DPS Project
-
-## Overview
-This project follows the CE-DPS (Context Engineered Development Process Suite) methodology for AI-assisted development with human strategic oversight.
-
-## Development Phases
-1. **Phase 1: Strategic Planning** - Define vision, approve architecture
-2. **Phase 2: Sprint Planning** - Select features, create implementation plans  
-3. **Phase 3: Implementation** - Execute code development with quality gates
-
-## Current Status
-- **Phase**: Not started
-- **Next Action**: Run `/cedps-phase1-setup` to begin strategic planning
-
-## Quality Standards
-- >95% test coverage required
-- Security-first implementation patterns
-- Comprehensive documentation with LLM optimization
-- Human approval required for all strategic decisions
-
-## Tools Integration
-- **Fortitude**: Knowledge management and pattern lookup
-- **Quality Gates**: Automated testing and validation
-- **Phase Validator**: Completion criteria verification
-EOF
+!if [ ! -f "docs/PROJECT.md" ]; then
+    echo "# CE-DPS Project" > docs/PROJECT.md
+    echo "" >> docs/PROJECT.md
+    echo "## Overview" >> docs/PROJECT.md
+    echo "This project follows the CE-DPS (Context Engineered Development Process Suite) methodology for AI-assisted development with human strategic oversight." >> docs/PROJECT.md
+    echo "" >> docs/PROJECT.md
+    echo "## Development Phases" >> docs/PROJECT.md
+    echo "1. **Phase 1: Strategic Planning** - Define vision, approve architecture" >> docs/PROJECT.md
+    echo "2. **Phase 2: Sprint Planning** - Select features, create implementation plans" >> docs/PROJECT.md
+    echo "3. **Phase 3: Implementation** - Execute code development with quality gates" >> docs/PROJECT.md
+    echo "" >> docs/PROJECT.md
+    echo "## Current Status" >> docs/PROJECT.md
+    echo "- **Phase**: Not started" >> docs/PROJECT.md
+    echo "- **Next Action**: Run \`/cedps-phase1-setup\` to begin strategic planning" >> docs/PROJECT.md
+    echo "" >> docs/PROJECT.md
+    echo "## Quality Standards" >> docs/PROJECT.md
+    echo "- >95% test coverage required" >> docs/PROJECT.md
+    echo "- Security-first implementation patterns" >> docs/PROJECT.md
+    echo "- Comprehensive documentation with LLM optimization" >> docs/PROJECT.md
+    echo "- Human approval required for all strategic decisions" >> docs/PROJECT.md
+    echo "" >> docs/PROJECT.md
+    echo "## Tools Integration" >> docs/PROJECT.md
+    echo "- **Fortitude**: Knowledge management and pattern lookup" >> docs/PROJECT.md
+    echo "- **Quality Gates**: Automated testing and validation" >> docs/PROJECT.md
+    echo "- **Phase Validator**: Completion criteria verification" >> docs/PROJECT.md
+fi
 
 «success-summary»
 !echo "✅ CE-DPS project initialized successfully!"
