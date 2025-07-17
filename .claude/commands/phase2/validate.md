@@ -82,7 +82,7 @@ Phase 2 Sprint Planning COMPLETE! 🎉
 🚀 Ready for Phase 3: Implementation
 
 Next Steps:
-1. Run /project:phase3:setup to initialize implementation environment
+1. Run /phase3:setup to initialize implementation environment
 2. Begin TDD implementation of approved features
 3. Execute comprehensive quality validation throughout
 

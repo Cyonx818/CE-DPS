@@ -94,7 +94,7 @@ Sprint Implementation Status: [Complete/In Progress]
 📊 Implementation tracking: docs/sprints/sprint-001/implementation/
 
 Next Steps:
-- If complete: Run /project:phase3:validate for final validation
+- If complete: Run /phase3:validate for final validation
 - If in progress: Continue with remaining features
 - Quality gates must pass before proceeding to validation
 

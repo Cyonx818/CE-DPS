@@ -79,7 +79,7 @@ CE-DPS project initialized successfully!
 
 Next Steps:
 1. Run /cedps-status to see current project state
-2. Run /project:phase1:setup to begin strategic planning
+2. Run /phase1:setup to begin strategic planning
 3. Review CLAUDE.md for project-specific guidance
 
 💡 Need help? Run /cedps-help for command overview

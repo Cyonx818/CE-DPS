@@ -10,26 +10,26 @@ Show comprehensive help for CE-DPS methodology and available commands.
    - Explain human-AI collaboration model
 
 2. **List Available Commands**
-   - **Project Status**: `/cedps-status` - Show current phase and progress
    - **Phase 1 Commands**:
-     - `/project:phase1:setup` - Initialize strategic planning
-     - `/project:phase1:analyze` - Analyze business requirements  
-     - `/project:phase1:validate` - Validate phase completion
+     - `/phase1:setup` - Initialize strategic planning
+     - `/phase1:analyze` - Analyze business requirements  
+     - `/phase1:validate` - Validate phase completion
    - **Phase 2 Commands**:
-     - `/project:phase2:setup` - Initialize sprint planning
-     - `/project:phase2:plan` - Create implementation plan
-     - `/project:phase2:validate` - Validate phase completion
+     - `/phase2:setup` - Initialize sprint planning
+     - `/phase2:plan` - Create implementation plan
+     - `/phase2:validate` - Validate phase completion
    - **Phase 3 Commands**:
-     - `/project:phase3:setup` - Initialize implementation
-     - `/project:phase3:implement` - Execute TDD implementation
-     - `/project:phase3:validate` - Validate phase completion
+     - `/phase3:setup` - Initialize implementation
+     - `/phase3:implement` - Execute TDD implementation
+     - `/phase3:validate` - Validate phase completion
    - **SKYNET Commands**:
-     - `/project:skynet:enable` - Enable autonomous operation
-     - `/project:skynet:disable` - Restore human oversight
-     - `/project:skynet:status` - Check current mode
+     - `/skynet:enable` - Enable autonomous operation
+     - `/skynet:disable` - Restore human oversight
+     - `/skynet:status` - Check current mode
    - **Utility Commands**:
-     - `/cedps-tools` - Run quality gates and validation
-     - `/cedps-quality-check` - Complete CI/CD test suite
+     - `/tools` - Run quality gates and validation
+     - `/quality-check` - Complete CI/CD test suite
+     - `/init` - Initialize new CE-DPS project
 
 3. **Explain Workflow**
    - Phase 1: Strategic Planning (Human-led with AI analysis)
@@ -65,29 +65,30 @@ Phase 3: Code Implementation - TDD development with quality gates
 🎯 Available Commands
 ====================
 
-Status & Control:
-- /cedps-status          Show current project status and next steps
-- /project:skynet:enable  Enable autonomous operation mode
-- /project:skynet:disable Restore human oversight mode
+SKYNET Commands:
+- /skynet:enable      Enable autonomous operation mode
+- /skynet:disable     Restore human oversight mode
+- /skynet:status      Check current operation mode
 
 Phase 1 (Strategic Planning):
-- /project:phase1:setup     Initialize strategic planning template
-- /project:phase1:analyze   Analyze business requirements 
-- /project:phase1:validate  Complete Phase 1 validation
+- /phase1:setup       Initialize strategic planning template
+- /phase1:analyze     Analyze business requirements 
+- /phase1:validate    Complete Phase 1 validation
 
 Phase 2 (Sprint Planning):
-- /project:phase2:setup     Initialize sprint planning template
-- /project:phase2:plan      Create detailed implementation plan
-- /project:phase2:validate  Complete Phase 2 validation
+- /phase2:setup       Initialize sprint planning template
+- /phase2:plan        Create detailed implementation plan
+- /phase2:validate    Complete Phase 2 validation
 
 Phase 3 (Implementation):
-- /project:phase3:setup     Initialize implementation environment
-- /project:phase3:implement Execute TDD implementation
-- /project:phase3:validate  Complete Phase 3 validation
+- /phase3:setup       Initialize implementation environment
+- /phase3:implement   Execute TDD implementation
+- /phase3:validate    Complete Phase 3 validation
 
 Quality & Tools:
-- /cedps-tools              Run validation tools
-- /cedps-quality-check      Complete quality gate validation
+- /tools              Run validation tools
+- /quality-check      Complete quality gate validation
+- /init               Initialize new CE-DPS project
 
 📚 Documentation Locations
 ===========================
@@ -98,9 +99,9 @@ Quality & Tools:
 
 🆘 Troubleshooting
 ==================
-- Start with /cedps-status to understand current state
+- Use /skynet:status to check current operation mode
 - Each phase must complete before the next can begin
-- Use SKYNET mode for autonomous operation
+- Use /skynet:enable for autonomous operation
 - Check CLAUDE.md for project-specific guidance
 ```
 

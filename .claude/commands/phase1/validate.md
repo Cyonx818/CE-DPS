@@ -69,7 +69,7 @@ Phase 1 Strategic Planning COMPLETE! 🎉
 🚀 Ready for Phase 2: Sprint Planning
 
 Next Steps:
-1. Run /project:phase2:setup to initialize sprint planning
+1. Run /phase2:setup to initialize sprint planning
 2. Select features for first sprint implementation
 3. Create detailed implementation plan
 

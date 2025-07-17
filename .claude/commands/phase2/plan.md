@@ -85,7 +85,7 @@ Next Steps:
 1. Human review of implementation approach
 2. Approval of timeline and resource allocation
 3. Validation of quality gate definitions
-4. Run /project:phase2:validate when human review complete
+4. Run /phase2:validate when human review complete
 ```
 
 ## Notes

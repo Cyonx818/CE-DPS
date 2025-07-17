@@ -78,7 +78,7 @@ Next Steps:
 1. Human review of architectural recommendations
 2. Approval/feedback on technology choices
 3. Validation of feature roadmap priorities
-4. Run /project:phase1:validate when human review complete
+4. Run /phase1:validate when human review complete
 ```
 
 ## Notes

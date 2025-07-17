@@ -35,7 +35,7 @@ Initialize Phase 1 strategic planning with business requirements template.
 6. **Provide Guidance**
    - Explain next steps for human business requirements input
    - Guide user to fill out business context, requirements, and constraints
-   - Mention the next command: `/project:phase1:analyze`
+   - Mention the next command: `/phase1:analyze`
 
 ## Expected Output
 
@@ -59,7 +59,7 @@ Next Steps:
    - Target Users  
    - Success Metrics
    - Technical Requirements
-3. Run /project:phase1:analyze for AI architectural analysis
+3. Run /phase1:analyze for AI architectural analysis
 ```
 
 ## Notes

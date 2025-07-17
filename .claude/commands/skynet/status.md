@@ -98,9 +98,9 @@ Phase 3 (Implementation):
 
 🔧 Control Commands
 ===================
-/project:skynet:enable  - Enable autonomous operation mode
-/project:skynet:disable - Return to human oversight mode
-/project:skynet:status  - Show this status information
+/skynet:enable  - Enable autonomous operation mode
+/skynet:disable - Return to human oversight mode
+/skynet:status  - Show this status information
 
 📊 Quality Standards (Always Enforced)
 =======================================

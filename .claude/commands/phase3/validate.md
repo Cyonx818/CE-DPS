@@ -109,7 +109,7 @@ Next Steps:
 1. Human validation of business value delivery
 2. Review and approve production deployment
 3. Execute deployment using provided checklist
-4. OR start next sprint with /project:phase2:setup
+4. OR start next sprint with /phase2:setup
 
 💡 Use /cedps-status to see final project status
 ```
