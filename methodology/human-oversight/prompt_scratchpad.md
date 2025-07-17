@@ -815,7 +815,191 @@ Commands Updated: 8/17 (47%)
 
 
 -------------------------------------------------------------------------------
+
+read: 
+- `/home/cyonx/Documents/GitHub/CE-DPS/reference/claude-code-slash-commands-guide.md` to understand how slash commands work. 
+- `/home/cyonx/Documents/GitHub/CE-DPS/methodology/ai-implementation/llm-style-guidelines.md` to undestand how we write llm-facing documents
+- `/home/cyonx/Documents/GitHub/CE-DPS/README.md` to understand the CE-DPS project, and how humans expect to interact with it.
+- `/home/cyonx/Documents/GitHub/CE-DPS/methodology/ai-implementation/quality-framework.md` to understand the quality framework we 
+work in.
+- `/home/cyonx/Documents/GitHub/CE-DPS/methodology/ai-implementation/phase-1-planning.md` to understand phase 1 details.
+
+Compare the phase 1 slash commands in `/home/cyonx/Documents/GitHub/CE-DPS/.claude/commands/phase1` against the original phase 1 commands in `/home/cyonx/Documents/GitHub/CE-DPS/docs/historical/legacy-backup`. The new commands use the best practices from the claude-code-slash-commands-guide, which is what we want, but they do not seem to implement the correct logic from the original slash commands. They did very specific things, and the new slash commands are much more generic. Edit each of the 3 current phase 1 slash commands, keeping the best practices style of notation from claude-code-slash-commands-guide, but replace the logic with equivalent logic to the original phase 1 files (just not the bash notation style)
+
+
 -------------------------------------------------------------------------------
+
+
+
+**Required reading:**
+- `/home/cyonx/Documents/GitHub/CE-DPS/README.md` to understand the CE-DPS project and how humans expect to interact with it.
+- `/home/cyonx/Documents/GitHub/CE-DPS/methodology/ai-implementation/quality-framework.md` to understand the quality framework we work in.
+- `/home/cyonx/Documents/GitHub/CE-DPS/reference/claude-code-slash-commands-guide.md` to understand how slash commands work and what best practices are.
+- `/home/cyonx/Documents/GitHub/CE-DPS/methodology/ai-implementation/llm-style-guidelines.md` to understand how we write LLM-facing documents.
+
+**Read as needed:**
+- Slash command folder structure containing all slash commands: `/home/cyonx/Documents/GitHub/CE-DPS/.claude/commands`
+- Detailed references for Phases and other AI direction `/home/cyonx/Documents/GitHub/CE-DPS/methodology/ai-implementation/` 
+
+We are working on improving the CE-DPS methodology's "Skynet Mode". 
+
+The intent of skynet mode is for the process to bypass human-centric portions of the CE-DPS methodology, and have Claude Code (you) proceed automatically from each step of the intended sequence to the next autonomously, while still meeting all quality gates of the CE-DPS methodology.
+
+Skynet mode is expected to be a significan use case for CE-DPS, even if it is not the default mode, so we need to pay critical attention to implementing it accurately, safely, and robustly.
+
+Once "Skynet mode" implementation reaches the end of phase 3 and passes the quality check, it should loop back around to the beginning of phase 2 again to plan a new sprint, then continues executing the loop indefinatly. In this way, with a good set of product plans and roadmap from phase 1, Skynet mode could and should implement, test, document, and polish the entire project it is working on without human involvement (other than optional passive supervision).
+
+We identified Claude Code's "auto-compact" as a major potential blocker to this intent, due to its impact on your active context window. We put together the resilience plan below in order to address this potential blocker. Review the plan for logical consistency, robustness, reliablity, and edge case handling. Determine if we need to make any adjustments before we implement, and let me know. We will start implementation when we are both satisfied that the plan is ready.
+
+## SKYNET Auto-Compact Resilience Implementation Plan
+
+### Problem Analysis
+
+The current SKYNET implementation has a critical vulnerability: Claude Code's auto-compact feature breaks the autonomous loop by causing complete context loss. When auto-compact occurs, the new Claude instance has no memory of the active loop state, effectively stopping autonomous operation.
+
+#### Current State Persistence (Partial)
+
+**What survives auto-compact:**
+- `docs/ce-dps-state.json` — phase tracking, completion status
+- `docs/sprints/sprint-*/sprint-info.json` — sprint metadata
+- Phase planning documents with approval markers
+- Git branch state and committed code
+- Project files and implementation artifacts
+
+**What's lost during auto-compact:**
+- Active command execution context
+- SKYNET environment variable (if not persistent)
+- Current position in autonomous loop
+- "Next command to execute" state
+- Intermediate work-in-progress context
+
+---
+
+### Solution: Stateful Loop Resumption System
+
+#### Phase 1: Enhanced State Persistence
+
+**1.1 Create SKYNET Loop State File**
+
+- New file: `docs/skynet-loop-state.json`
+- Contents:
+  ```json
+  {
+    "skynet_active": true,
+    "loop_position": "phase2:plan",
+    "next_command": "/phase2:validate",
+    "current_sprint": 2,
+    "last_execution": "2025-07-17T10:30:00Z",
+    "loop_iteration": 3,
+    "auto_compact_recovery": false
+  }
+  ```
+
+**1.2 Update All Phase Commands**
+- Add loop state tracking at start/end of each command
+- Save "next command to execute" before transitioning
+- Record loop position and iteration count
+- Mark successful command completion
+
+---
+
+#### Phase 2: Auto-Compact Detection & Recovery
+
+**2.1 Enhance `/project-status` Command**
+- Add new step: "Detect SKYNET Loop Interruption"
+- Check for `skynet-loop-state.json` with recent timestamp
+- Compare SKYNET environment variable vs saved state
+- Detect if auto-compact recovery is needed
+- Display recovery recommendations
+
+**2.2 Create `/skynet:resume` Command**
+- New command: Auto-resume interrupted SKYNET loop
+- Read loop state from `skynet-loop-state.json`
+- Validate project state consistency
+- Set SKYNET environment variable
+- Execute next command in sequence
+- Handle edge cases (partial completion, errors)
+
+**2.3 Add Auto-Recovery Logic to Key Commands**
+- Target commands: `/init`, `/project-status`, `/skynet:status`
+- Check for interrupted SKYNET loop on execution
+- Offer automatic resumption with user confirmation
+- Fall back to manual recovery instructions
+
+---
+
+#### Phase 3: Loop Continuity Enhancements
+
+**3.1 Update Quality Check Command**
+- Save loop state before quality validation
+- Mark quality check completion in loop state
+- Automatically trigger `/phase2:setup` if SKYNET active
+- Handle quality failures gracefully (pause loop)
+
+**3.2 Enhance Sprint Management**
+- Increment sprint number in loop state
+- Update sprint directories and tracking files
+- Maintain sprint history across auto-compact events
+- Handle sprint rollback on failures
+
+**3.3 Add Loop Health Monitoring**
+- Track loop execution time and iteration count
+- Detect infinite loops or stuck states
+- Implement circuit breaker pattern
+- Add loop performance metrics
+
+---
+
+#### Phase 4: User Experience & Safety
+
+**4.1 Recovery User Interface**
+- Clear visual indicators for auto-compact recovery
+- One-click resume functionality
+- Manual override and loop termination options
+- Detailed recovery status reporting
+
+**4.2 Safety Mechanisms**
+- Maximum loop iterations before human confirmation
+- Quality gate failures stop the loop
+- Git repository health checks
+- Resource utilization monitoring
+
+**4.3 Documentation Updates**
+- Update `skynet/enable.md` with recovery behavior
+- Add troubleshooting guide for auto-compact issues
+- Document loop state file format
+- Create recovery workflow diagrams
+
+---
+
+### Implementation Priority
+
+**Critical Path (Must Implement):**
+1. Loop state persistence in all phase commands
+2. Auto-compact detection in `/project-status`
+3. Resume command (`/skynet:resume`) creation
+4. Quality check loop integration
+
+**Enhanced Features (Nice to Have):**
+1. Loop health monitoring and metrics
+2. Advanced recovery UI
+3. Performance optimization
+4. Comprehensive troubleshooting
+
+---
+
+### Expected Outcome
+
+After implementation, SKYNET mode will be resilient to auto-compact:
+- Detect interrupted loops automatically
+- Resume execution from correct phase/command
+- Maintain sprint continuity across context loss
+- Preserve autonomous operation intent
+- Handle edge cases gracefully (failures, partial completion)
+- Provide clear recovery UX for manual intervention when needed
+
+The autonomous loop will become truly continuous, surviving Claude Code auto-compact events without breaking the development cycle.
+
 -------------------------------------------------------------------------------
 -------------------------------------------------------------------------------
 -------------------------------------------------------------------------------
