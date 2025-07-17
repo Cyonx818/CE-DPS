@@ -73,7 +73,7 @@
 ### <step-8>SKYNET Mode Auto-Transition</step-8>
 **Autonomous Transition** (if SKYNET=true):
 - Automatically run quality check and prepare next sprint loop
-- Exit with special code (42) to trigger /cedps-quality-check
+- Exit with special code (42) to trigger /quality-check
 - Auto-transition to Phase 2 setup for continuous development
 
 ## <expected-output priority="medium">Validation Results</expected-output>

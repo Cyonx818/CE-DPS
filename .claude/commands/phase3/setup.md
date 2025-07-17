@@ -90,7 +90,7 @@
 1. Review pre-implementation checklist at docs/phases/phase-3-artifacts/pre-implementation-checklist.md
 2. Confirm sprint backlog at docs/phases/phase-3-artifacts/implementation-backlog.md
 3. Validate development environment and tools
-4. When ready, run /cedps-phase3-implement to begin implementation
+4. When ready, run /phase3:implement to begin implementation
 
 ## <parameters priority="low">Command Configuration</parameters>
 **Configuration Details**:

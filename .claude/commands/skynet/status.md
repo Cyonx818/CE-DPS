@@ -68,9 +68,9 @@
 
 ### <step-6>Show Recommended Next Actions</step-6>
 **Mode-Specific Recommendations**:
-- **Autonomous mode**: suggest /cedps-init or continue current phase
-- **Human oversight**: suggest /cedps-init or enable autonomous if desired
-- **Always available**: /cedps-status, /cedps-quality-check, /cedps-help options
+- **Autonomous mode**: suggest /init or continue current phase
+- **Human oversight**: suggest /init or enable autonomous if desired
+- **Always available**: /project-status, /quality-check, /help options
 
 ## <expected-output priority="medium">Status Display Results</expected-output>
 

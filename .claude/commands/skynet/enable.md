@@ -50,8 +50,8 @@
 
 ### <step-5>Show Control Commands and Workflow</step-5>
 **Control Commands**:
-- /skynet-disable to return to human oversight
-- /skynet-status to check current mode
+- /skynet:disable to return to human oversight
+- /skynet:status to check current mode
 
 **Autonomous Loop Workflow**:
 Auto-generate requirements → Auto-approve architecture → Auto-select features → Auto-implement with TDD → Auto-run quality check → Loop back

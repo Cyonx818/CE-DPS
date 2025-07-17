@@ -20,7 +20,7 @@
 
 ### <step-1>Validate Implementation Setup</step-1>
 **Setup Validation**:
-- Check docs/phases/phase-3-implementation.md exists (run /cedps-phase3-setup if missing)
+- Check docs/phases/phase-3-implementation.md exists (run /phase3:setup if missing)
 - Verify docs/phases/phase-3-artifacts/implementation-backlog.md exists from Phase 2
 - Confirm on sprint-001-implementation branch (git branch --show-current)
 - Validate quality gates (cargo run --bin quality-gates -- --validate-environment)

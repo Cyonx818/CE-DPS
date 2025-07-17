@@ -20,7 +20,7 @@
 
 ### <step-1>Validate Project Prerequisites</step-1>
 **Validation Checks**:
-- Verify docs/ce-dps-state.json exists (inform user to run /cedps-init if missing)
+- Verify docs/ce-dps-state.json exists (inform user to run /init if missing)
 - Check if docs/phases/phase-1-planning.md exists (inform if Phase 1 already initialized)
 - Confirm project is in CE-DPS root directory with methodology structure
 

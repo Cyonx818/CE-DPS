@@ -84,8 +84,8 @@
 **Post-Initialization Steps**:
 1. Review project structure in docs/
 2. Customize docs/PROJECT.md with project details  
-3. Run /cedps-status to see current state
-4. Run /cedps-phase1-setup to begin strategic planning
+3. Run /project-status to see current state
+4. Run /phase1:setup to begin strategic planning
 
 ## <parameters priority="low">Command Configuration</parameters>
 **Configuration Details**:

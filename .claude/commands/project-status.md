@@ -63,10 +63,10 @@
 
 ### <step-8>Provide Next Steps</step-8>
 **Intelligent Recommendations**:
-- **Not initialized**: /cedps-init
-- **Phase 1 incomplete**: /cedps-phase1-setup or /cedps-phase1-analyze
-- **Phase 1 complete, Phase 2 incomplete**: /cedps-phase2-setup
-- **Phase 2 complete, Phase 3 incomplete**: /cedps-phase3-setup
+- **Not initialized**: /init
+- **Phase 1 incomplete**: /phase1:setup or /phase1:analyze
+- **Phase 1 complete, Phase 2 incomplete**: /phase2:setup
+- **Phase 2 complete, Phase 3 incomplete**: /phase3:setup
 - **All phases complete**: quality validation or next sprint
 
 ### <step-9>List Available Commands</step-9>
