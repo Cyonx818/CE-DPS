@@ -70,6 +70,7 @@
 
 ### <step-8>Extract Sprint Backlog</step-8>
 **Backlog Preparation**:
+- Confirm folder location in base repo folder
 - Copy docs/sprints/sprint-001/backlog/sprint-backlog.md to docs/phases/phase-3-artifacts/implementation-backlog.md
 
 ### <step-9>Create Pre-Implementation Checklist</step-9>

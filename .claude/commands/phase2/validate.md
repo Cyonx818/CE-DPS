@@ -38,12 +38,14 @@
 
 ### <step-3>Run Phase Validation Tool</step-3>
 **Tool Validation**:
+- **CRITICAL**: Activate Python virtual environment first: `source .venv/bin/activate`
 - If tools/phase-validator.py exists and python3 available:
-  - Run phase validation for Phase 2 with sprint planning document
+  - Run phase validation for Phase 2 with sprint planning document: `python tools/phase-validator.py --phase 2`
   - Validate all Phase 2 deliverables meet CE-DPS standards
   - Check implementation planning completeness and quality
   - Ensure strategic decisions are properly documented
 - If validation tool fails, exit with error about addressing issues
+- **Note**: Virtual environment (.venv) contains all required dependencies for validation tools
 
 ### <step-4>Extract Sprint Backlog for Phase 3</step-4>
 **Backlog Preparation**:
