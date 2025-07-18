@@ -58,7 +58,8 @@ fi
 ### <method>Git Branch Validation</method>
 «branch-check»
 !CURRENT_BRANCH=$(git branch --show-current)
-!if [[ "$CURRENT_BRANCH" != *"sprint-001-implementation"* ]]; then
+!IMPLEMENTATION_BRANCH=$(echo "$CURRENT_BRANCH" | grep -q "sprint-001-implementation" && echo "true" || echo "false")
+!if [ "$IMPLEMENTATION_BRANCH" = "false" ]; then
     echo "❌ Error: Not on implementation branch. Current branch: $CURRENT_BRANCH"
     echo "💡 Switch to sprint-001-implementation branch or run '/cedps-phase3-setup' again."
     exit 1
@@ -69,9 +70,12 @@ fi
 
 ### <method>Quality Gates Validation</method>
 «quality-validation»
-!if command -v cargo >/dev/null 2>&1; then
+!CARGO_AVAILABLE=$(command -v cargo >/dev/null 2>&1 && echo "true" || echo "false")
+!if [ "$CARGO_AVAILABLE" = "true" ]; then
     echo "🔧 Validating quality gates..."
-    if ! cargo run --bin quality-gates -- --validate-environment 2>/dev/null; then
+    cargo run --bin quality-gates -- --validate-environment 2>/dev/null
+    QUALITY_SUCCESS=$?
+    if [ $QUALITY_SUCCESS -ne 0 ]; then
         echo "❌ Error: Quality gates validation failed."
         echo "💡 Build quality gates tools or check environment setup."
         exit 1

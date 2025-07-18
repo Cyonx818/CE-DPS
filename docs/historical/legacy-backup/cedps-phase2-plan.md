@@ -233,7 +233,7 @@ Please begin the comprehensive Phase 2 implementation planning now. When complet
 !if [ "$SKYNET" = "true" ]; then
     echo "🤖 SKYNET MODE: Auto-transitioning to phase validation"
     echo "✅ Phase 2 planning complete - proceeding to validation"
-    exec /home/cyonx/Documents/GitHub/CE-DPS/.claude/commands/cedps-phase2-validate.md
+    exec .claude/commands/cedps-phase2-validate.md
     exit 0
 fi
 

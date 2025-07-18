@@ -68,28 +68,36 @@ done
 !if [ "$SKYNET" = "true" ]; then
     echo "🤖 SKYNET MODE: Bypassing human approval validation"
     echo "✅ Approved - SKYNET: Phase 2 planning auto-validated based on CE-DPS methodology compliance"
-elif ! grep -q "✅ Approved" docs/phases/phase-2-sprint-planning.md; then
-    echo "❌ Error: No human approvals found in Phase 2 planning."
-    echo "💡 Review and approve implementation plans before proceeding."
-    echo "📋 Required approvals: Feature Selection, Implementation Approach, Timeline"
-    exit 1
+else
+    APPROVALS_FOUND=$(grep -q "✅ Approved" docs/phases/phase-2-sprint-planning.md && echo "true" || echo "false")
+    if [ "$APPROVALS_FOUND" = "false" ]; then
+        echo "❌ Error: No human approvals found in Phase 2 planning."
+        echo "💡 Review and approve implementation plans before proceeding."
+        echo "📋 Required approvals: Feature Selection, Implementation Approach, Timeline"
+        exit 1
+    fi
 fi
 
 # Validate sprint scope is realistic (with SKYNET bypass)
 !if [ "$SKYNET" = "true" ]; then
     echo "🤖 SKYNET MODE: Bypassing rejection validation - auto-accepting sprint scope"
     echo "✅ Approved - SKYNET: Sprint scope validated as technically feasible and business-aligned"
-elif grep -q "❌ Requires Revision" docs/phases/phase-2-sprint-planning.md; then
-    echo "❌ Error: Sprint planning has rejected sections requiring revision."
-    echo "💡 Address rejected items before proceeding to implementation."
-    exit 1
+else
+    REJECTIONS_FOUND=$(grep -q "❌ Requires Revision" docs/phases/phase-2-sprint-planning.md && echo "true" || echo "false")
+    if [ "$REJECTIONS_FOUND" = "true" ]; then
+        echo "❌ Error: Sprint planning has rejected sections requiring revision."
+        echo "💡 Address rejected items before proceeding to implementation."
+        exit 1
+    fi
 fi
 
 # Run phase validator tool if available
-!if command -v python3 >/dev/null 2>&1 && [ -f "tools/phase-validator.py" ]; then
+!PYTHON_AVAILABLE=$(command -v python3 >/dev/null 2>&1 && echo "true" || echo "false")
+!if [ "$PYTHON_AVAILABLE" = "true" ] && [ -f "tools/phase-validator.py" ]; then
     echo "🔧 Running phase validation tool..."
     python3 tools/phase-validator.py --phase 2 --file docs/phases/phase-2-sprint-planning.md
-    if [ $? -ne 0 ]; then
+    VALIDATION_SUCCESS=$?
+    if [ $VALIDATION_SUCCESS -ne 0 ]; then
         echo "❌ Error: Phase validation tool failed."
         echo "💡 Address validation issues before proceeding."
         exit 1
@@ -98,17 +106,22 @@ fi
 
 # Extract sprint backlog for Phase 3
 !mkdir -p docs/sprints/sprint-001/backlog
-!if grep -A 100 "Sprint Backlog" docs/phases/phase-2-sprint-planning.md > docs/sprints/sprint-001/backlog/sprint-backlog.md; then
+!grep -A 100 "Sprint Backlog" docs/phases/phase-2-sprint-planning.md > docs/sprints/sprint-001/backlog/sprint-backlog.md
+!EXTRACTION_SUCCESS=$?
+!if [ $EXTRACTION_SUCCESS -eq 0 ]; then
     echo "📋 Sprint backlog extracted for Phase 3 implementation"
 fi
 
 # Update project state
-!if command -v jq >/dev/null 2>&1; then
-    jq '.phases_completed += [2] | .phase_2_completed = now | .ready_for_phase_3 = true | .current_sprint = 1' docs/ce-dps-state.json > docs/ce-dps-state.tmp && mv docs/ce-dps-state.tmp docs/ce-dps-state.json
+!JQ_AVAILABLE=$(command -v jq >/dev/null 2>&1 && echo "true" || echo "false")
+!if [ "$JQ_AVAILABLE" = "true" ]; then
+    jq '.phases_completed += [2] | .phase_2_completed = now | .ready_for_phase_3 = true | .current_sprint = 1' docs/ce-dps-state.json > docs/ce-dps-state.tmp
+    mv docs/ce-dps-state.tmp docs/ce-dps-state.json
     
     # Update sprint tracking if sprint-info.json exists
     if [ -f "docs/sprints/sprint-001/sprint-info.json" ]; then
-        jq '.status = "approved" | .planning_completed = now | .ready_for_implementation = true' docs/sprints/sprint-001/sprint-info.json > docs/sprints/sprint-001/sprint-info.tmp && mv docs/sprints/sprint-001/sprint-info.tmp docs/sprints/sprint-001/sprint-info.json
+        jq '.status = "approved" | .planning_completed = now | .ready_for_implementation = true' docs/sprints/sprint-001/sprint-info.json > docs/sprints/sprint-001/sprint-info.tmp
+        mv docs/sprints/sprint-001/sprint-info.tmp docs/sprints/sprint-001/sprint-info.json
     fi
 else
     echo "⚠️ Warning: jq not found. State update skipped."
@@ -186,7 +199,7 @@ EOF
 !if [ "$SKYNET" = "true" ]; then
     echo "🤖 SKYNET MODE: Auto-transitioning to Phase 3 setup"
     echo "🚀 Proceeding to Phase 3 implementation setup..."
-    exec /home/cyonx/Documents/GitHub/CE-DPS/.claude/commands/cedps-phase3-setup.md
+    echo "Note: Exec transition would occur here in full implementation"
     exit 0
 fi
 </implementation>

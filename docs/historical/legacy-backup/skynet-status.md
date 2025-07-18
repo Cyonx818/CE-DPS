@@ -22,7 +22,7 @@ echo "━━━━━━━━━━━━━━━━━━━━━━━━�
 
 <!-- CHUNK-BOUNDARY: skynet-enabled -->
 
-if [[ "$SKYNET" == "true" ]]; then
+if [ "$SKYNET" = "true" ]; then
     echo "🟢 STATUS: SKYNET MODE ENABLED"
     echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
     echo "⚡ AUTONOMOUS OPERATION ACTIVE"
@@ -53,7 +53,7 @@ if [[ "$SKYNET" == "true" ]]; then
     
 <!-- CHUNK-BOUNDARY: skynet-disabled -->
 
-elif [[ "$SKYNET" == "false" ]]; then
+elif [ "$SKYNET" = "false" ]; then
     echo "🟡 STATUS: SKYNET MODE EXPLICITLY DISABLED"
     echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
     echo "👨‍💼 HUMAN OVERSIGHT ACTIVE"
@@ -139,7 +139,7 @@ echo ""
 echo "📋 RECOMMENDED NEXT ACTIONS:"
 echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
 
-if [[ "$SKYNET" == "true" ]]; then
+if [ "$SKYNET" = "true" ]; then
     echo "   🚀 Run /cedps-init to start autonomous development"
     echo "   🚀 Or continue with current phase using /cedps-status"
     echo "   🚀 Quality validation available with /cedps-quality-check"

@@ -57,7 +57,7 @@ fi
 !export CE_DPS_QUALITY_GATES=true
 
 # Configure human approval based on SKYNET mode
-!if [[ "$SKYNET" == "true" ]]; then
+!if [ "$SKYNET" = "true" ]; then
     export CE_DPS_HUMAN_APPROVAL_REQUIRED=false
     echo "🤖 SKYNET mode detected - human approval bypassed"
 else
@@ -66,19 +66,18 @@ else
 fi
 
 # Update project state
-!if command -v jq >/dev/null 2>&1; then
-    jq '.current_phase = 1 | .last_updated = now | .phase_1_started = now' docs/ce-dps-state.json > docs/ce-dps-state.tmp && mv docs/ce-dps-state.tmp docs/ce-dps-state.json
+!command -v jq >/dev/null 2>&1
+!JQ_AVAILABLE=$?
+!if [ $JQ_AVAILABLE -eq 0 ]; then
+    jq '.current_phase = 1 | .last_updated = now | .phase_1_started = now' docs/ce-dps-state.json > docs/ce-dps-state.tmp
+    mv docs/ce-dps-state.tmp docs/ce-dps-state.json
 else
     echo "⚠️ Warning: jq not found. State update skipped."
     echo "💡 Install jq for automatic state management"
 fi
 
 # Copy Phase 1 template
-!if [ ! -f "methodology/templates/phase-1-template.md" ]; then
-    echo "❌ Error: Phase 1 template not found at methodology/templates/phase-1-template.md"
-    echo "💡 Ensure you're in the CE-DPS project root with complete methodology structure."
-    exit 1
-fi
+!test ! -f "methodology/templates/phase-1-template.md" && echo "❌ Error: Phase 1 template not found at methodology/templates/phase-1-template.md" && echo "💡 Ensure you're in the CE-DPS project root with complete methodology structure." && exit 1
 
 !cp methodology/templates/phase-1-template.md docs/phases/phase-1-planning.md
 
@@ -87,40 +86,85 @@ fi
 ### <method priority="high">SKYNET Auto-Population</method>
 «skynet-template-generation»
 # Auto-populate template if SKYNET mode is enabled
-!if [[ "$SKYNET" == "true" ]]; then
+!if [ "$SKYNET" = "true" ]; then
     echo "🤖 SKYNET mode: Auto-populating business requirements template..."
     
-    # Add SKYNET header to the document
-    sed -i '1i<!-- Manifested by SKYNET -->' docs/phases/phase-1-planning.md
+    # Create populated template using heredoc
+    cat > docs/phases/phase-1-planning-populated.md << 'EOF'
+<!-- Manifested by SKYNET -->
+# Phase 1: Strategic Planning
+
+## Business Requirements
+
+### Problem Statement
+Accelerate software development through AI-assisted implementation while maintaining quality and strategic alignment. Enable rapid feature delivery with comprehensive testing and security validation.
+
+### Target Users
+Primary: Development teams seeking AI-assisted implementation. Secondary: Product managers requiring rapid feature delivery, QA teams needing comprehensive test coverage.
+
+### Success Metrics
+- Development velocity increase: >50% faster feature delivery
+- Quality metrics: >95% test coverage, zero critical security vulnerabilities
+- Business value: Reduced time-to-market, improved code quality, decreased technical debt
+
+### Budget Constraints
+Development budget optimized through AI efficiency gains. Focus on time-to-value rather than resource constraints. Operational costs minimized through automated quality gates.
+
+## Feature Prioritization
+
+### Critical Features
+- Core application functionality with business logic
+- Comprehensive test suite with >95% coverage
+- Security framework with authentication and authorization
+- API endpoints with proper validation and error handling
+
+### Important Features
+- Performance optimization and caching strategies
+- Advanced logging and monitoring capabilities
+- Integration with external services and APIs
+- User interface enhancements and UX improvements
+
+### Nice-to-Have Features
+- Advanced analytics and reporting features
+- Mobile application support
+- Multi-language internationalization
+- Advanced admin dashboard capabilities
+
+## Technical Requirements
+
+### Performance Requirements
+- API response time: <200ms for 95% of requests
+- Database query performance: <100ms average
+- Concurrent user support: 10,000+ simultaneous users
+- Horizontal scaling capability for load distribution
+
+### Security Requirements
+- Secure authentication with JWT tokens and password hashing
+- Role-based access control (RBAC) with granular permissions
+- Data encryption at rest and in transit
+- Input validation and XSS/CSRF protection
+
+### Integration Requirements
+- Database integration with proper ORM and connection pooling
+- External API integrations with proper error handling
+- Third-party service integrations as business requirements dictate
+- CI/CD pipeline integration for automated deployment
+
+### Technology Constraints
+- Modern technology stack optimized for development velocity
+- Proven frameworks with strong community support
+- Security-first technology choices with regular updates
+- Technologies supporting comprehensive testing frameworks
+
+### Timeline Constraints
+- Iterative development with rapid sprint cycles
+- Continuous delivery with quality gate enforcement
+- Flexible timeline based on business value delivery
+- Dependencies managed through architectural planning
+EOF
     
-    # Auto-populate based on project context analysis
-    PROJECT_NAME=$(basename "$(pwd)")
-    PROJECT_DESCRIPTION="AI-driven development project using CE-DPS methodology"
-    
-    # Generate contextual business requirements
-    sed -i 's/\[Replace with: What business problem does this project solve?\]/Accelerate software development through AI-assisted implementation while maintaining quality and strategic alignment. Enable rapid feature delivery with comprehensive testing and security validation./g' docs/phases/phase-1-planning.md
-    
-    sed -i 's/\[Replace with: Who are the primary and secondary users?\]/Primary: Development teams seeking AI-assisted implementation. Secondary: Product managers requiring rapid feature delivery, QA teams needing comprehensive test coverage./g' docs/phases/phase-1-planning.md
-    
-    sed -i 's/\[Replace with: How will you measure project success? Be specific.\]/- Development velocity increase: >50% faster feature delivery\n- Quality metrics: >95% test coverage, zero critical security vulnerabilities\n- Business value: Reduced time-to-market, improved code quality, decreased technical debt/g' docs/phases/phase-1-planning.md
-    
-    sed -i 's/\[Replace with: Development budget and operational cost limits\]/Development budget optimized through AI efficiency gains. Focus on time-to-value rather than resource constraints. Operational costs minimized through automated quality gates./g' docs/phases/phase-1-planning.md
-    
-    sed -i 's/\[List critical features that must be implemented\]/- Core application functionality with business logic\n- Comprehensive test suite with >95% coverage\n- Security framework with authentication and authorization\n- API endpoints with proper validation and error handling/g' docs/phases/phase-1-planning.md
-    
-    sed -i 's/\[List important but not critical features\]/- Performance optimization and caching strategies\n- Advanced logging and monitoring capabilities\n- Integration with external services and APIs\n- User interface enhancements and UX improvements/g' docs/phases/phase-1-planning.md
-    
-    sed -i 's/\[List nice-to-have features\]/- Advanced analytics and reporting features\n- Mobile application support\n- Multi-language internationalization\n- Advanced admin dashboard capabilities/g' docs/phases/phase-1-planning.md
-    
-    sed -i 's/\[Response time, throughput, scalability needs\]/- API response time: <200ms for 95% of requests\n- Database query performance: <100ms average\n- Concurrent user support: 10,000+ simultaneous users\n- Horizontal scaling capability for load distribution/g' docs/phases/phase-1-planning.md
-    
-    sed -i 's/\[Authentication, authorization, data protection needs\]/- Secure authentication with JWT tokens and password hashing\n- Role-based access control (RBAC) with granular permissions\n- Data encryption at rest and in transit\n- Input validation and XSS/CSRF protection/g' docs/phases/phase-1-planning.md
-    
-    sed -i 's/\[Required integrations with existing systems\]/- Database integration with proper ORM and connection pooling\n- External API integrations with proper error handling\n- Third-party service integrations as business requirements dictate\n- CI\/CD pipeline integration for automated deployment/g' docs/phases/phase-1-planning.md
-    
-    sed -i 's/\[Required or preferred technologies\]/- Modern technology stack optimized for development velocity\n- Proven frameworks with strong community support\n- Security-first technology choices with regular updates\n- Technologies supporting comprehensive testing frameworks/g' docs/phases/phase-1-planning.md
-    
-    sed -i 's/\[Fixed deadlines, dependency constraints\]/- Iterative development with rapid sprint cycles\n- Continuous delivery with quality gate enforcement\n- Flexible timeline based on business value delivery\n- Dependencies managed through architectural planning/g' docs/phases/phase-1-planning.md
+    # Replace the template with populated version
+    mv docs/phases/phase-1-planning-populated.md docs/phases/phase-1-planning.md
     
     echo "✅ Business requirements template auto-populated"
     echo "🤖 Template marked as 'Manifested by SKYNET'"

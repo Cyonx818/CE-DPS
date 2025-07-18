@@ -49,11 +49,16 @@ fi
 
 # Validate we're on the implementation branch
 !CURRENT_BRANCH=$(git branch --show-current)
-!if [[ "$CURRENT_BRANCH" != *"sprint-001-implementation"* ]]; then
-    echo "❌ Error: Not on implementation branch. Current branch: $CURRENT_BRANCH"
-    echo "💡 Switch to sprint-001-implementation branch for validation."
-    exit 1
-fi
+!case "$CURRENT_BRANCH" in
+    *sprint-001-implementation*)
+        # Branch is correct, continue
+        ;;
+    *)
+        echo "❌ Error: Not on implementation branch. Current branch: $CURRENT_BRANCH"
+        echo "💡 Switch to sprint-001-implementation branch for validation."
+        exit 1
+        ;;
+esac
 
 # Check for implementation completion indicators
 !if ! grep -q "Implementation Results" docs/phases/phase-3-implementation.md; then
@@ -72,7 +77,7 @@ fi
 done
 
 # Check for human validation decisions (bypass in SKYNET mode)
-!if [[ "$SKYNET" != "true" ]]; then
+!if [ "$SKYNET" != "true" ]; then
     if ! grep -q "✅ Approved" docs/phases/phase-3-implementation.md; then
         echo "❌ Error: No human validations found in Phase 3 implementation."
         echo "💡 Review and validate implemented features before proceeding."
@@ -98,7 +103,11 @@ fi
 fi
 
 # Run comprehensive quality gates
-!if command -v cargo >/dev/null 2>&1 && [ -f "tools/quality-gates/Cargo.toml" ]; then
+!CARGO_AVAILABLE=""
+!if command -v cargo >/dev/null 2>&1; then
+    CARGO_AVAILABLE="true"
+fi
+!if [ "$CARGO_AVAILABLE" = "true" ] && [ -f "tools/quality-gates/Cargo.toml" ]; then
     echo "🔧 Running comprehensive quality gates validation..."
     if ! cargo run --bin quality-gates -- --comprehensive-validation 2>/dev/null; then
         echo "❌ Error: Quality gates validation failed."
@@ -108,7 +117,7 @@ fi
 fi
 
 # Validate test coverage meets requirements
-!if command -v cargo >/dev/null 2>&1; then
+!if [ "$CARGO_AVAILABLE" = "true" ]; then
     echo "🧪 Validating test coverage..."
     if ! cargo test --quiet 2>/dev/null; then
         echo "❌ Error: Tests are failing."
@@ -117,13 +126,17 @@ fi
     fi
     
     # Check coverage if tarpaulin is available
+    TARPAULIN_AVAILABLE=""
     if command -v cargo-tarpaulin >/dev/null 2>&1; then
+        TARPAULIN_AVAILABLE="true"
+    fi
+    if [ "$TARPAULIN_AVAILABLE" = "true" ]; then
         COVERAGE=$(cargo tarpaulin --quiet --output-dir target/tarpaulin 2>/dev/null | grep -o '[0-9]*\.[0-9]*%' | head -1)
         if [ -n "$COVERAGE" ]; then
             echo "📊 Test coverage: $COVERAGE"
-            # Extract numeric value and check if >= 95%
-            COVERAGE_NUM=$(echo "$COVERAGE" | sed 's/%//')
-            if (( $(echo "$COVERAGE_NUM < 95" | bc -l) )); then
+            # Extract numeric value and check if >= 95% using shell arithmetic
+            COVERAGE_NUM=$(echo "$COVERAGE" | sed 's/%//' | cut -d'.' -f1)
+            if [ "$COVERAGE_NUM" -lt 95 ]; then
                 echo "❌ Error: Test coverage ($COVERAGE) below 95% requirement."
                 echo "💡 Add more comprehensive tests to meet coverage requirement."
                 exit 1
@@ -133,7 +146,11 @@ fi
 fi
 
 # Run phase validator tool if available
-!if command -v python3 >/dev/null 2>&1 && [ -f "tools/phase-validator.py" ]; then
+!PYTHON3_AVAILABLE=""
+!if command -v python3 >/dev/null 2>&1; then
+    PYTHON3_AVAILABLE="true"
+fi
+!if [ "$PYTHON3_AVAILABLE" = "true" ] && [ -f "tools/phase-validator.py" ]; then
     echo "🔧 Running phase validation tool..."
     if ! python3 tools/phase-validator.py --phase 3 --file docs/phases/phase-3-implementation.md; then
         echo "❌ Error: Phase validation tool failed."
@@ -143,12 +160,18 @@ fi
 fi
 
 # Update project state
+!JQ_AVAILABLE=""
 !if command -v jq >/dev/null 2>&1; then
-    jq '.phases_completed += [3] | .phase_3_completed = now | .ready_for_production = true' docs/ce-dps-state.json > docs/ce-dps-state.tmp && mv docs/ce-dps-state.tmp docs/ce-dps-state.json
+    JQ_AVAILABLE="true"
+fi
+!if [ "$JQ_AVAILABLE" = "true" ]; then
+    jq '.phases_completed += [3] | .phase_3_completed = now | .ready_for_production = true' docs/ce-dps-state.json > docs/ce-dps-state.tmp
+    mv docs/ce-dps-state.tmp docs/ce-dps-state.json
     
     # Update implementation tracking if file exists
     if [ -f "docs/sprints/sprint-001/implementation/implementation-status.json" ]; then
-        jq '.status = "completed" | .implementation_completed = now | .quality_gates_passed = true | .human_validation_complete = true' docs/sprints/sprint-001/implementation/implementation-status.json > docs/sprints/sprint-001/implementation/implementation-status.tmp && mv docs/sprints/sprint-001/implementation/implementation-status.tmp docs/sprints/sprint-001/implementation/implementation-status.json
+        jq '.status = "completed" | .implementation_completed = now | .quality_gates_passed = true | .human_validation_complete = true' docs/sprints/sprint-001/implementation/implementation-status.json > docs/sprints/sprint-001/implementation/implementation-status.tmp
+        mv docs/sprints/sprint-001/implementation/implementation-status.tmp docs/sprints/sprint-001/implementation/implementation-status.json
     fi
 else
     echo "⚠️ Warning: jq not found. State update skipped."
@@ -156,7 +179,7 @@ else
 fi
 
 # Generate comprehensive quality report
-!if command -v cargo >/dev/null 2>&1; then
+!if [ "$CARGO_AVAILABLE" = "true" ]; then
     echo "📊 Generating quality report..."
     cargo run --bin quality-gates -- --generate-report --output docs/quality-reports/sprint-001/final-quality-report.json 2>/dev/null || echo "⚠️  Quality report generation skipped"
 fi
@@ -302,7 +325,7 @@ EOF
 !echo "🎯 Sprint 1 implementation successful - Ready for production!"
 
 # SKYNET mode: Auto-run quality check and continuous loop
-!if [[ "$SKYNET" == "true" ]]; then
+!if [ "$SKYNET" = "true" ]; then
     echo ""
     echo "🤖 SKYNET mode: Initiating automated quality check and continuous development loop"
     echo "⚡ Running comprehensive quality validation..."
@@ -336,7 +359,7 @@ fi
 </constraints>
 
 ## <human-action-required>
-!if [[ "$SKYNET" == "true" ]]; then
+!if [ "$SKYNET" = "true" ]; then
     echo "🤖 **SKYNET MODE**: Phase 3 validation complete - continuing autonomously"
     echo "⚡ Quality check will run automatically"
     echo "⚡ If quality gates pass, system will loop to next sprint"

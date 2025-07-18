@@ -65,8 +65,9 @@ fi
 done
 
 # Check for human approval decisions (bypass in SKYNET mode)
-!if [[ "$SKYNET" != "true" ]]; then
-    if ! grep -q "✅ Approved" docs/phases/phase-1-planning.md; then
+!if [ "$SKYNET" != "true" ]; then
+    APPROVALS_FOUND=$(grep -q "✅ Approved" docs/phases/phase-1-planning.md && echo "true" || echo "false")
+    if [ "$APPROVALS_FOUND" = "false" ]; then
         echo "❌ Error: No human approvals found in Phase 1 planning."
         echo "💡 Review and approve architectural decisions before proceeding."
         echo "📋 Required approvals: Architecture, Feature Roadmap, Risk Assessment"
@@ -75,20 +76,40 @@ done
 else
     echo "🤖 SKYNET mode: Auto-approving architectural decisions"
     # Auto-inject approval markers if not present
-    if ! grep -q "✅ Approved" docs/phases/phase-1-planning.md; then
-        sed -i '/Architecture Approval/a ✅ Approved - SKYNET: Architecture follows security-first design patterns and scalability requirements' docs/phases/phase-1-planning.md
-        sed -i '/Feature Roadmap Approval/a ✅ Approved - SKYNET: Feature roadmap aligns with business value delivery and technical constraints' docs/phases/phase-1-planning.md
-        sed -i '/Risk Acceptance/a ✅ Approved - SKYNET: Risk mitigation strategies are comprehensive and actionable' docs/phases/phase-1-planning.md
-        sed -i '/Final Approval/a ✅ Approved - SKYNET: Strategic planning complete, ready for sprint planning phase' docs/phases/phase-1-planning.md
+    APPROVALS_FOUND=$(grep -q "✅ Approved" docs/phases/phase-1-planning.md && echo "true" || echo "false")
+    if [ "$APPROVALS_FOUND" = "false" ]; then
+        cat > /tmp/approval_markers << 'APPROVAL_EOF'
+✅ Approved - SKYNET: Architecture follows security-first design patterns and scalability requirements
+APPROVAL_EOF
+        sed -i '/Architecture Approval/r /tmp/approval_markers' docs/phases/phase-1-planning.md
+        
+        cat > /tmp/approval_markers << 'APPROVAL_EOF'
+✅ Approved - SKYNET: Feature roadmap aligns with business value delivery and technical constraints
+APPROVAL_EOF
+        sed -i '/Feature Roadmap Approval/r /tmp/approval_markers' docs/phases/phase-1-planning.md
+        
+        cat > /tmp/approval_markers << 'APPROVAL_EOF'
+✅ Approved - SKYNET: Risk mitigation strategies are comprehensive and actionable
+APPROVAL_EOF
+        sed -i '/Risk Acceptance/r /tmp/approval_markers' docs/phases/phase-1-planning.md
+        
+        cat > /tmp/approval_markers << 'APPROVAL_EOF'
+✅ Approved - SKYNET: Strategic planning complete, ready for sprint planning phase
+APPROVAL_EOF
+        sed -i '/Final Approval/r /tmp/approval_markers' docs/phases/phase-1-planning.md
+        
+        rm -f /tmp/approval_markers
         echo "⚡ Auto-approval markers injected"
     fi
 fi
 
 # Run phase validator tool if available
-!if command -v python3 >/dev/null 2>&1 && [ -f "tools/phase-validator.py" ]; then
+!PYTHON_AVAILABLE=$(command -v python3 >/dev/null 2>&1 && echo "true" || echo "false")
+!if [ "$PYTHON_AVAILABLE" = "true" ] && [ -f "tools/phase-validator.py" ]; then
     echo "🔧 Running phase validation tool..."
     python3 tools/phase-validator.py --phase 1 --file docs/phases/phase-1-planning.md
-    if [ $? -ne 0 ]; then
+    VALIDATION_SUCCESS=$?
+    if [ $VALIDATION_SUCCESS -ne 0 ]; then
         echo "❌ Error: Phase validation tool failed."
         echo "💡 Address validation issues before proceeding."
         exit 1
@@ -96,8 +117,10 @@ fi
 fi
 
 # Update project state
-!if command -v jq >/dev/null 2>&1; then
-    jq '.phases_completed += [1] | .phase_1_completed = now | .ready_for_phase_2 = true' docs/ce-dps-state.json > docs/ce-dps-state.tmp && mv docs/ce-dps-state.tmp docs/ce-dps-state.json
+!JQ_AVAILABLE=$(command -v jq >/dev/null 2>&1 && echo "true" || echo "false")
+!if [ "$JQ_AVAILABLE" = "true" ]; then
+    jq '.phases_completed += [1] | .phase_1_completed = now | .ready_for_phase_2 = true' docs/ce-dps-state.json > docs/ce-dps-state.tmp
+    mv docs/ce-dps-state.tmp docs/ce-dps-state.json
 else
     echo "⚠️ Warning: jq not found. State update skipped."
     echo "💡 Install jq for automatic state management or update docs/ce-dps-state.json manually"
@@ -155,7 +178,7 @@ EOF
 !echo "🎯 Ready for Phase 2: Sprint Planning"
 
 # Auto-transition to Phase 2 in SKYNET mode
-!if [[ "$SKYNET" == "true" ]]; then
+!if [ "$SKYNET" = "true" ]; then
     echo ""
     echo "🤖 SKYNET mode: Auto-transitioning to Phase 2 sprint planning"
     echo "⚡ Strategic planning complete - proceeding to feature selection"
@@ -175,7 +198,7 @@ fi
 </constraints>
 
 ## <human-action-required>
-!if [[ "$SKYNET" == "true" ]]; then
+!if [ "$SKYNET" = "true" ]; then
     echo "🤖 **SKYNET MODE**: Phase 1 validation complete - transitioning autonomously"
     echo "⚡ Strategic planning approved automatically"
     echo "⚡ Auto-proceeding to Phase 2 sprint planning"
