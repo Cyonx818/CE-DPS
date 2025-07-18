@@ -890,17 +890,25 @@ impl App {
                                 pipeline_builder.with_research_engine(Arc::new(engine));
                         }
                         Err(e) => {
-                            warn!("Failed to initialize Claude research engine: {}. Using fallback mode.", e);
+                            warn!("Failed to initialize Claude research engine: {}. Using Claude Code fallback.", e);
+                            let claude_code_engine = fortitude_core::ClaudeCodeResearchEngine::new_default();
+                            pipeline_builder = pipeline_builder.with_research_engine(Arc::new(claude_code_engine));
                         }
                     }
                 }
                 Err(e) => {
-                    warn!("Invalid Claude configuration: {}. Using fallback mode.", e);
+                    warn!("Invalid Claude configuration: {}. Using Claude Code fallback.", e);
+                    let claude_code_engine = fortitude_core::ClaudeCodeResearchEngine::new_default();
+                    pipeline_builder = pipeline_builder.with_research_engine(Arc::new(claude_code_engine));
                 }
             }
         } else {
-            info!("Claude API not configured. Research will use placeholder responses.");
-            info!("To enable full research capabilities, set CLAUDE_API_KEY environment variable or configure via 'fortitude config'");
+            info!("Claude API not configured. Using Claude Code provider as fallback.");
+            info!("Claude Code provider will use WebSearch tool for comprehensive research capabilities.");
+            
+            // Create Claude Code research engine as fallback
+            let claude_code_engine = fortitude_core::ClaudeCodeResearchEngine::new_default();
+            pipeline_builder = pipeline_builder.with_research_engine(Arc::new(claude_code_engine));
         }
 
         let pipeline = pipeline_builder.build(Arc::new(classifier), Arc::new(storage));
