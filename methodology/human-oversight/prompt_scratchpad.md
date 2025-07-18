@@ -829,8 +829,6 @@ Compare the phase 1 slash commands in `/home/cyonx/Documents/GitHub/CE-DPS/.clau
 
 -------------------------------------------------------------------------------
 
-
-
 **Required reading:**
 - `/home/cyonx/Documents/GitHub/CE-DPS/README.md` to understand the CE-DPS project and how humans expect to interact with it.
 - `/home/cyonx/Documents/GitHub/CE-DPS/methodology/ai-implementation/quality-framework.md` to understand the quality framework we work in.
@@ -1001,7 +999,111 @@ After implementation, SKYNET mode will be resilient to auto-compact:
 The autonomous loop will become truly continuous, surviving Claude Code auto-compact events without breaking the development cycle.
 
 -------------------------------------------------------------------------------
+
+We are going to try out CE-DPS's SKYNET autonomous mode with an actual project, improving fortitude.
+
+**Required reading:**
+- `/home/cyonx/Documents/GitHub/CE-DPS/README.md` to understand the CE-DPS project and how humans expect to interact with it.
+- `/home/cyonx/Documents/GitHub/CE-DPS/methodology/ai-implementation/quality-framework.md` to understand the quality framework we work in.
+
 -------------------------------------------------------------------------------
+
+# CE-DPS Competitive Analysis Research Prompt
+
+## Research Objective
+I am attaching a markdown file describing a design methodology called CE-DPS (Context Enhanced Development Process Suite). After reading and analyzing the feature set of this AI-assisted design methodology, I need comprehensive research to determine the competitive landscape and unique value proposition.
+
+## Primary Research Questions
+1. **Existing Competitors**: Are there other tools, methodologies, or platforms that perform similar functions to CE-DPS?
+2. **Unique Differentiators**: What specific capabilities does CE-DPS offer that are not available in existing solutions?
+3. **Market Gap Analysis**: What unmet needs in AI-assisted design does CE-DPS address?
+
+## Research Scope & Sources
+Please search across multiple domains and timeframes:
+
+### **Academic & Research Sources**
+- Recent academic papers (2022-2025) on AI-assisted design methodologies
+- Conference proceedings from CHI, UIST, DIS, and design-related venues
+- Research labs and university projects in HCI and design automation
+
+### **Industry & Commercial Solutions**
+- Existing design tools with AI assistance (Figma, Adobe Creative Suite, Canva, etc.)
+- Emerging AI design platforms and startups
+- Design methodology frameworks and tools from major tech companies
+- Patent filings related to AI-assisted design and prototype generation
+
+### **Developer & Open Source Community**
+- GitHub repositories for design automation tools
+- Open source projects in generative design
+- Developer tool ecosystems and frameworks
+
+### **Market Intelligence**
+- Product announcements and press releases (last 18 months)
+- Venture capital investments in design technology
+- Technology blogs and industry publications covering design tools
+
+## Specific Analysis Framework
+For each potential competitor or similar tool identified:
+
+### **Feature Comparison Matrix**
+- Core functionality overlap with CE-DPS
+- Implementation approach differences
+- Target user personas and use cases
+- Integration capabilities and ecosystem
+
+### **Technical Differentiation**
+- Underlying AI/ML approaches used
+- Context awareness and dynamic adaptation capabilities
+- Prototype synthesis methodologies
+- Performance and scalability characteristics
+
+### **Market Positioning**
+- Current availability (research, beta, production)
+- Pricing models and accessibility
+- User adoption and community engagement
+- Strategic partnerships and integrations
+
+## Output Requirements
+Please structure your findings as follows:
+
+1. **Executive Summary** (2-3 paragraphs)
+   - High-level competitive landscape overview
+   - Key finding on CE-DPS uniqueness and differentiation
+
+2. **Direct Competitors** 
+   - Tools with substantial feature overlap
+   - Detailed comparison of capabilities and approaches
+
+3. **Adjacent Solutions**
+   - Tools that address parts of CE-DPS functionality
+   - Potential competitive threats or partnership opportunities
+
+4. **Unique Value Proposition Analysis**
+   - Features/capabilities exclusive to CE-DPS
+   - Underserved market segments CE-DPS could target
+
+5. **Market Opportunity Assessment**
+   - Gaps in current solutions that CE-DPS fills
+   - Potential barriers to entry or competitive risks
+
+6. **Source Documentation**
+   - Comprehensive list of all sources consulted
+   - Links to key competitive tools and resources for further investigation
+
+## Research Depth Instructions
+- Prioritize recent developments (2023-2025) but include foundational work where relevant
+- Look for both direct feature comparisons and conceptual/methodological similarities
+- Pay special attention to emerging startups and research projects that may not be widely known
+- Consider international sources and non-English tools/research where applicable
+- Flag any proprietary or enterprise solutions that may not be publicly documented
+
+## Success Criteria
+The research will be considered comprehensive when it can definitively answer:
+- Whether CE-DPS is genuinely novel or builds incrementally on existing approaches
+- What competitive advantages CE-DPS has in the current market
+- Where CE-DPS fits in the broader ecosystem of AI-assisted design tools
+- What strategic considerations are needed for positioning and go-to-market
+
 -------------------------------------------------------------------------------
 -------------------------------------------------------------------------------
 -------------------------------------------------------------------------------
