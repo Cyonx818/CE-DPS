@@ -8,7 +8,6 @@ use crate::multi_provider_research_engine::{
 use crate::prompts::{DefaultTemplateFactory, ParameterValue, TemplateRegistry};
 use fortitude_types::{ClassifiedRequest, ResearchType};
 
-use async_trait::async_trait;
 use serde::{Deserialize, Serialize};
 use std::collections::HashMap;
 use std::sync::Arc;
@@ -408,87 +407,88 @@ impl ProviderManagerTrait for ClaudeCodeProvider {
         request: &ClassifiedRequest,
     ) -> impl std::future::Future<Output = Result<String, Box<dyn std::error::Error + Send + Sync>>> + Send {
         async move {
-        let start_time = Instant::now();
-        
-        info!(
-            "Claude Code provider executing research for query: '{}'",
-            request.original_query
-        );
+            let start_time = Instant::now();
+            
+            info!(
+                "Claude Code provider executing research for query: '{}'",
+                request.original_query
+            );
 
-        // Update health status to indicate we're processing
-        {
-            let mut health = self.health_status.write().await;
-            *health = ProviderHealthStatus::Healthy;
-        }
-
-        // Build the research prompt
-        let prompt = self.build_claude_code_prompt(request).await?;
-        
-        debug!("Built Claude Code research prompt: {}", prompt);
-
-        // Execute the research
-        let result = self.execute_claude_code_research(prompt).await;
-        
-        let processing_time = start_time.elapsed();
-        
-        // Check for timeout
-        if processing_time > self.config.max_processing_time {
-            error!("Claude Code research timed out after {:?}", processing_time);
-            self.update_stats(false, processing_time, 0.0).await;
-            return Err("Research request timed out".into());
-        }
-
-        match result {
-            Ok(response) => {
-                info!(
-                    "Claude Code research completed in {:?} for query: '{}'",
-                    processing_time, request.original_query
-                );
-                
-                // Estimate quality based on response length and structure
-                let quality = if response.contains("## Answer") && response.contains("## Evidence") {
-                    0.85 // Good structured response
-                } else {
-                    0.65 // Basic response
-                };
-                
-                self.update_stats(true, processing_time, quality).await;
-                Ok(response)
+            // Update health status to indicate we're processing
+            {
+                let mut health = self.health_status.write().await;
+                *health = ProviderHealthStatus::Healthy;
             }
-            Err(e) => {
-                error!(
-                    "Claude Code research failed for query '{}': {}",
-                    request.original_query, e
-                );
-                
+
+            // Build the research prompt
+            let prompt = self.build_claude_code_prompt(request).await?;
+            
+            debug!("Built Claude Code research prompt: {}", prompt);
+
+            // Execute the research
+            let result = self.execute_claude_code_research(prompt).await;
+            
+            let processing_time = start_time.elapsed();
+            
+            // Check for timeout
+            if processing_time > self.config.max_processing_time {
+                error!("Claude Code research timed out after {:?}", processing_time);
                 self.update_stats(false, processing_time, 0.0).await;
-                
-                // Update health status
-                {
-                    let mut health = self.health_status.write().await;
-                    *health = ProviderHealthStatus::Degraded(e.to_string());
+                return Err("Research request timed out".into());
+            }
+
+            match result {
+                Ok(response) => {
+                    info!(
+                        "Claude Code research completed in {:?} for query: '{}'",
+                        processing_time, request.original_query
+                    );
+                    
+                    // Estimate quality based on response length and structure
+                    let quality = if response.contains("## Answer") && response.contains("## Evidence") {
+                        0.85 // Good structured response
+                    } else {
+                        0.65 // Basic response
+                    };
+                    
+                    self.update_stats(true, processing_time, quality).await;
+                    Ok(response)
                 }
-                
-                Err(e)
+                Err(e) => {
+                    error!(
+                        "Claude Code research failed for query '{}': {}",
+                        request.original_query, e
+                    );
+                    
+                    self.update_stats(false, processing_time, 0.0).await;
+                    
+                    // Update health status
+                    {
+                        let mut health = self.health_status.write().await;
+                        *health = ProviderHealthStatus::Degraded(e.to_string());
+                    }
+                    
+                    Err(e)
+                }
             }
         }
     }
 
     fn get_performance_stats(&self) -> impl std::future::Future<Output = HashMap<String, ProviderPerformanceStats>> + Send {
         async move {
-        let stats = self.get_current_stats().await;
-        let mut result = HashMap::new();
-        result.insert(self.config.provider_name.clone(), stats);
-        result
+            let stats = self.get_current_stats().await;
+            let mut result = HashMap::new();
+            result.insert(self.config.provider_name.clone(), stats);
+            result
         }
     }
 
     fn health_check_all(&self) -> impl std::future::Future<Output = Result<HashMap<String, ProviderHealthStatus>, Box<dyn std::error::Error + Send + Sync>>> + Send {
         async move {
-        let health = self.check_health().await;
-        let mut result = HashMap::new();
-        result.insert(self.config.provider_name.clone(), health);
-        Ok(result)
+            let health = self.check_health().await;
+            let mut result = HashMap::new();
+            result.insert(self.config.provider_name.clone(), health);
+            Ok(result)
         }
     }
 }
