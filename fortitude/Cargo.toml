@@ -159,6 +159,10 @@ axum = { workspace = true }
 tower = { workspace = true }
 hyper = { workspace = true }
 
+[[bin]]
+name = "simple_claude_code_test"
+path = "simple_claude_code_test.rs"
+
 [[bench]]
 name = "performance_validation"
 harness = false

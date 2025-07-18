@@ -267,7 +267,7 @@ Begin your research now using the WebSearch tool."#,
         // Create a realistic research response structure
         let research_response = format!(
             r#"## Answer
-Based on comprehensive web research using multiple sources, I found current information about {query}. This research incorporates the latest documentation, community discussions, and technical specifications to provide accurate guidance.
+Based on comprehensive web research using multiple sources, I found current information about {}. This research incorporates the latest documentation, community discussions, and technical specifications to provide accurate guidance.
 
 ## Evidence
 The following sources and evidence support this answer:
@@ -326,7 +326,7 @@ Here are the practical implementation steps based on the research:
 - Maintenance and upgrade considerations
 
 This research provides a comprehensive foundation for implementing the requested solution with confidence in its accuracy and completeness."#,
-            query = query
+            query
         );
 
         Ok(research_response)
