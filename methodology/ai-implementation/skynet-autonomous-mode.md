@@ -283,6 +283,56 @@ Phase1 (one-time) → Phase2 → Phase3 → Quality Check → Phase2 (next sprin
 </failure-scenarios>
 ```
 
+### <method>Critical Failure Escalation</method>
+
+**Critical Failures Requiring Immediate Human Intervention**:
+```xml
+<critical-failures>
+  <security-breach priority="critical">
+    <description>Critical security vulnerabilities detected in codebase</description>
+    <detection>Security scans report critical CVEs or injection vulnerabilities</detection>
+    <action>IMMEDIATE LOOP TERMINATION - Disable SKYNET, alert human, quarantine code</action>
+  </security-breach>
+  
+  <data-integrity priority="critical">
+    <description>Database corruption or data loss events detected</description>
+    <detection>Data validation failures, backup corruption, or storage errors</detection>
+    <action>IMMEDIATE LOOP TERMINATION - Disable SKYNET, preserve data state, escalate</action>
+  </data-integrity>
+  
+  <cascade-failures priority="critical">
+    <description>Three or more consecutive quality gate failures</description>
+    <detection>Repeated test failures, build breakage, or performance degradation</detection>
+    <action>IMMEDIATE LOOP TERMINATION - Disable SKYNET, require human analysis</action>
+  </cascade-failures>
+  
+  <system-critical priority="critical">
+    <description>Resource exhaustion or system instability</description>
+    <detection>Disk space <1GB, memory exhaustion, or system crashes</detection>
+    <action>IMMEDIATE LOOP TERMINATION - Disable SKYNET, preserve system state</action>
+  </system-critical>
+  
+  <fortitude-failure priority="critical">
+    <description>Inability to contact or utilize the Fortitude knowledge management system</description>
+    <detection>Fortitude API failures, connection timeouts, or research pipeline errors</detection>
+    <action>IMMEDIATE LOOP TERMINATION - Disable SKYNET, CE-DPS methodology compromised</action>
+  </fortitude-failure>
+  
+  <git-corruption priority="critical">
+    <description>Git repository corruption or version control failures</description>
+    <detection>Git command failures, missing commits, or repository integrity issues</detection>
+    <action>IMMEDIATE LOOP TERMINATION - Disable SKYNET, preserve code history</action>
+  </git-corruption>
+</critical-failures>
+```
+
+**Critical Failure Response Protocol**:
+1. **Immediate Action**: Set `SKYNET=false`, update state file with failure reason
+2. **Loop Termination**: Stop all autonomous command execution immediately  
+3. **State Preservation**: Save current work and error context for human review
+4. **Human Notification**: Log critical failure with timestamp and remediation requirements
+5. **Recovery Block**: Prevent loop resumption until human explicitly resolves issue
+
 ### <constraints priority="high">Error Response Requirements</constraints>
 
 **Error Handling Standards**:
