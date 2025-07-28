@@ -77,7 +77,7 @@ impl ClaudeCodeResearchEngine {
         request: &ClassifiedRequest,
     ) -> Result<ResearchResult, ResearchEngineError> {
         let start_time = Instant::now();
-        
+
         info!(
             "Claude Code research engine processing query: '{}'",
             request.original_query
@@ -86,11 +86,14 @@ impl ClaudeCodeResearchEngine {
         // Create comprehensive structured research response
         // This demonstrates the format and quality that Claude Code would provide
         let research_response = self.create_comprehensive_research_response(request).await?;
-        
+
         let processing_time = start_time.elapsed();
-        
+
         if processing_time.as_millis() > self.config.max_processing_time_ms as u128 {
-            warn!("Claude Code research took longer than expected: {:?}", processing_time);
+            warn!(
+                "Claude Code research took longer than expected: {:?}",
+                processing_time
+            );
         }
 
         debug!(
@@ -125,11 +128,7 @@ The research combines semantic understanding with up-to-date web sources to prov
 - Real-world implementation examples with performance considerations
 - Security patterns and vulnerability prevention measures
 - Integration approaches with existing {technology} ecosystems
-- Performance optimization techniques and benchmarks"#,
-            query = query,
-            research_type = research_type,
-            level = level,
-            technology = technology
+- Performance optimization techniques and benchmarks"#
         );
 
         // Generate comprehensive supporting evidence
@@ -298,15 +297,18 @@ The research combines semantic understanding with up-to-date web sources to prov
                 "industry-standards".to_string(),
             ],
             quality_score: 0.92, // High quality due to comprehensive web research
-            cache_key: format!("claude-code-{}", 
-                md5::compute(format!("{}-{:?}-{}", query, research_type, technology)).0.iter()
-                    .map(|b| format!("{:02x}", b))
+            cache_key: format!(
+                "claude-code-{}",
+                md5::compute(format!("{query}-{research_type:?}-{technology}"))
+                    .0
+                    .iter()
+                    .map(|b| format!("{b:02x}"))
                     .collect::<String>()
             ),
             tags: {
                 let mut tags = HashMap::new();
                 tags.insert("provider".to_string(), "claude-code".to_string());
-                tags.insert("research_type".to_string(), format!("{:?}", research_type));
+                tags.insert("research_type".to_string(), format!("{research_type:?}"));
                 tags.insert("technology".to_string(), technology.clone());
                 tags.insert("audience_level".to_string(), level.clone());
                 tags.insert("has_web_search".to_string(), "true".to_string());
@@ -397,7 +399,11 @@ mod tests {
                 tags: vec!["authentication".to_string(), "security".to_string()],
             },
             0.9,
-            vec!["authentication".to_string(), "rust".to_string(), "web".to_string()],
+            vec![
+                "authentication".to_string(),
+                "rust".to_string(),
+                "web".to_string(),
+            ],
         )
     }
 
@@ -412,18 +418,21 @@ mod tests {
     async fn test_generate_research() {
         let engine = ClaudeCodeResearchEngine::new_default();
         let request = create_test_request();
-        
+
         let result = engine.generate_research(&request).await.unwrap();
-        
+
         // Verify comprehensive response structure
         assert!(result.immediate_answer.contains("## Answer"));
         assert!(result.immediate_answer.contains("## Key Findings"));
         assert!(!result.supporting_evidence.is_empty());
         assert!(!result.implementation_details.is_empty());
-        
+
         // Verify quality metrics
         assert!(result.metadata.quality_score > 0.9);
-        assert!(result.metadata.sources_consulted.contains(&"claude-code-websearch".to_string()));
+        assert!(result
+            .metadata
+            .sources_consulted
+            .contains(&"claude-code-websearch".to_string()));
         assert!(result.metadata.tags.contains_key("provider"));
         assert_eq!(result.metadata.tags.get("provider").unwrap(), "claude-code");
     }
@@ -431,7 +440,7 @@ mod tests {
     #[tokio::test]
     async fn test_different_research_types() {
         let engine = ClaudeCodeResearchEngine::new_default();
-        
+
         let research_types = vec![
             ResearchType::Decision,
             ResearchType::Learning,
@@ -442,9 +451,9 @@ mod tests {
         for research_type in research_types {
             let mut request = create_test_request();
             request.research_type = research_type.clone();
-            
+
             let result = engine.generate_research(&request).await.unwrap();
-            
+
             assert!(result.immediate_answer.len() > 500);
             assert!(!result.supporting_evidence.is_empty());
             assert!(!result.implementation_details.is_empty());
@@ -460,11 +469,16 @@ mod tests {
     async fn test_contextual_research() {
         let engine = ClaudeCodeResearchEngine::new_default();
         let request = create_test_request();
-        
-        let result = engine.generate_research_with_context(&request).await.unwrap();
-        
+
+        let result = engine
+            .generate_research_with_context(&request)
+            .await
+            .unwrap();
+
         // Should provide same comprehensive research as regular method
-        assert!(result.immediate_answer.contains("comprehensive web research"));
+        assert!(result
+            .immediate_answer
+            .contains("comprehensive web research"));
         assert!(!result.supporting_evidence.is_empty());
         assert!(!result.implementation_details.is_empty());
     }

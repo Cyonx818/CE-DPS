@@ -22,8 +22,8 @@
 
 use criterion::{black_box, criterion_group, criterion_main, BenchmarkId, Criterion};
 use fortitude::quality::{
-    OptimizationConfig, ProviderSelectionStrategy, QualityOptimizationEngine, QualityScore,
-    QualityWeights, SelectionCriteria, UrgencyLevel,
+    OptimizationConfig, ProviderSelectionStrategy, QualityScore,
+    QualityWeights, SelectionCriteria,
 };
 use std::time::{Duration, Instant};
 use tokio::runtime::Runtime;
@@ -67,8 +67,7 @@ fn benchmark_provider_selection_latency(c: &mut Criterion) {
                     // Assert performance requirement
                     assert!(
                         selection_time < Duration::from_millis(100),
-                        "Provider selection took {:?}, exceeds 100ms requirement",
-                        selection_time
+                        "Provider selection took {selection_time:?}, exceeds 100ms requirement"
                     );
 
                     black_box(selection_time)
@@ -125,8 +124,7 @@ fn benchmark_learning_adaptation(c: &mut Criterion) {
                     // Assert performance requirement
                     assert!(
                         adaptation_time < Duration::from_secs(5),
-                        "Learning adaptation took {:?}, exceeds 5 second requirement",
-                        adaptation_time
+                        "Learning adaptation took {adaptation_time:?}, exceeds 5 second requirement"
                     );
 
                     black_box(adaptation_time)
@@ -187,15 +185,15 @@ fn benchmark_accuracy_achievement(c: &mut Criterion) {
                     match strategy {
                         ProviderSelectionStrategy::QualityOptimized => {
                             assert!(accuracy_confidence >= 0.95,
-                                "Quality-optimized strategy achieved {:.3} accuracy, below 95% target", accuracy_confidence);
+                                "Quality-optimized strategy achieved {accuracy_confidence:.3} accuracy, below 95% target");
                         },
                         ProviderSelectionStrategy::Balanced => {
                             assert!(accuracy_confidence >= 0.85,
-                                "Balanced strategy achieved {:.3} accuracy", accuracy_confidence);
+                                "Balanced strategy achieved {accuracy_confidence:.3} accuracy");
                         },
                         _ => {
                             assert!(accuracy_confidence >= 0.80,
-                                "Context-aware strategy achieved {:.3} accuracy", accuracy_confidence);
+                                "Context-aware strategy achieved {accuracy_confidence:.3} accuracy");
                         }
                     }
 
@@ -230,7 +228,7 @@ fn benchmark_concurrent_optimization(c: &mut Criterion) {
                     let mut tasks = Vec::new();
                     for i in 0..concurrency {
                         let task = tokio::spawn(async move {
-                            let query = format!("Test query {}", i);
+                            let query = format!("Test query {i}");
                             let criteria = SelectionCriteria::research_optimized();
 
                             // Simulate optimization process
@@ -254,8 +252,7 @@ fn benchmark_concurrent_optimization(c: &mut Criterion) {
                     // Validate scalability requirement
                     if concurrency >= 100 {
                         assert!(queries_per_minute >= 1000.0,
-                            "Achieved {:.1} queries/minute with {} concurrent queries, below 1000/minute target",
-                            queries_per_minute, concurrency);
+                            "Achieved {queries_per_minute:.1} queries/minute with {concurrency} concurrent queries, below 1000/minute target");
                     }
 
                     black_box((queries_per_minute, total_time))
@@ -304,8 +301,7 @@ fn benchmark_memory_efficiency(c: &mut Criterion) {
                     // Validate memory efficiency requirement
                     assert!(
                         memory_mb < 50.0,
-                        "Memory usage {:.1}MB per session exceeds 50MB target",
-                        memory_mb
+                        "Memory usage {memory_mb:.1}MB per session exceeds 50MB target"
                     );
 
                     black_box(memory_mb)
@@ -433,7 +429,7 @@ async fn simulate_query_execution(provider: &str) -> String {
 
     tokio::time::sleep(latency).await;
 
-    format!("Simulated response from {}", provider)
+    format!("Simulated response from {provider}")
 }
 
 async fn simulate_quality_evaluation(result: &str, criteria: &SelectionCriteria) -> QualityScore {
@@ -502,7 +498,7 @@ async fn process_optimization_batch(data: &[Vec<u8>]) -> Vec<String> {
     tokio::time::sleep(Duration::from_millis(data.len() as u64)).await;
     data.iter()
         .enumerate()
-        .map(|(i, _)| format!("processed_{}", i))
+        .map(|(i, _)| format!("processed_{i}"))
         .collect()
 }
 

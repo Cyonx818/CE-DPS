@@ -163,6 +163,10 @@ hyper = { workspace = true }
 name = "simple_claude_code_test"
 path = "simple_claude_code_test.rs"
 
+[[bin]]
+name = "stress_test_cache_performance"
+path = "stress_test_cache_performance.rs"
+
 [[bench]]
 name = "performance_validation"
 harness = false

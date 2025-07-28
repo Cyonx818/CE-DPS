@@ -631,7 +631,7 @@ mod tests {
 
         // Perform multiple queries
         for i in 0..5 {
-            let query = format!("Test query {}", i);
+            let query = format!("Test query {i}");
             let _result = quality_provider.research_query(query).await;
         }
 
@@ -647,12 +647,12 @@ mod tests {
 
         // Add multiple providers
         for i in 0..3 {
-            let mock_provider = Arc::new(MockProvider::new(&format!("provider-{}", i)));
+            let mock_provider = Arc::new(MockProvider::new(&format!("provider-{i}")));
             let scorer = ComprehensiveQualityScorer::with_default_config();
             let config = QualityIntegrationConfig::monitoring_only();
             let quality_provider = QualityAwareProvider::new(mock_provider, scorer, config);
 
-            manager.add_provider(format!("provider-{}", i), quality_provider);
+            manager.add_provider(format!("provider-{i}"), quality_provider);
         }
 
         let context = QualityContext::new();

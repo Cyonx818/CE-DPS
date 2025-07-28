@@ -403,7 +403,7 @@ mod tests {
                 });
             }
 
-            Ok(format!("Mock response for query: {}", query))
+            Ok(format!("Mock response for query: {query}"))
         }
 
         fn metadata(&self) -> ProviderMetadata {
@@ -591,7 +591,7 @@ mod tests {
             let provider_clone = Arc::clone(&provider);
             let handle =
                 tokio::spawn(
-                    async move { provider_clone.research_query(format!("Query {}", i)).await },
+                    async move { provider_clone.research_query(format!("Query {i}")).await },
                 );
             handles.push(handle);
         }

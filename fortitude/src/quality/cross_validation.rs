@@ -1688,9 +1688,9 @@ mod tests {
         // Three similar responses (majority)
         for i in 1..=3 {
             responses.insert(
-                format!("provider{}", i),
+                format!("provider{i}"),
                 ProviderResponse {
-                    provider: format!("provider{}", i),
+                    provider: format!("provider{i}"),
                     response: "Python is an interpreted high-level programming language."
                         .to_string(),
                     quality_score: QualityScore::new(),

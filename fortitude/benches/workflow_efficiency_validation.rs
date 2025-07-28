@@ -35,7 +35,7 @@
 //! - Implementation success rates
 //! - Developer satisfaction proxies
 
-use criterion::{black_box, criterion_group, criterion_main, BenchmarkId, Criterion, Throughput};
+use criterion::{black_box, criterion_group, criterion_main, BenchmarkId, Criterion};
 use serde::{Deserialize, Serialize};
 use std::time::{Duration, Instant};
 use tokio::runtime::Runtime;
@@ -214,17 +214,17 @@ impl DevelopmentTask {
     pub fn name(&self) -> String {
         match self {
             DevelopmentTask::FeatureImplementation { complexity, .. } => {
-                format!("feature_impl_{:?}", complexity)
+                format!("feature_impl_{complexity:?}")
             }
             DevelopmentTask::BugFix { complexity, .. } => {
-                format!("bug_fix_{:?}", complexity)
+                format!("bug_fix_{complexity:?}")
             }
             DevelopmentTask::Integration { systems_count, .. } => {
-                format!("integration_{}_systems", systems_count)
+                format!("integration_{systems_count}_systems")
             }
             DevelopmentTask::Optimization { .. } => "optimization".to_string(),
             DevelopmentTask::Refactoring { scope, .. } => {
-                format!("refactoring_{:?}", scope)
+                format!("refactoring_{scope:?}")
             }
         }
     }
@@ -317,7 +317,7 @@ async fn simulate_manual_workflow(task: &DevelopmentTask) -> ManualWorkflowResul
     let base_work_time = Duration::from_secs(3600); // 1 hour base work
 
     // 1. Start with focused development
-    let mut current_time = Instant::now();
+    let current_time = Instant::now();
     let initial_focus_duration =
         Duration::from_millis((300.0 * (1.0 - research_intensity) * 1000.0) as u64);
     tokio::time::sleep(Duration::from_millis(50)).await; // Simulate initial work
@@ -589,9 +589,7 @@ fn bench_cognitive_load_impact(c: &mut Criterion) {
 
                     assert!(
                         load_reduction >= intensity * 0.2,
-                        "Cognitive load reduction {:.3} insufficient for intensity {:.1}",
-                        load_reduction,
-                        intensity
+                        "Cognitive load reduction {load_reduction:.3} insufficient for intensity {intensity:.1}"
                     );
 
                     // Validate that higher research intensity shows greater benefit

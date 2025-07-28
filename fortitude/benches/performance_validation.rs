@@ -31,41 +31,37 @@ fn create_test_project(temp_dir: &TempDir, file_count: usize) -> Vec<PathBuf> {
     let mut files = Vec::new();
 
     for i in 0..file_count {
-        let file_path = temp_dir.path().join(format!("test_file_{}.rs", i));
+        let file_path = temp_dir.path().join(format!("test_file_{i}.rs"));
 
         // Create files with different content patterns for gap detection
         let content = match i % 4 {
             0 => format!(
-                "// TODO: Implement feature {}\n\
-                 pub fn function_{}() {{\n\
+                "// TODO: Implement feature {i}\n\
+                 pub fn function_{i}() {{\n\
                      // Implementation needed\n\
-                 }}",
-                i, i
+                 }}"
             ),
             1 => format!(
-                "pub struct UndocumentedStruct{} {{\n\
+                "pub struct UndocumentedStruct{i} {{\n\
                      pub field: String,\n\
-                 }}",
-                i
+                 }}"
             ),
             2 => format!(
-                "use unknown_crate_{};\n\
+                "use unknown_crate_{i};\n\
                  // FIXME: This needs proper implementation\n\
-                 pub fn complex_function_{}() -> Result<(), Box<dyn std::error::Error>> {{\n\
+                 pub fn complex_function_{i}() -> Result<(), Box<dyn std::error::Error>> {{\n\
                      todo!(\"Implement complex logic\")\n\
-                 }}",
-                i, i
+                 }}"
             ),
             _ => format!(
-                "/// Well documented function {}\n\
+                "/// Well documented function {i}\n\
                  /// # Arguments\n\
                  /// * `param` - The parameter\n\
                  /// # Returns\n\
                  /// The result\n\
-                 pub fn documented_function_{}(param: i32) -> i32 {{\n\
+                 pub fn documented_function_{i}(param: i32) -> i32 {{\n\
                      param * 2\n\
-                 }}",
-                i, i
+                 }}"
             ),
         };
 
@@ -127,7 +123,7 @@ async fn simulate_background_processing(task_count: usize) -> Vec<String> {
     for i in 0..task_count {
         // Simulate research task processing
         tokio::time::sleep(Duration::from_millis(1)).await; // Brief processing time
-        results.push(format!("Research result for task {}", i));
+        results.push(format!("Research result for task {i}"));
     }
 
     results
@@ -181,7 +177,7 @@ fn bench_sprint_008_gap_analysis_target(c: &mut Criterion) {
                     }
 
                     // Verify gaps were detected
-                    assert!(gaps.len() > 0, "Should detect some gaps in test files");
+                    assert!(!gaps.is_empty(), "Should detect some gaps in test files");
 
                     black_box(gaps);
                 });
@@ -209,9 +205,9 @@ fn bench_sprint_008_priority_scoring_target(c: &mut Criterion) {
                     // Create test gaps
                     let gaps: Vec<String> = (0..gap_count)
                         .map(|i| match i % 3 {
-                            0 => format!("file_{}.rs:TODO", i),
-                            1 => format!("file_{}.rs:FIXME", i),
-                            _ => format!("file_{}.rs:HACK", i),
+                            0 => format!("file_{i}.rs:TODO"),
+                            1 => format!("file_{i}.rs:FIXME"),
+                            _ => format!("file_{i}.rs:HACK"),
                         })
                         .collect();
 
@@ -263,8 +259,7 @@ fn bench_sprint_008_background_processing_target(c: &mut Criterion) {
                     let avg_per_task = duration.as_millis() / task_count as u128;
                     assert!(
                         avg_per_task < 1000, // 1s for simulation
-                        "Background processing took {}ms per task",
-                        avg_per_task
+                        "Background processing took {avg_per_task}ms per task"
                     );
 
                     // Verify all tasks were processed
@@ -295,7 +290,7 @@ fn bench_sprint_008_notification_target(c: &mut Criterion) {
                 b.to_async(&rt).iter(|| async {
                     // Create test notifications
                     let notifications: Vec<String> = (0..notification_count)
-                        .map(|i| format!("Notification {}: Gap detected", i))
+                        .map(|i| format!("Notification {i}: Gap detected"))
                         .collect();
 
                     let start = std::time::Instant::now();
@@ -313,8 +308,7 @@ fn bench_sprint_008_notification_target(c: &mut Criterion) {
                     let notifications_per_minute = (notification_count as f64 * 60.0) / duration.as_secs_f64();
                     if notification_count >= 25 {
                         assert!(notifications_per_minute >= 50.0,
-                            "Notification throughput: {:.0}/min, Sprint 008 target is 50+/min",
-                            notifications_per_minute);
+                            "Notification throughput: {notifications_per_minute:.0}/min, Sprint 008 target is 50+/min");
                     }
 
                     // Verify all notifications were processed
@@ -349,9 +343,9 @@ fn bench_sprint_008_file_monitoring_target(c: &mut Criterion) {
 
                     // Simulate file changes
                     for i in 0..change_count {
-                        let change_file = temp_dir.path().join(format!("changed_file_{}.rs", i));
+                        let change_file = temp_dir.path().join(format!("changed_file_{i}.rs"));
                         let content =
-                            format!("// TODO: File change {}\npub fn changed_{}() {{}}", i, i);
+                            format!("// TODO: File change {i}\npub fn changed_{i}() {{}}");
                         fs::write(&change_file, content).unwrap();
 
                         // Brief pause to simulate realistic file change timing
@@ -367,8 +361,7 @@ fn bench_sprint_008_file_monitoring_target(c: &mut Criterion) {
                     if change_count >= 100 {
                         assert!(
                             changes_per_minute >= 100.0,
-                            "File change handling: {:.0}/min, Sprint 008 target is 100+/min",
-                            changes_per_minute
+                            "File change handling: {changes_per_minute:.0}/min, Sprint 008 target is 100+/min"
                         );
                     }
 
@@ -431,7 +424,7 @@ fn bench_sprint_008_comprehensive_baseline(c: &mut Criterion) {
 
             // 4. Notification Performance Test (10 notifications)
             let notifications: Vec<String> = (0..10)
-                .map(|i| format!("Baseline notification {}", i))
+                .map(|i| format!("Baseline notification {i}"))
                 .collect();
 
             let notification_start = std::time::Instant::now();
@@ -455,8 +448,8 @@ fn bench_sprint_008_comprehensive_baseline(c: &mut Criterion) {
             );
 
             // Verify results
-            assert!(gaps.len() > 0, "Should detect gaps");
-            assert!(scored_gaps.len() > 0, "Should score gaps");
+            assert!(!gaps.is_empty(), "Should detect gaps");
+            assert!(!scored_gaps.is_empty(), "Should score gaps");
             assert_eq!(processing_results.len(), 5, "Should process all tasks");
             assert_eq!(
                 notification_results.len(),
