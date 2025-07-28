@@ -48,8 +48,8 @@ Quality Enforcement:
   standards: "Zero critical vulnerabilities, comprehensive coverage"
   
 Pattern Application:
-  lookup: "Query Fortitude before new implementations"
-  reuse: "Apply proven patterns and templates"
+  lookup: "Query Fortitude before ALL new implementations (MANDATORY)"
+  reuse: "Apply proven patterns and templates from knowledge base"
   learning: "Capture successful patterns for future use"
   
 Documentation:
@@ -124,10 +124,11 @@ graph LR
 4. Validate feature roadmap + timeline
 
 **AI**:
-1. Research architectural patterns + best practices
-2. Design system architecture (security + scalability)
-3. Create detailed feature roadmap + effort estimates
-4. Identify risks + mitigation strategies
+1. Query Fortitude for architectural patterns + domain-specific approaches
+2. Research security patterns and scalability approaches from knowledge base
+3. Design system architecture using proven patterns
+4. Create detailed feature roadmap + effort estimates
+5. Identify risks + mitigation strategies
 
 **Approval**: Human reviews AI analysis → approves/requests changes → signs off
 </responsibilities>
@@ -141,10 +142,11 @@ graph LR
 
 <responsibilities>
 **AI**:
-1. Analyze features for implementation complexity
-2. Create file-level implementation plans
-3. Research knowledge gaps via parallel subagents
-4. Estimate effort + identify dependencies
+1. Query Fortitude for similar feature implementation patterns
+2. Research security and performance patterns for selected features
+3. Analyze features for implementation complexity using proven approaches
+4. Create file-level implementation plans based on knowledge base patterns
+5. Estimate effort + identify dependencies
 
 **Human**:
 1. Select features based on business priorities
@@ -153,10 +155,10 @@ graph LR
 4. Authorize sprint execution
 
 **Quality Gates**:
-- File-level implementation detail
-- All dependencies identified/researched
-- Security + performance considerations
-- Comprehensive testing approach
+- File-level implementation detail with pattern references
+- All dependencies identified/researched using Fortitude knowledge base
+- Security + performance considerations from proven patterns
+- Comprehensive testing approach based on similar implementations
 </responsibilities>
 
 ### <phase priority="high">Phase 3: Code Implementation (AI-Led, Human Validation)</phase>
@@ -168,10 +170,11 @@ graph LR
 
 <responsibilities>
 **AI**:
-1. Implement code using TDD
-2. Create comprehensive test coverage (unit/integration/security)
-3. Enforce quality gates + standards
-4. Generate complete technical documentation
+1. Implement code using TDD with patterns from Fortitude knowledge base
+2. Apply proven security and performance patterns during implementation
+3. Create comprehensive test coverage (unit/integration/security)
+4. Enforce quality gates + standards
+5. Generate complete technical documentation
 
 **Human**:
 1. Validate features vs business requirements
@@ -198,6 +201,7 @@ graph LR
 | Performance | <200ms | API response time | Automated |
 | Documentation | >90% | API coverage | Automated |
 | Code Quality | 0 Warnings | Linting compliance | Automated |
+| Knowledge Integration | 100% | Fortitude pattern usage | Manual |
 | Human Approval | 100% | Business value validation | Manual |
 
 ### <security priority="critical">Security Implementation Patterns</security>
@@ -296,11 +300,42 @@ Post-Implementation:
 ./tools/fortitude-integration.sh report
 ```
 
-### <process>Pattern Lookup Workflow</process>
-1. **Before Implementation**: Query Fortitude for existing patterns
+### <process priority="critical">Pattern Lookup Workflow</process>
+1. **Before Implementation**: Query Fortitude for existing patterns (MANDATORY)
 2. **During Implementation**: Reference proven approaches + templates
 3. **After Implementation**: Update knowledge base with new patterns
 4. **Continuous Learning**: Capture human-AI collaboration patterns
+
+### <fortitude-integration priority="critical">Mandatory Fortitude Knowledge Integration</fortitude-integration>
+
+#### <fortitude-requirements>Critical Integration Requirements</fortitude-requirements>
+**Fortitude knowledge management is the backbone of CE-DPS methodology and MUST be used throughout all phases:**
+
+**Phase 1 - Mandatory Fortitude Queries**:
+- Query architectural patterns for the specific domain/technology stack
+- Research security patterns and compliance requirements
+- Look up scalability approaches for similar system types
+- Validate design approaches against proven implementations
+
+**Phase 2 - Mandatory Fortitude Research**:
+- Query implementation patterns for each selected feature
+- Research testing approaches for similar functionality
+- Look up performance optimization patterns
+- Validate technical approaches against successful implementations
+
+**Phase 3 - Mandatory Fortitude Pattern Application**:
+- Apply security patterns during implementation
+- Use proven error handling and validation patterns
+- Reference performance optimization techniques
+- Follow established deployment and monitoring patterns
+
+#### <fortitude-fallback>Fortitude Unavailability Protocol</fortitude-fallback>
+**If Fortitude knowledge base is unavailable:**
+1. Document the unavailability and impact on implementation approach
+2. Use comprehensive file-based research within the project
+3. Reference external documentation and best practices
+4. Mark implementation for knowledge base update when Fortitude is restored
+5. **Never proceed without attempting knowledge-driven research**
 
 ## <validation-tools priority="high">Automated Quality Validation</validation-tools>
 
