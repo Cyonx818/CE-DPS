@@ -19,9 +19,9 @@
 
 pub mod api;
 pub mod classification;
+pub mod claude_code_integration_example;
 pub mod claude_code_provider;
 pub mod claude_code_research_engine;
-pub mod claude_code_integration_example;
 pub mod multi_provider_research_engine;
 pub mod pipeline;
 pub mod prompts;

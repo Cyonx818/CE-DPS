@@ -82,7 +82,8 @@ fn bench_single_metric_collection(c: &mut Criterion) {
             |b, collector| {
                 b.to_async(&rt).iter(|| async {
                     let metric = create_test_metric("claude", 0.85);
-                    black_box(collector.collect(metric).await.unwrap());
+                    collector.collect(metric).await.unwrap();
+                    black_box(());
                 });
             },
         );
@@ -120,7 +121,8 @@ fn bench_batch_collection(c: &mut Criterion) {
                         .map(|i| create_test_metric("provider", 0.7 + (i as f64 * 0.01)))
                         .collect();
 
-                    black_box(collector.collect_batch(metrics).await.unwrap());
+                    collector.collect_batch(metrics).await.unwrap();
+                    black_box(());
                 });
             },
         );
@@ -154,7 +156,8 @@ fn bench_storage_throughput(c: &mut Criterion) {
                         })
                         .collect();
 
-                    black_box(storage.store_metrics(&metrics).await.unwrap());
+                    storage.store_metrics(&metrics).await.unwrap();
+                    black_box(());
                 });
             },
         );
@@ -275,7 +278,7 @@ fn bench_concurrent_operations(c: &mut Criterion) {
                     tokio::spawn(async move {
                         for j in 0..10 {
                             let metric = create_test_metric(
-                                &format!("provider_{}", i),
+                                &format!("provider_{i}"),
                                 0.5 + ((i * 10 + j) as f64 * 0.001),
                             );
                             collector.collect(metric).await.unwrap();
@@ -326,8 +329,7 @@ fn performance_validation(c: &mut Criterion) {
             // Assert performance requirement: should be well under 5ms
             assert!(
                 duration < Duration::from_millis(5),
-                "Collection took {:?}, requirement is <5ms",
-                duration
+                "Collection took {duration:?}, requirement is <5ms"
             );
 
             black_box(duration);
@@ -357,8 +359,7 @@ fn performance_validation(c: &mut Criterion) {
             // Assert performance requirement: should be well under 100ms
             assert!(
                 duration < Duration::from_millis(100),
-                "Query took {:?}, requirement is <100ms",
-                duration
+                "Query took {duration:?}, requirement is <100ms"
             );
 
             black_box(results);

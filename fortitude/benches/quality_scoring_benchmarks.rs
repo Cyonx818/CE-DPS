@@ -135,8 +135,7 @@ fn bench_batch_processing(c: &mut Criterion) {
     let scorer = ComprehensiveQualityScorer::with_default_config();
     let weights = QualityWeights::research_optimized();
 
-    let queries_responses = vec![
-        (
+    let queries_responses = [(
             "What is machine learning?",
             "Machine learning enables computers to learn from data.",
         ),
@@ -155,8 +154,7 @@ fn bench_batch_processing(c: &mut Criterion) {
         (
             "Describe computer vision",
             "Computer vision enables machines to interpret and understand visual information.",
-        ),
-    ];
+        )];
 
     let batch_sizes = vec![1, 5, 10];
 
@@ -199,7 +197,7 @@ fn bench_memory_efficiency(c: &mut Criterion) {
     // Generate responses of different sizes
     let base_response = "Machine learning is a powerful technology that enables computers to learn patterns from data and make intelligent decisions without explicit programming. ";
     let responses = vec![
-        ("small", base_response.repeat(1)),
+        ("small", base_response.to_string()),
         ("medium", base_response.repeat(5)),
         ("large", base_response.repeat(20)),
     ];
@@ -255,8 +253,7 @@ fn bench_performance_threshold(c: &mut Criterion) {
                         // Assert performance requirement
                         assert!(
                             eval_time < Duration::from_millis(100),
-                            "Evaluation took {:?}, should be < 100ms",
-                            eval_time
+                            "Evaluation took {eval_time:?}, should be < 100ms"
                         );
 
                         black_box(result);

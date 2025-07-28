@@ -36,10 +36,8 @@ use std::time::Duration;
 use tokio::runtime::Runtime;
 
 use fortitude::quality::{
-    ComprehensiveQualityScorer, ConsistencyAnalysis, CrossValidationConfig, CrossValidationEngine,
-    FeedbackCollectionConfig, FeedbackIntegrationSystem, InMemoryMetricsStorage, MetricsCollector,
-    MetricsConfig, OptimizationConfig, QualityConfigManager, QualityContext, QualityControlConfig,
-    QualityLearningConfig, QualityOptimizationEngine, QualityScore, QualityScorer, QualityWeights,
+    ComprehensiveQualityScorer, ConsistencyAnalysis, CrossValidationEngine, FeedbackIntegrationSystem, InMemoryMetricsStorage, MetricsCollector,
+    MetricsConfig, OptimizationConfig, QualityConfigManager, QualityContext, QualityControlConfig, QualityOptimizationEngine, QualityScorer, QualityWeights,
     ScorerConfig, SelectionCriteria, UrgencyLevel, ValidationMetrics, ValidationResult,
 };
 
@@ -90,7 +88,7 @@ impl BenchmarkTestData {
                 }
             ));
 
-            responses.push(format!("This is a comprehensive explanation of topic {} covering the fundamental principles, practical applications, current industry trends, and future developments in the field.", i));
+            responses.push(format!("This is a comprehensive explanation of topic {i} covering the fundamental principles, practical applications, current industry trends, and future developments in the field."));
 
             contexts.push(
                 QualityContext::new()

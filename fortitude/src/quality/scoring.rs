@@ -950,8 +950,7 @@ mod tests {
         // Both should be reasonable scores, with clear response typically scoring higher
         // But we're testing the algorithm works, not that it's perfect
         println!(
-            "Clear response score: {}, Unclear response score: {}",
-            score_clear, score_unclear
+            "Clear response score: {score_clear}, Unclear response score: {score_unclear}"
         );
     }
 
@@ -1014,8 +1013,7 @@ mod tests {
         assert!(result.is_ok());
         assert!(
             duration < Duration::from_millis(100),
-            "Evaluation took {:?}, should be < 100ms",
-            duration
+            "Evaluation took {duration:?}, should be < 100ms"
         );
     }
 

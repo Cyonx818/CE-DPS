@@ -16,13 +16,13 @@
 // This bypasses the complex trait implementation for demonstration
 
 use fortitude_types::{AudienceContext, ClassifiedRequest, DomainContext, ResearchType};
-use std::collections::HashMap;
-use std::time::{Duration, Instant};
+use std::time::Instant;
 
 #[derive(Debug, Clone)]
 struct SimpleClaudeCodeProvider {
     provider_name: String,
-    max_web_results: usize,
+    #[allow(dead_code)]
+        max_web_results: usize,
 }
 
 impl SimpleClaudeCodeProvider {
@@ -33,22 +33,28 @@ impl SimpleClaudeCodeProvider {
         }
     }
 
-    async fn execute_research(&self, request: &ClassifiedRequest) -> Result<String, Box<dyn std::error::Error>> {
+    async fn execute_research(
+        &self,
+        request: &ClassifiedRequest,
+    ) -> Result<String, Box<dyn std::error::Error>> {
         println!("🔍 Executing research for: '{}'", request.original_query);
-        
+
         // Simulate the research process
         let start_time = Instant::now();
-        
+
         // Create structured research response
         let response = self.generate_structured_response(request).await?;
-        
+
         let processing_time = start_time.elapsed();
-        println!("⏱️  Research completed in {:?}", processing_time);
-        
+        println!("⏱️  Research completed in {processing_time:?}");
+
         Ok(response)
     }
 
-    async fn generate_structured_response(&self, request: &ClassifiedRequest) -> Result<String, Box<dyn std::error::Error>> {
+    async fn generate_structured_response(
+        &self,
+        request: &ClassifiedRequest,
+    ) -> Result<String, Box<dyn std::error::Error>> {
         let query = &request.original_query;
         let research_type = &request.research_type;
         let technology = &request.domain_context.technology;
@@ -117,11 +123,7 @@ Here are the practical implementation steps based on the research:
 - Security vulnerabilities to prevent in production deployments
 - Maintenance and upgrade considerations for long-term projects
 
-This research provides a comprehensive foundation for implementing the requested solution with confidence in its accuracy and real-world applicability."#,
-            query = query,
-            research_type = research_type,
-            technology = technology,
-            level = level
+This research provides a comprehensive foundation for implementing the requested solution with confidence in its accuracy and real-world applicability."#
         );
 
         Ok(response)
@@ -138,9 +140,10 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
 
     // Test 1: Phase 1 Roadmap Research
     println!("\n📋 Test 1: Phase 1 Storage Research");
-    
+
     let storage_request = ClassifiedRequest::new(
-        "How to implement stable cache index management with proper write lock handling in Rust?".to_string(),
+        "How to implement stable cache index management with proper write lock handling in Rust?"
+            .to_string(),
         ResearchType::Implementation,
         AudienceContext {
             level: "advanced".to_string(),
@@ -158,9 +161,9 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
     );
 
     let result = provider.execute_research(&storage_request).await?;
-    
+
     println!("📏 Response length: {} characters", result.len());
-    
+
     // Quality validation
     let has_answer = result.contains("## Answer");
     let has_evidence = result.contains("## Evidence");
@@ -168,25 +171,33 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
     let mentions_rust = result.to_lowercase().contains("rust");
     let mentions_cache = result.to_lowercase().contains("cache");
     let mentions_lock = result.to_lowercase().contains("lock");
-    
+
     println!("\n🔍 Quality Assessment:");
-    println!("  ✅ Has Answer section: {}", has_answer);
-    println!("  ✅ Has Evidence section: {}", has_evidence);
-    println!("  ✅ Has Implementation section: {}", has_implementation);
-    println!("  ✅ Mentions Rust: {}", mentions_rust);
-    println!("  ✅ Mentions cache: {}", mentions_cache);
-    println!("  ✅ Mentions lock: {}", mentions_lock);
-    
-    let quality_score = [has_answer, has_evidence, has_implementation, mentions_rust, mentions_cache, mentions_lock]
-        .iter()
-        .map(|&b| if b { 1.0 } else { 0.0 })
-        .sum::<f64>() / 6.0;
-    
-    println!("  📊 Overall quality score: {:.2}/1.0", quality_score);
+    println!("  ✅ Has Answer section: {has_answer}");
+    println!("  ✅ Has Evidence section: {has_evidence}");
+    println!("  ✅ Has Implementation section: {has_implementation}");
+    println!("  ✅ Mentions Rust: {mentions_rust}");
+    println!("  ✅ Mentions cache: {mentions_cache}");
+    println!("  ✅ Mentions lock: {mentions_lock}");
+
+    let quality_score = [
+        has_answer,
+        has_evidence,
+        has_implementation,
+        mentions_rust,
+        mentions_cache,
+        mentions_lock,
+    ]
+    .iter()
+    .map(|&b| if b { 1.0 } else { 0.0 })
+    .sum::<f64>()
+        / 6.0;
+
+    println!("  📊 Overall quality score: {quality_score:.2}/1.0");
 
     // Test 2: Phase 2 ML Research
     println!("\n🤖 Test 2: Phase 2 ML Research");
-    
+
     let ml_request = ClassifiedRequest::new(
         "How to implement ReciprocalRankFusion for hybrid search result combination?".to_string(),
         ResearchType::Implementation,
@@ -202,13 +213,17 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
             tags: vec!["ml".to_string(), "search".to_string(), "fusion".to_string()],
         },
         0.8,
-        vec!["reciprocal".to_string(), "rank".to_string(), "fusion".to_string()],
+        vec![
+            "reciprocal".to_string(),
+            "rank".to_string(),
+            "fusion".to_string(),
+        ],
     );
 
     let result = provider.execute_research(&ml_request).await?;
-    
+
     println!("📏 Response length: {} characters", result.len());
-    
+
     // Quality validation for ML query
     let has_answer = result.contains("## Answer");
     let has_evidence = result.contains("## Evidence");
@@ -216,35 +231,55 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
     let mentions_reciprocal = result.to_lowercase().contains("reciprocal");
     let mentions_rank = result.to_lowercase().contains("rank");
     let mentions_fusion = result.to_lowercase().contains("fusion");
-    
+
     println!("\n🔍 Quality Assessment:");
-    println!("  ✅ Has Answer section: {}", has_answer);
-    println!("  ✅ Has Evidence section: {}", has_evidence);
-    println!("  ✅ Has Implementation section: {}", has_implementation);
-    println!("  ✅ Mentions reciprocal: {}", mentions_reciprocal);
-    println!("  ✅ Mentions rank: {}", mentions_rank);
-    println!("  ✅ Mentions fusion: {}", mentions_fusion);
-    
-    let quality_score = [has_answer, has_evidence, has_implementation, mentions_reciprocal, mentions_rank, mentions_fusion]
-        .iter()
-        .map(|&b| if b { 1.0 } else { 0.0 })
-        .sum::<f64>() / 6.0;
-    
-    println!("  📊 Overall quality score: {:.2}/1.0", quality_score);
+    println!("  ✅ Has Answer section: {has_answer}");
+    println!("  ✅ Has Evidence section: {has_evidence}");
+    println!("  ✅ Has Implementation section: {has_implementation}");
+    println!("  ✅ Mentions reciprocal: {mentions_reciprocal}");
+    println!("  ✅ Mentions rank: {mentions_rank}");
+    println!("  ✅ Mentions fusion: {mentions_fusion}");
+
+    let quality_score = [
+        has_answer,
+        has_evidence,
+        has_implementation,
+        mentions_reciprocal,
+        mentions_rank,
+        mentions_fusion,
+    ]
+    .iter()
+    .map(|&b| if b { 1.0 } else { 0.0 })
+    .sum::<f64>()
+        / 6.0;
+
+    println!("  📊 Overall quality score: {quality_score:.2}/1.0");
 
     // Test 3: Different Research Types
     println!("\n🔄 Test 3: Different Research Types");
-    
+
     let research_types = vec![
-        (ResearchType::Decision, "Should I use PostgreSQL or MongoDB for a knowledge management system?"),
-        (ResearchType::Learning, "What are the key concepts of async programming in Rust?"),
-        (ResearchType::Troubleshooting, "Why is my Rust async application consuming too much memory?"),
-        (ResearchType::Validation, "Is this JWT authentication approach secure for production?"),
+        (
+            ResearchType::Decision,
+            "Should I use PostgreSQL or MongoDB for a knowledge management system?",
+        ),
+        (
+            ResearchType::Learning,
+            "What are the key concepts of async programming in Rust?",
+        ),
+        (
+            ResearchType::Troubleshooting,
+            "Why is my Rust async application consuming too much memory?",
+        ),
+        (
+            ResearchType::Validation,
+            "Is this JWT authentication approach secure for production?",
+        ),
     ];
 
     for (research_type, query) in research_types {
-        println!("\n  Testing {:?} research type:", research_type);
-        
+        println!("\n  Testing {research_type:?} research type:");
+
         let request = ClassifiedRequest::new(
             query.to_string(),
             research_type.clone(),
@@ -265,17 +300,20 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
 
         let result = provider.execute_research(&request).await?;
 
-        let has_structure = result.contains("## Answer") && result.contains("## Evidence") && result.contains("## Implementation");
+        let has_structure = result.contains("## Answer")
+            && result.contains("## Evidence")
+            && result.contains("## Implementation");
         let reasonable_length = result.len() > 500;
-        let mentions_query_terms = query.split_whitespace().take(2).all(|term| {
-            result.to_lowercase().contains(&term.to_lowercase())
-        });
-        
+        let mentions_query_terms = query
+            .split_whitespace()
+            .take(2)
+            .all(|term| result.to_lowercase().contains(&term.to_lowercase()));
+
         println!("    📏 Length: {} chars", result.len());
-        println!("    ✅ Structured: {}", has_structure);
-        println!("    ✅ Reasonable length: {}", reasonable_length);
-        println!("    ✅ Mentions query terms: {}", mentions_query_terms);
-        
+        println!("    ✅ Structured: {has_structure}");
+        println!("    ✅ Reasonable length: {reasonable_length}");
+        println!("    ✅ Mentions query terms: {mentions_query_terms}");
+
         if has_structure && reasonable_length && mentions_query_terms {
             println!("    🎉 PASS");
         } else {
@@ -293,7 +331,7 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
         0.8,
         vec![],
     );
-    
+
     let sample_result = provider.execute_research(&sample_request).await?;
     println!("{}", &sample_result[..300.min(sample_result.len())]);
     if sample_result.len() > 300 {

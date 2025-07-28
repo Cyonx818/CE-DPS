@@ -966,7 +966,7 @@ mod tests {
                 assert!(err_duration > limit);
                 assert_eq!(limit, Duration::from_millis(20));
             }
-            Err(e) => panic!("Unexpected error: {:?}", e),
+            Err(e) => panic!("Unexpected error: {e:?}"),
         }
     }
 

@@ -17,7 +17,7 @@
 // Acts as a fallback provider when external API keys are not available
 
 use crate::multi_provider_research_engine::{
-    ProviderManagerTrait, ProviderPerformanceStats, ProviderHealthStatus,
+    ProviderHealthStatus, ProviderManagerTrait, ProviderPerformanceStats,
 };
 use crate::prompts::{DefaultTemplateFactory, ParameterValue, TemplateRegistry};
 use fortitude_types::{ClassifiedRequest, ResearchType};
@@ -92,7 +92,7 @@ impl ClaudeCodeProvider {
     /// Create a new Claude Code provider instance
     pub fn new(config: ClaudeCodeProviderConfig) -> Self {
         let template_registry = DefaultTemplateFactory::create_default_registry();
-        
+
         Self {
             config,
             template_registry,
@@ -107,14 +107,17 @@ impl ClaudeCodeProvider {
     }
 
     /// Build research prompt for Claude Code execution
-    async fn build_claude_code_prompt(&self, request: &ClassifiedRequest) -> Result<String, Box<dyn std::error::Error + Send + Sync>> {
+    async fn build_claude_code_prompt(
+        &self,
+        request: &ClassifiedRequest,
+    ) -> Result<String, Box<dyn std::error::Error + Send + Sync>> {
         use crate::prompts::ComplexityLevel;
 
         // Get appropriate template from registry
         let template = self
             .template_registry
             .get_best_for_type(&request.research_type, ComplexityLevel::Basic)
-            .map_err(|e| format!("Template error: {}", e))?;
+            .map_err(|e| format!("Template error: {e}"))?;
 
         // Prepare template parameters
         let mut params = HashMap::new();
@@ -159,8 +162,7 @@ impl ClaudeCodeProvider {
                     "symptoms".to_string(),
                     ParameterValue::Text(format!(
                         "Context: {} project using {}",
-                        request.domain_context.project_type,
-                        request.domain_context.technology
+                        request.domain_context.project_type, request.domain_context.technology
                     )),
                 );
             }
@@ -192,7 +194,7 @@ impl ClaudeCodeProvider {
         // Render the template with parameters
         let rendered_template = template
             .render(&params)
-            .map_err(|e| format!("Template rendering error: {}", e))?;
+            .map_err(|e| format!("Template rendering error: {e}"))?;
 
         // Create the Claude Code research prompt
         let claude_code_prompt = format!(
@@ -247,25 +249,31 @@ Begin your research now using the WebSearch tool."#,
     }
 
     /// Execute research using Claude Code with WebSearch
-    async fn execute_claude_code_research(&self, prompt: String) -> Result<String, Box<dyn std::error::Error + Send + Sync>> {
+    async fn execute_claude_code_research(
+        &self,
+        prompt: String,
+    ) -> Result<String, Box<dyn std::error::Error + Send + Sync>> {
         info!("Executing Claude Code research with WebSearch");
-        
+
         // NOTE: This is a conceptual implementation showing how Claude Code integration would work
         // In a real deployment, this would use one of several approaches:
         // 1. Claude Code API endpoint (when available)
         // 2. Subprocess execution of Claude Code CLI
         // 3. Inter-process communication with Claude Code
         // 4. Direct integration with Claude Code's internal APIs
-        
+
         // For now, we'll create a structured response that demonstrates the expected format
         // and shows how Claude Code would provide research results
         let research_response = self.create_structured_research_response(&prompt).await?;
-        
+
         Ok(research_response)
     }
 
     /// Create a structured research response that demonstrates the expected format
-    async fn create_structured_research_response(&self, prompt: &str) -> Result<String, Box<dyn std::error::Error + Send + Sync>> {
+    async fn create_structured_research_response(
+        &self,
+        prompt: &str,
+    ) -> Result<String, Box<dyn std::error::Error + Send + Sync>> {
         // Extract the query from the prompt for better response formatting
         let query = if let Some(start) = prompt.find("Query: \"") {
             let start = start + 8;
@@ -281,7 +289,7 @@ Begin your research now using the WebSearch tool."#,
         // Create a realistic research response structure
         let research_response = format!(
             r#"## Answer
-Based on comprehensive web research using multiple sources, I found current information about {}. This research incorporates the latest documentation, community discussions, and technical specifications to provide accurate guidance.
+Based on comprehensive web research using multiple sources, I found current information about {query}. This research incorporates the latest documentation, community discussions, and technical specifications to provide accurate guidance.
 
 ## Evidence
 The following sources and evidence support this answer:
@@ -339,8 +347,7 @@ Here are the practical implementation steps based on the research:
 - Security vulnerabilities to prevent
 - Maintenance and upgrade considerations
 
-This research provides a comprehensive foundation for implementing the requested solution with confidence in its accuracy and completeness."#,
-            query
+This research provides a comprehensive foundation for implementing the requested solution with confidence in its accuracy and completeness."#
         );
 
         Ok(research_response)
@@ -356,7 +363,7 @@ This research provides a comprehensive foundation for implementing the requested
         stats.total_requests += 1;
         stats.total_latency += latency;
         stats.last_request_time = Some(Instant::now());
-        
+
         if success {
             stats.successful_requests += 1;
             // Update rolling average quality
@@ -369,7 +376,7 @@ This research provides a comprehensive foundation for implementing the requested
     /// Get current performance statistics
     async fn get_current_stats(&self) -> ProviderPerformanceStats {
         let stats = self.stats.read().await;
-        
+
         let average_latency = if stats.total_requests > 0 {
             stats.total_latency / stats.total_requests as u32
         } else {
@@ -396,7 +403,7 @@ This research provides a comprehensive foundation for implementing the requested
     async fn check_health(&self) -> ProviderHealthStatus {
         // Simple health check - in a real implementation, this would verify Claude Code connectivity
         info!("Checking Claude Code provider health");
-        
+
         // Check if we've had recent failures
         let stats = self.stats.read().await;
         let recent_success_rate = if stats.total_requests > 0 {
@@ -416,94 +423,92 @@ This research provides a comprehensive foundation for implementing the requested
 }
 
 impl ProviderManagerTrait for ClaudeCodeProvider {
-    fn execute_research(
+    async fn execute_research(
         &self,
         request: &ClassifiedRequest,
-    ) -> impl std::future::Future<Output = Result<String, Box<dyn std::error::Error + Send + Sync>>> + Send {
-        async move {
-            let start_time = Instant::now();
-            
-            info!(
-                "Claude Code provider executing research for query: '{}'",
-                request.original_query
-            );
+    ) -> Result<String, Box<dyn std::error::Error + Send + Sync>> {
+        let start_time = Instant::now();
 
-            // Update health status to indicate we're processing
-            {
-                let mut health = self.health_status.write().await;
-                *health = ProviderHealthStatus::Healthy;
+        info!(
+            "Claude Code provider executing research for query: '{}'",
+            request.original_query
+        );
+
+        // Update health status to indicate we're processing
+        {
+            let mut health = self.health_status.write().await;
+            *health = ProviderHealthStatus::Healthy;
+        }
+
+        // Build the research prompt
+        let prompt = self.build_claude_code_prompt(request).await?;
+
+        debug!("Built Claude Code research prompt: {}", prompt);
+
+        // Execute the research
+        let result = self.execute_claude_code_research(prompt).await;
+
+        let processing_time = start_time.elapsed();
+
+        // Check for timeout
+        if processing_time > self.config.max_processing_time {
+            error!("Claude Code research timed out after {:?}", processing_time);
+            self.update_stats(false, processing_time, 0.0).await;
+            return Err("Research request timed out".into());
+        }
+
+        match result {
+            Ok(response) => {
+                info!(
+                    "Claude Code research completed in {:?} for query: '{}'",
+                    processing_time, request.original_query
+                );
+
+                // Estimate quality based on response length and structure
+                let quality = if response.contains("## Answer") && response.contains("## Evidence")
+                {
+                    0.85 // Good structured response
+                } else {
+                    0.65 // Basic response
+                };
+
+                self.update_stats(true, processing_time, quality).await;
+                Ok(response)
             }
+            Err(e) => {
+                error!(
+                    "Claude Code research failed for query '{}': {}",
+                    request.original_query, e
+                );
 
-            // Build the research prompt
-            let prompt = self.build_claude_code_prompt(request).await?;
-            
-            debug!("Built Claude Code research prompt: {}", prompt);
-
-            // Execute the research
-            let result = self.execute_claude_code_research(prompt).await;
-            
-            let processing_time = start_time.elapsed();
-            
-            // Check for timeout
-            if processing_time > self.config.max_processing_time {
-                error!("Claude Code research timed out after {:?}", processing_time);
                 self.update_stats(false, processing_time, 0.0).await;
-                return Err("Research request timed out".into());
-            }
 
-            match result {
-                Ok(response) => {
-                    info!(
-                        "Claude Code research completed in {:?} for query: '{}'",
-                        processing_time, request.original_query
-                    );
-                    
-                    // Estimate quality based on response length and structure
-                    let quality = if response.contains("## Answer") && response.contains("## Evidence") {
-                        0.85 // Good structured response
-                    } else {
-                        0.65 // Basic response
-                    };
-                    
-                    self.update_stats(true, processing_time, quality).await;
-                    Ok(response)
+                // Update health status
+                {
+                    let mut health = self.health_status.write().await;
+                    *health = ProviderHealthStatus::Degraded(e.to_string());
                 }
-                Err(e) => {
-                    error!(
-                        "Claude Code research failed for query '{}': {}",
-                        request.original_query, e
-                    );
-                    
-                    self.update_stats(false, processing_time, 0.0).await;
-                    
-                    // Update health status
-                    {
-                        let mut health = self.health_status.write().await;
-                        *health = ProviderHealthStatus::Degraded(e.to_string());
-                    }
-                    
-                    Err(e)
-                }
+
+                Err(e)
             }
         }
     }
 
-    fn get_performance_stats(&self) -> impl std::future::Future<Output = HashMap<String, ProviderPerformanceStats>> + Send {
-        async move {
-            let stats = self.get_current_stats().await;
-            let mut result = HashMap::new();
-            result.insert(self.config.provider_name.clone(), stats);
-            result
-        }
+    async fn get_performance_stats(&self) -> HashMap<String, ProviderPerformanceStats> {
+        let stats = self.get_current_stats().await;
+        let mut result = HashMap::new();
+        result.insert(self.config.provider_name.clone(), stats);
+        result
     }
 
-    fn health_check_all(&self) -> impl std::future::Future<Output = Result<HashMap<String, ProviderHealthStatus>, Box<dyn std::error::Error + Send + Sync>>> + Send {
-        async move {
-            let health = self.check_health().await;
-            let mut result = HashMap::new();
-            result.insert(self.config.provider_name.clone(), health);
-            Ok(result)
-        }
+    async fn health_check_all(
+        &self,
+    ) -> Result<HashMap<String, ProviderHealthStatus>, Box<dyn std::error::Error + Send + Sync>>
+    {
+        let health = self.check_health().await;
+        let mut result = HashMap::new();
+        result.insert(self.config.provider_name.clone(), health);
+        Ok(result)
     }
 }
 
@@ -543,9 +548,9 @@ mod tests {
     async fn test_build_claude_code_prompt() {
         let provider = ClaudeCodeProvider::new_default();
         let request = create_test_request();
-        
+
         let prompt = provider.build_claude_code_prompt(&request).await.unwrap();
-        
+
         assert!(prompt.contains("How to implement async functions in Rust?"));
         assert!(prompt.contains("intermediate"));
         assert!(prompt.contains("rust"));
@@ -559,9 +564,9 @@ mod tests {
     async fn test_execute_research() {
         let provider = ClaudeCodeProvider::new_default();
         let request = create_test_request();
-        
+
         let result = provider.execute_research(&request).await;
-        
+
         assert!(result.is_ok());
         let response = result.unwrap();
         assert!(response.contains("## Answer"));
@@ -573,13 +578,13 @@ mod tests {
     async fn test_performance_stats() {
         let provider = ClaudeCodeProvider::new_default();
         let request = create_test_request();
-        
+
         // Execute a research request
         let _ = provider.execute_research(&request).await;
-        
+
         let stats = provider.get_performance_stats().await;
         assert!(stats.contains_key("claude-code-websearch"));
-        
+
         let provider_stats = &stats["claude-code-websearch"];
         assert_eq!(provider_stats.total_requests, 1);
         assert_eq!(provider_stats.successful_requests, 1);
@@ -589,10 +594,10 @@ mod tests {
     #[tokio::test]
     async fn test_health_check() {
         let provider = ClaudeCodeProvider::new_default();
-        
+
         let health = provider.health_check_all().await.unwrap();
         assert!(health.contains_key("claude-code-websearch"));
-        
+
         match &health["claude-code-websearch"] {
             ProviderHealthStatus::Healthy => assert!(true),
             _ => assert!(false, "Expected healthy status"),

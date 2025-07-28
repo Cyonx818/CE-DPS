@@ -13,7 +13,7 @@
 // limitations under the License.
 
 use criterion::{black_box, criterion_group, criterion_main, BenchmarkId, Criterion, Throughput};
-use fortitude_core::vector::{VectorConfig, VectorDocument, DocumentMetadata};
+use fortitude_core::vector::{DocumentMetadata, VectorConfig, VectorDocument};
 use std::collections::HashMap;
 use std::time::Duration;
 use tokio::runtime::Runtime;
@@ -29,9 +29,15 @@ fn create_test_vector_config() -> VectorConfig {
 
 fn create_test_document(id: &str, content: &str) -> VectorDocument {
     let mut metadata = HashMap::new();
-    metadata.insert("category".to_string(), serde_json::Value::String("test".to_string()));
-    metadata.insert("timestamp".to_string(), serde_json::Value::Number(serde_json::Number::from(1234567890)));
-    
+    metadata.insert(
+        "category".to_string(),
+        serde_json::Value::String("test".to_string()),
+    );
+    metadata.insert(
+        "timestamp".to_string(),
+        serde_json::Value::Number(serde_json::Number::from(1234567890)),
+    );
+
     VectorDocument {
         id: id.to_string(),
         content: content.to_string(),
@@ -55,18 +61,14 @@ fn benchmark_single_document_storage(c: &mut Criterion) {
 
     for (size_name, content) in document_sizes {
         let doc = create_test_document("test_id", content);
-        
+
         group.throughput(Throughput::Bytes(content.len() as u64));
-        group.bench_with_input(
-            BenchmarkId::new("store", size_name),
-            &doc,
-            |b, doc| {
-                b.to_async(&rt).iter(|| async {
-                    let _result = mock_store_document(black_box(doc)).await;
-                    black_box(_result);
-                });
-            },
-        );
+        group.bench_with_input(BenchmarkId::new("store", size_name), &doc, |b, doc| {
+            b.to_async(&rt).iter(|| async {
+                let _result = mock_store_document(black_box(doc)).await;
+                black_box(_result);
+            });
+        });
     }
 
     group.finish();
@@ -83,7 +85,9 @@ fn benchmark_batch_document_storage(c: &mut Criterion) {
 
     for &batch_size in &batch_sizes {
         let documents: Vec<VectorDocument> = (0..batch_size)
-            .map(|i| create_test_document(&format!("doc_{i}"), &format!("Content for document {i}")))
+            .map(|i| {
+                create_test_document(&format!("doc_{i}"), &format!("Content for document {i}"))
+            })
             .collect();
 
         group.throughput(Throughput::Elements(batch_size as u64));
@@ -107,11 +111,19 @@ fn benchmark_document_retrieval(c: &mut Criterion) {
     let _config = create_test_vector_config();
 
     let mut group = c.benchmark_group("document_retrieval");
-    
+
     let retrieval_patterns = vec![
         ("single", vec!["doc_1"]),
         ("small_batch", vec!["doc_1", "doc_2", "doc_3"]),
-        ("large_batch", (0..20).map(|i| format!("doc_{i}")).collect::<Vec<_>>().iter().map(|s| s.as_str()).collect()),
+        (
+            "large_batch",
+            (0..20)
+                .map(|i| format!("doc_{i}"))
+                .collect::<Vec<_>>()
+                .iter()
+                .map(|s| s.as_str())
+                .collect(),
+        ),
     ];
 
     for (pattern_name, ids) in retrieval_patterns {
@@ -136,7 +148,7 @@ fn benchmark_document_update(c: &mut Criterion) {
     let _config = create_test_vector_config();
 
     let mut group = c.benchmark_group("document_update");
-    
+
     let update_scenarios = vec![
         ("content_only", true, false),
         ("metadata_only", false, true),
@@ -145,25 +157,23 @@ fn benchmark_document_update(c: &mut Criterion) {
 
     for (scenario_name, update_content, update_metadata) in update_scenarios {
         let mut doc = create_test_document("update_test", "Original content");
-        
+
         if update_content {
             doc.content = "Updated content with new information".to_string();
         }
-        
+
         if update_metadata {
-            doc.metadata.fields.insert("updated".to_string(), serde_json::Value::Bool(true));
+            doc.metadata
+                .fields
+                .insert("updated".to_string(), serde_json::Value::Bool(true));
         }
 
-        group.bench_with_input(
-            BenchmarkId::new("update", scenario_name),
-            &doc,
-            |b, doc| {
-                b.to_async(&rt).iter(|| async {
-                    let _result = mock_update_document(black_box(doc)).await;
-                    black_box(_result);
-                });
-            },
-        );
+        group.bench_with_input(BenchmarkId::new("update", scenario_name), &doc, |b, doc| {
+            b.to_async(&rt).iter(|| async {
+                let _result = mock_update_document(black_box(doc)).await;
+                black_box(_result);
+            });
+        });
     }
 
     group.finish();
@@ -174,9 +184,9 @@ fn benchmark_concurrent_storage(c: &mut Criterion) {
     let _config = create_test_vector_config();
 
     let mut group = c.benchmark_group("concurrent_storage");
-    
+
     let concurrency_levels = [1, 2, 4, 8, 16];
-    
+
     for &concurrency in &concurrency_levels {
         group.bench_with_input(
             BenchmarkId::new("concurrent", concurrency),
@@ -184,15 +194,16 @@ fn benchmark_concurrent_storage(c: &mut Criterion) {
             |b, &concurrency| {
                 b.to_async(&rt).iter(|| async {
                     let tasks: Vec<_> = (0..concurrency)
-                        .map(|i| {
-                            async move {
-                                let doc = create_test_document(&format!("concurrent_doc_{i}"), &format!("Content {i}"));
-                                let _result = mock_store_document(black_box(&doc)).await;
-                                black_box(_result);
-                            }
+                        .map(|i| async move {
+                            let doc = create_test_document(
+                                &format!("concurrent_doc_{i}"),
+                                &format!("Content {i}"),
+                            );
+                            let _result = mock_store_document(black_box(&doc)).await;
+                            black_box(_result);
                         })
                         .collect();
-                    
+
                     futures::future::join_all(tasks).await;
                 });
             },
@@ -206,17 +217,16 @@ fn benchmark_metadata_operations(c: &mut Criterion) {
     let rt = Runtime::new().unwrap();
 
     let mut group = c.benchmark_group("metadata_operations");
-    
-    let metadata_sizes = vec![
-        ("small", 5),
-        ("medium", 20),
-        ("large", 100),
-    ];
+
+    let metadata_sizes = vec![("small", 5), ("medium", 20), ("large", 100)];
 
     for (size_name, field_count) in metadata_sizes {
         let mut metadata = HashMap::new();
         for i in 0..field_count {
-            metadata.insert(format!("field_{i}"), serde_json::Value::String(format!("value_{i}")));
+            metadata.insert(
+                format!("field_{i}"),
+                serde_json::Value::String(format!("value_{i}")),
+            );
         }
 
         group.throughput(Throughput::Elements(field_count as u64));
@@ -239,49 +249,49 @@ fn benchmark_metadata_operations(c: &mut Criterion) {
 async fn mock_store_document(doc: &VectorDocument) -> Result<(), String> {
     // Simulate storage operation
     tokio::time::sleep(Duration::from_millis(1)).await;
-    
+
     // Simulate validation
     if doc.id.is_empty() || doc.content.is_empty() {
         return Err("Invalid document".to_string());
     }
-    
+
     Ok(())
 }
 
 async fn mock_store_batch_documents(docs: &[VectorDocument]) -> Result<(), String> {
     // Simulate batch storage operation
     tokio::time::sleep(Duration::from_millis(docs.len() as u64)).await;
-    
+
     // Validate all documents
     for doc in docs {
         if doc.id.is_empty() || doc.content.is_empty() {
             return Err("Invalid document in batch".to_string());
         }
     }
-    
+
     Ok(())
 }
 
 async fn mock_retrieve_documents(ids: &[&str]) -> Result<Vec<VectorDocument>, String> {
     // Simulate retrieval operation
     tokio::time::sleep(Duration::from_millis(ids.len() as u64)).await;
-    
+
     let documents: Vec<VectorDocument> = ids
         .iter()
         .map(|id| create_test_document(id, &format!("Retrieved content for {id}")))
         .collect();
-    
+
     Ok(documents)
 }
 
 async fn mock_update_document(doc: &VectorDocument) -> Result<(), String> {
     // Simulate update operation
     tokio::time::sleep(Duration::from_millis(2)).await;
-    
+
     if doc.id.is_empty() {
         return Err("Cannot update document without ID".to_string());
     }
-    
+
     Ok(())
 }
 

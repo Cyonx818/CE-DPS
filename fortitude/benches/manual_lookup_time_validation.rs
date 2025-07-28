@@ -181,26 +181,26 @@ impl DevelopmentScenario {
     pub fn name(&self) -> String {
         match self {
             DevelopmentScenario::MissingApiDocumentation { api_name, .. } => {
-                format!("api_docs_{}", api_name)
+                format!("api_docs_{api_name}")
             }
             DevelopmentScenario::UndocumentedTechnology { technology, .. } => {
-                format!("tech_{}", technology)
+                format!("tech_{technology}")
             }
             DevelopmentScenario::ConfigurationGap { config_type, .. } => {
-                format!("config_{}", config_type)
+                format!("config_{config_type}")
             }
             DevelopmentScenario::TodoImplementation {
                 feature_description,
                 ..
             } => {
-                format!("todo_{}", feature_description)
+                format!("todo_{feature_description}")
             }
             DevelopmentScenario::IntegrationPattern {
                 source_system,
                 target_system,
                 ..
             } => {
-                format!("integration_{}_{}", source_system, target_system)
+                format!("integration_{source_system}_{target_system}")
             }
         }
     }
@@ -516,13 +516,13 @@ fn bench_proactive_gap_detection_speed(c: &mut Criterion) {
 
                     // Create test project with various gap types
                     for i in 0..file_count {
-                        let file_path = temp_dir.path().join(format!("file_{}.rs", i));
+                        let file_path = temp_dir.path().join(format!("file_{i}.rs"));
                         let content = match i % 5 {
-                            0 => format!("// TODO: Implement {} feature", i),
-                            1 => format!("use undocumented_crate_{};", i),
-                            2 => format!("// FIXME: Configuration needed for {}", i),
-                            3 => format!("// Missing API documentation for function_{}", i),
-                            _ => format!("pub fn documented_function_{}() {{}}", i),
+                            0 => format!("// TODO: Implement {i} feature"),
+                            1 => format!("use undocumented_crate_{i};"),
+                            2 => format!("// FIXME: Configuration needed for {i}"),
+                            3 => format!("// Missing API documentation for function_{i}"),
+                            _ => format!("pub fn documented_function_{i}() {{}}"),
                         };
                         fs::write(&file_path, content).unwrap();
                     }
@@ -562,7 +562,7 @@ fn bench_proactive_gap_detection_speed(c: &mut Criterion) {
                     }
 
                     // Verify gaps were detected
-                    assert!(detected_gaps.len() > 0, "Should detect gaps in test files");
+                    assert!(!detected_gaps.is_empty(), "Should detect gaps in test files");
 
                     black_box((detected_gaps, detection_time));
                 });
@@ -639,12 +639,12 @@ fn bench_sprint_008_50_percent_reduction_validation(c: &mut Criterion) {
                 .fold(f64::NEG_INFINITY, f64::max);
 
             println!("Sprint 008 Task 6.5 Validation Results:");
-            println!("  Scenarios tested: {}", total_scenarios);
+            println!("  Scenarios tested: {total_scenarios}");
             println!("  Success rate: {:.1}%", success_rate * 100.0);
             println!("  Average reduction: {:.1}%", average_reduction * 100.0);
             println!("  Min reduction: {:.1}%", min_reduction * 100.0);
             println!("  Max reduction: {:.1}%", max_reduction * 100.0);
-            println!("  Quality maintained: {}", quality_maintained);
+            println!("  Quality maintained: {quality_maintained}");
 
             black_box((success_rate, average_reduction, quality_maintained));
         });

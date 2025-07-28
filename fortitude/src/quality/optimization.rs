@@ -1298,10 +1298,10 @@ mod tests {
             }
             Err(OptimizationError::ComponentInitialization { component, .. }) => {
                 // Expected failure due to missing dependencies in test environment
-                assert!(component.len() > 0);
+                assert!(!component.is_empty());
             }
             Err(e) => {
-                panic!("Unexpected error: {}", e);
+                panic!("Unexpected error: {e}");
             }
         }
     }
