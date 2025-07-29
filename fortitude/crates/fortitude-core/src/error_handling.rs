@@ -13,7 +13,7 @@
 // limitations under the License.
 
 //! Enhanced error handling framework for Core Research Pipeline Stabilization
-//! 
+//!
 //! This module provides structured error types, retry logic with exponential backoff,
 //! and circuit breaker patterns for reliable research pipeline operations.
 
@@ -29,7 +29,7 @@ use uuid::Uuid;
 #[derive(Error, Debug)]
 pub enum PipelineError {
     #[error("Network error: {message}")]
-    Network { 
+    Network {
         message: String,
         #[source]
         source: Option<Box<dyn std::error::Error + Send + Sync>>,
@@ -37,14 +37,14 @@ pub enum PipelineError {
     },
 
     #[error("Timeout error: operation took longer than {timeout_ms}ms")]
-    Timeout { 
+    Timeout {
         timeout_ms: u64,
         operation: String,
         correlation_id: String,
     },
 
     #[error("External API error: {api_name} returned {status_code}")]
-    ExternalApi { 
+    ExternalApi {
         api_name: String,
         status_code: u16,
         message: String,
@@ -53,7 +53,7 @@ pub enum PipelineError {
     },
 
     #[error("Validation error: {field}")]
-    Validation { 
+    Validation {
         field: String,
         message: String,
         context: HashMap<String, String>,
@@ -63,14 +63,14 @@ pub enum PipelineError {
     Configuration(String),
 
     #[error("Circuit breaker open for {service}")]
-    CircuitBreakerOpen { 
+    CircuitBreakerOpen {
         service: String,
         retry_after: Duration,
         failure_count: u32,
     },
 
     #[error("Rate limit exceeded for {service}")]
-    RateLimit { 
+    RateLimit {
         service: String,
         retry_after: Duration,
         limit: u32,
@@ -83,7 +83,7 @@ pub enum PipelineError {
     Authorization(String),
 
     #[error("Internal error: {message}")]
-    Internal { 
+    Internal {
         message: String,
         correlation_id: String,
         #[source]
@@ -94,42 +94,72 @@ pub enum PipelineError {
 impl Clone for PipelineError {
     fn clone(&self) -> Self {
         match self {
-            Self::Network { message, retry_after, .. } => Self::Network {
+            Self::Network {
+                message,
+                retry_after,
+                ..
+            } => Self::Network {
                 message: message.clone(),
                 source: None, // Can't clone trait objects
                 retry_after: *retry_after,
             },
-            Self::Timeout { timeout_ms, operation, correlation_id } => Self::Timeout {
+            Self::Timeout {
+                timeout_ms,
+                operation,
+                correlation_id,
+            } => Self::Timeout {
                 timeout_ms: *timeout_ms,
                 operation: operation.clone(),
                 correlation_id: correlation_id.clone(),
             },
-            Self::ExternalApi { api_name, status_code, message, retry_after, correlation_id } => Self::ExternalApi {
+            Self::ExternalApi {
+                api_name,
+                status_code,
+                message,
+                retry_after,
+                correlation_id,
+            } => Self::ExternalApi {
                 api_name: api_name.clone(),
                 status_code: *status_code,
                 message: message.clone(),
                 retry_after: *retry_after,
                 correlation_id: correlation_id.clone(),
             },
-            Self::Validation { field, message, context } => Self::Validation {
+            Self::Validation {
+                field,
+                message,
+                context,
+            } => Self::Validation {
                 field: field.clone(),
                 message: message.clone(),
                 context: context.clone(),
             },
             Self::Configuration(msg) => Self::Configuration(msg.clone()),
-            Self::CircuitBreakerOpen { service, retry_after, failure_count } => Self::CircuitBreakerOpen {
+            Self::CircuitBreakerOpen {
+                service,
+                retry_after,
+                failure_count,
+            } => Self::CircuitBreakerOpen {
                 service: service.clone(),
                 retry_after: *retry_after,
                 failure_count: *failure_count,
             },
-            Self::RateLimit { service, retry_after, limit } => Self::RateLimit {
+            Self::RateLimit {
+                service,
+                retry_after,
+                limit,
+            } => Self::RateLimit {
                 service: service.clone(),
                 retry_after: *retry_after,
                 limit: *limit,
             },
             Self::Authentication(msg) => Self::Authentication(msg.clone()),
             Self::Authorization(msg) => Self::Authorization(msg.clone()),
-            Self::Internal { message, correlation_id, .. } => Self::Internal {
+            Self::Internal {
+                message,
+                correlation_id,
+                ..
+            } => Self::Internal {
                 message: message.clone(),
                 correlation_id: correlation_id.clone(),
                 source: None, // Can't clone trait objects
@@ -255,21 +285,18 @@ impl CircuitBreaker {
         // Check circuit breaker state
         {
             let state = self.state.lock().unwrap();
-            match *state {
-                CircuitBreakerState::Open { until } => {
-                    if Instant::now() < until {
-                        let failure_count = *self.failure_count.lock().unwrap();
-                        return Err(PipelineError::CircuitBreakerOpen {
-                            service: "research_pipeline".to_string(),
-                            retry_after: until.duration_since(Instant::now()),
-                            failure_count,
-                        });
-                    }
-                    // Move to half-open state
-                    drop(state);
-                    *self.state.lock().unwrap() = CircuitBreakerState::HalfOpen;
+            if let CircuitBreakerState::Open { until } = *state {
+                if Instant::now() < until {
+                    let failure_count = *self.failure_count.lock().unwrap();
+                    return Err(PipelineError::CircuitBreakerOpen {
+                        service: "research_pipeline".to_string(),
+                        retry_after: until.duration_since(Instant::now()),
+                        failure_count,
+                    });
                 }
-                _ => {}
+                // Move to half-open state
+                drop(state);
+                *self.state.lock().unwrap() = CircuitBreakerState::HalfOpen;
             }
         }
 
@@ -299,25 +326,25 @@ impl CircuitBreaker {
     fn on_success(&self) {
         let mut success_count = self.success_count.lock().unwrap();
         let mut failure_count = self.failure_count.lock().unwrap();
-        
+
         *success_count += 1;
         *failure_count = 0;
 
         let state = self.state.lock().unwrap();
-        if matches!(*state, CircuitBreakerState::HalfOpen) {
-            if *success_count >= self.config.success_threshold {
-                drop(state);
-                *self.state.lock().unwrap() = CircuitBreakerState::Closed;
-                *success_count = 0;
-                info!("Circuit breaker closed after successful operations");
-            }
+        if matches!(*state, CircuitBreakerState::HalfOpen)
+            && *success_count >= self.config.success_threshold
+        {
+            drop(state);
+            *self.state.lock().unwrap() = CircuitBreakerState::Closed;
+            *success_count = 0;
+            info!("Circuit breaker closed after successful operations");
         }
     }
 
     fn on_failure(&self) {
         let mut failure_count = self.failure_count.lock().unwrap();
         let mut success_count = self.success_count.lock().unwrap();
-        
+
         *failure_count += 1;
         *success_count = 0;
 
@@ -360,24 +387,33 @@ impl RetryExecutor {
 
         loop {
             let correlation_id = Uuid::new_v4().to_string();
-            debug!("Executing operation attempt {} with correlation_id: {}", attempt, correlation_id);
+            debug!(
+                "Executing operation attempt {} with correlation_id: {}",
+                attempt, correlation_id
+            );
 
             match operation().await {
                 Ok(result) => {
                     if attempt > 1 {
-                        info!("Operation succeeded on attempt {} with correlation_id: {}", attempt, correlation_id);
+                        info!(
+                            "Operation succeeded on attempt {} with correlation_id: {}",
+                            attempt, correlation_id
+                        );
                     }
                     return Ok(result);
                 }
                 Err(error) => {
                     if attempt >= self.config.max_attempts || !error.is_retryable() {
-                        error!("Operation failed after {} attempts with correlation_id: {}, error: {}", attempt, correlation_id, error);
+                        error!(
+                            "Operation failed after {} attempts with correlation_id: {}, error: {}",
+                            attempt, correlation_id, error
+                        );
                         return Err(error);
                     }
 
                     // Use suggested retry delay if available
                     let retry_delay = error.retry_after().unwrap_or(delay);
-                    
+
                     warn!("Operation failed on attempt {} with correlation_id: {}, retrying in {:?}ms, error: {}", 
                           attempt, correlation_id, retry_delay.as_millis(), error);
 
@@ -386,14 +422,16 @@ impl RetryExecutor {
                     // Calculate next delay with exponential backoff and jitter
                     delay = std::cmp::min(
                         Duration::from_millis(
-                            (delay.as_millis() as f64 * self.config.backoff_multiplier) as u64
+                            (delay.as_millis() as f64 * self.config.backoff_multiplier) as u64,
                         ),
                         self.config.max_delay,
                     );
 
                     // Add jitter to prevent thundering herd
                     if self.config.jitter_factor > 0.0 {
-                        let jitter = (delay.as_millis() as f64 * self.config.jitter_factor * rand::random::<f64>()) as u64;
+                        let jitter = (delay.as_millis() as f64
+                            * self.config.jitter_factor
+                            * rand::random::<f64>()) as u64;
                         delay = Duration::from_millis(delay.as_millis() as u64 + jitter);
                     }
 
@@ -433,26 +471,28 @@ mod tests {
             backoff_multiplier: 2.0,
             jitter_factor: 0.0, // No jitter for predictable testing
         };
-        
+
         let executor = RetryExecutor::new(config);
         let attempt_count = Arc::new(AtomicU32::new(0));
         let attempt_count_clone = attempt_count.clone();
 
         let start = Instant::now();
-        let result = executor.execute(move || {
-            let count = attempt_count_clone.fetch_add(1, Ordering::SeqCst) + 1;
-            async move {
-                if count < 3 {
-                    Err(PipelineError::Network {
-                        message: format!("Attempt {}", count),
-                        source: None,
-                        retry_after: None,
-                    })
-                } else {
-                    Ok("Success".to_string())
+        let result = executor
+            .execute(move || {
+                let count = attempt_count_clone.fetch_add(1, Ordering::SeqCst) + 1;
+                async move {
+                    if count < 3 {
+                        Err(PipelineError::Network {
+                            message: format!("Attempt {}", count),
+                            source: None,
+                            retry_after: None,
+                        })
+                    } else {
+                        Ok("Success".to_string())
+                    }
                 }
-            }
-        }).await;
+            })
+            .await;
 
         let duration = start.elapsed();
         assert!(result.is_ok());
@@ -470,37 +510,45 @@ mod tests {
             timeout: Duration::from_millis(100),
             reset_timeout: Duration::from_millis(50),
         };
-        
+
         let circuit_breaker = CircuitBreaker::new(config);
-        
+
         // First failure
-        let result1 = circuit_breaker.execute(|| async {
-            Err::<(), _>(PipelineError::Network {
-                message: "Network error".to_string(),
-                source: None,
-                retry_after: None,
+        let result1 = circuit_breaker
+            .execute(|| async {
+                Err::<(), _>(PipelineError::Network {
+                    message: "Network error".to_string(),
+                    source: None,
+                    retry_after: None,
+                })
             })
-        }).await;
+            .await;
         assert!(result1.is_err());
         assert_eq!(circuit_breaker.state(), CircuitBreakerState::Closed);
 
         // Second failure - should open circuit
-        let result2 = circuit_breaker.execute(|| async {
-            Err::<(), _>(PipelineError::Network {
-                message: "Network error".to_string(),
-                source: None,
-                retry_after: None,
+        let result2 = circuit_breaker
+            .execute(|| async {
+                Err::<(), _>(PipelineError::Network {
+                    message: "Network error".to_string(),
+                    source: None,
+                    retry_after: None,
+                })
             })
-        }).await;
+            .await;
         assert!(result2.is_err());
-        assert!(matches!(circuit_breaker.state(), CircuitBreakerState::Open { .. }));
+        assert!(matches!(
+            circuit_breaker.state(),
+            CircuitBreakerState::Open { .. }
+        ));
 
         // Third attempt should be rejected
-        let result3 = circuit_breaker.execute(|| async {
-            Ok::<(), _>(())
-        }).await;
+        let result3 = circuit_breaker.execute(|| async { Ok::<(), _>(()) }).await;
         assert!(result3.is_err());
-        assert!(matches!(result3.unwrap_err(), PipelineError::CircuitBreakerOpen { .. }));
+        assert!(matches!(
+            result3.unwrap_err(),
+            PipelineError::CircuitBreakerOpen { .. }
+        ));
     }
 
     #[tokio::test]
@@ -511,28 +559,33 @@ mod tests {
             timeout: Duration::from_millis(100),
             reset_timeout: Duration::from_millis(10), // Short reset for testing
         };
-        
+
         let circuit_breaker = CircuitBreaker::new(config);
-        
+
         // Trigger failure to open circuit
-        let _result = circuit_breaker.execute(|| async {
-            Err::<(), _>(PipelineError::Network {
-                message: "Network error".to_string(),
-                source: None,
-                retry_after: None,
+        let _result = circuit_breaker
+            .execute(|| async {
+                Err::<(), _>(PipelineError::Network {
+                    message: "Network error".to_string(),
+                    source: None,
+                    retry_after: None,
+                })
             })
-        }).await;
-        
-        assert!(matches!(circuit_breaker.state(), CircuitBreakerState::Open { .. }));
-        
+            .await;
+
+        assert!(matches!(
+            circuit_breaker.state(),
+            CircuitBreakerState::Open { .. }
+        ));
+
         // Wait for reset timeout
         sleep(Duration::from_millis(15)).await;
-        
+
         // Next call should succeed and close circuit
-        let result = circuit_breaker.execute(|| async {
-            Ok::<&str, _>("Success")
-        }).await;
-        
+        let result = circuit_breaker
+            .execute(|| async { Ok::<&str, _>("Success") })
+            .await;
+
         assert!(result.is_ok());
         assert_eq!(circuit_breaker.state(), CircuitBreakerState::Closed);
     }
@@ -580,11 +633,13 @@ mod tests {
         };
         let circuit_breaker = CircuitBreaker::new(config);
 
-        let result = circuit_breaker.execute(|| async {
-            // Simulate long operation that will definitely timeout
-            sleep(Duration::from_secs(1)).await;
-            Ok::<&str, PipelineError>("Should timeout")
-        }).await;
+        let result = circuit_breaker
+            .execute(|| async {
+                // Simulate long operation that will definitely timeout
+                sleep(Duration::from_secs(1)).await;
+                Ok::<&str, PipelineError>("Should timeout")
+            })
+            .await;
 
         assert!(result.is_err());
         if let Err(PipelineError::Timeout { correlation_id, .. }) = result {

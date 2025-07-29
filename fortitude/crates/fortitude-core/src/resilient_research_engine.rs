@@ -104,7 +104,10 @@ impl<T: ResearchEngine> ResilientResearchEngine<T> {
         R: Send,
     {
         let correlation_id = Uuid::new_v4().to_string();
-        debug!("Starting resilient operation '{}' with correlation_id: {}", operation_name, correlation_id);
+        debug!(
+            "Starting resilient operation '{}' with correlation_id: {}",
+            operation_name, correlation_id
+        );
 
         // Wrap the operation to convert ResearchEngineError to PipelineError for circuit breaker
         let circuit_breaker_operation = || async {
@@ -112,39 +115,56 @@ impl<T: ResearchEngine> ResilientResearchEngine<T> {
                 Ok(result) => Ok(result),
                 Err(research_error) => {
                     let pipeline_error = research_error.to_pipeline_error();
-                    error!("Operation '{}' failed with correlation_id: {}, error: {}", 
-                           operation_name, correlation_id, pipeline_error);
+                    error!(
+                        "Operation '{}' failed with correlation_id: {}, error: {}",
+                        operation_name, correlation_id, pipeline_error
+                    );
                     Err(pipeline_error)
                 }
             }
         };
 
         // Execute with circuit breaker protection
-        let circuit_result = self.circuit_breaker.execute(circuit_breaker_operation).await;
+        let circuit_result = self
+            .circuit_breaker
+            .execute(circuit_breaker_operation)
+            .await;
 
         match circuit_result {
             Ok(result) => {
-                debug!("Operation '{}' succeeded with correlation_id: {}", operation_name, correlation_id);
+                debug!(
+                    "Operation '{}' succeeded with correlation_id: {}",
+                    operation_name, correlation_id
+                );
                 Ok(result)
             }
             Err(pipeline_error) => {
                 // Convert back to ResearchEngineError
                 let research_error = ResearchEngineError::PipelineError(pipeline_error);
-                
+
                 // Apply retry logic if appropriate
                 if research_error.is_retryable() {
-                    debug!("Attempting retry for operation '{}' with correlation_id: {}", operation_name, correlation_id);
-                    
-                    let retry_result = self.retry_executor.execute(|| async {
-                        match operation().await {
-                            Ok(result) => Ok(result),
-                            Err(error) => Err(error.to_pipeline_error()),
-                        }
-                    }).await;
+                    debug!(
+                        "Attempting retry for operation '{}' with correlation_id: {}",
+                        operation_name, correlation_id
+                    );
+
+                    let retry_result = self
+                        .retry_executor
+                        .execute(|| async {
+                            match operation().await {
+                                Ok(result) => Ok(result),
+                                Err(error) => Err(error.to_pipeline_error()),
+                            }
+                        })
+                        .await;
 
                     match retry_result {
                         Ok(result) => {
-                            info!("Operation '{}' succeeded after retry with correlation_id: {}", operation_name, correlation_id);
+                            info!(
+                                "Operation '{}' succeeded after retry with correlation_id: {}",
+                                operation_name, correlation_id
+                            );
                             Ok(result)
                         }
                         Err(pipeline_error) => {
@@ -217,18 +237,15 @@ impl<T: ResearchEngine> ResearchEngine for ResilientResearchEngine<T> {
     async fn health_check(&self) -> Result<(), ResearchEngineError> {
         // Check circuit breaker state first
         let circuit_state = self.circuit_breaker.state();
-        match circuit_state {
-            crate::error_handling::CircuitBreakerState::Open { until: _ } => {
-                warn!("Health check failed: circuit breaker is open");
-                return Err(ResearchEngineError::PipelineError(
-                    PipelineError::CircuitBreakerOpen {
-                        service: "research_engine".to_string(),
-                        retry_after: Duration::from_secs(30),
-                        failure_count: self.circuit_breaker.failure_count(),
-                    },
-                ));
-            }
-            _ => {}
+        if let crate::error_handling::CircuitBreakerState::Open { until: _ } = circuit_state {
+            warn!("Health check failed: circuit breaker is open");
+            return Err(ResearchEngineError::PipelineError(
+                PipelineError::CircuitBreakerOpen {
+                    service: "research_engine".to_string(),
+                    retry_after: Duration::from_secs(30),
+                    failure_count: self.circuit_breaker.failure_count(),
+                },
+            ));
         }
 
         // Perform actual health check
@@ -244,11 +261,13 @@ impl<T: ResearchEngine> ResearchEngine for ResilientResearchEngine<T> {
     fn estimate_processing_time(&self, request: &ClassifiedRequest) -> Duration {
         // Add buffer for retry and circuit breaker overhead
         let base_time = self.inner.estimate_processing_time(request);
-        let max_retries = self.config.retry_config.max_attempts as u32;
-        let max_delay = self.config.retry_config.max_delay;
-        
-        // Estimate worst-case scenario: base_time * retries + max_delay * (retries - 1)
-        base_time * max_retries + max_delay * (max_retries - 1)
+        let max_retries = self.config.retry_config.max_attempts;
+        let initial_delay = self.config.retry_config.initial_delay;
+
+        // Estimate realistic scenario: base_time * retries + exponential backoff delays
+        // Use initial_delay for more realistic estimation instead of max_delay
+        let retry_overhead = initial_delay * (max_retries - 1) * 2; // Approximate exponential growth
+        base_time * max_retries + retry_overhead
     }
 }
 
@@ -257,10 +276,10 @@ mod tests {
     use super::*;
     use crate::research_engine::ResearchEngineError;
     use async_trait::async_trait;
+    use fortitude_types::{ClassifiedRequest, ResearchResult, ResearchType};
     use std::sync::atomic::{AtomicU32, Ordering};
     use std::sync::Arc;
     use tokio::time::Duration;
-    use fortitude_types::{ClassifiedRequest, ResearchResult, ResearchType};
 
     // Mock research engine for testing
     struct MockResearchEngine {
@@ -299,7 +318,7 @@ mod tests {
                     0.9,
                     vec![],
                 );
-                
+
                 let metadata = fortitude_types::ResearchMetadata {
                     completed_at: chrono::Utc::now(),
                     processing_time_ms: self.delay.as_millis() as u64,
@@ -356,9 +375,9 @@ mod tests {
             },
             ..Default::default()
         };
-        
+
         let resilient_engine = ResilientResearchEngine::new(mock_engine, config);
-        
+
         let request = ClassifiedRequest::new(
             "test query".to_string(),
             ResearchType::Implementation,
@@ -370,7 +389,7 @@ mod tests {
 
         let result = resilient_engine.generate_research(&request).await;
         assert!(result.is_ok());
-        
+
         let research_result = result.unwrap();
         assert_eq!(research_result.immediate_answer, "Mock research result");
     }
@@ -391,9 +410,9 @@ mod tests {
             },
             ..Default::default()
         };
-        
+
         let resilient_engine = ResilientResearchEngine::new(mock_engine, config);
-        
+
         let request = ClassifiedRequest::new(
             "test query".to_string(),
             ResearchType::Implementation,
@@ -406,15 +425,18 @@ mod tests {
         // First two calls should fail normally
         let result1 = resilient_engine.generate_research(&request).await;
         assert!(result1.is_err());
-        
+
         let result2 = resilient_engine.generate_research(&request).await;
         assert!(result2.is_err());
 
         // Third call should be rejected by circuit breaker
         let result3 = resilient_engine.generate_research(&request).await;
         assert!(result3.is_err());
-        
-        if let Err(ResearchEngineError::PipelineError(PipelineError::CircuitBreakerOpen { .. })) = result3 {
+
+        if let Err(ResearchEngineError::PipelineError(PipelineError::CircuitBreakerOpen {
+            ..
+        })) = result3
+        {
             // Expected
         } else {
             panic!("Expected circuit breaker open error, got: {:?}", result3);
@@ -434,7 +456,7 @@ mod tests {
     fn test_estimated_processing_time_includes_overhead() {
         let mock_engine = MockResearchEngine::new(0, Duration::from_millis(100));
         let resilient_engine = ResilientResearchEngine::with_defaults(mock_engine);
-        
+
         let request = ClassifiedRequest::new(
             "test query".to_string(),
             ResearchType::Implementation,
@@ -445,7 +467,7 @@ mod tests {
         );
 
         let estimated_time = resilient_engine.estimate_processing_time(&request);
-        
+
         // Should be more than base processing time due to retry overhead
         assert!(estimated_time > Duration::from_millis(100));
         // But should be reasonable (not more than 10x base time)

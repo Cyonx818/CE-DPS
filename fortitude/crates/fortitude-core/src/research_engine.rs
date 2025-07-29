@@ -95,7 +95,7 @@ impl ResearchEngineError {
                 correlation_id: uuid::Uuid::new_v4().to_string(),
             },
             Self::VectorSearchError(msg) => PipelineError::Internal {
-                message: format!("Vector search failed: {}", msg),
+                message: format!("Vector search failed: {msg}"),
                 correlation_id: uuid::Uuid::new_v4().to_string(),
                 source: None,
             },
