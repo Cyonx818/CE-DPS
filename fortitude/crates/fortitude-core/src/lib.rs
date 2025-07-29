@@ -22,11 +22,13 @@ pub mod classification;
 pub mod claude_code_integration_example;
 pub mod claude_code_provider;
 pub mod claude_code_research_engine;
+pub mod error_handling;
 pub mod multi_provider_research_engine;
 pub mod pipeline;
 pub mod prompts;
 pub mod research_engine;
 pub mod research_feedback;
+pub mod resilient_research_engine;
 pub mod storage;
 pub mod vector;
 
@@ -48,6 +50,7 @@ pub use pipeline::*;
 pub use prompts::*;
 pub use research_engine::*;
 pub use research_feedback::*;
+pub use resilient_research_engine::*;
 pub use storage::*;
 pub use vector::{
     BatchSearchRequest,
