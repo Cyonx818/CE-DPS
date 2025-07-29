@@ -22,7 +22,7 @@ use std::time::Instant;
 struct SimpleClaudeCodeProvider {
     provider_name: String,
     #[allow(dead_code)]
-        max_web_results: usize,
+    max_web_results: usize,
 }
 
 impl SimpleClaudeCodeProvider {
