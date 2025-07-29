@@ -503,7 +503,7 @@ fn bench_proactive_gap_detection_speed(c: &mut Criterion) {
 
     let mut group = c.benchmark_group("sprint_008_proactive_gap_detection");
 
-    let scenarios = DevelopmentScenario::realistic_scenarios();
+    let _scenarios = DevelopmentScenario::realistic_scenarios();
 
     for file_count in [100, 500, 1000].iter() {
         group.throughput(Throughput::Elements(*file_count as u64));
@@ -562,7 +562,10 @@ fn bench_proactive_gap_detection_speed(c: &mut Criterion) {
                     }
 
                     // Verify gaps were detected
-                    assert!(!detected_gaps.is_empty(), "Should detect gaps in test files");
+                    assert!(
+                        !detected_gaps.is_empty(),
+                        "Should detect gaps in test files"
+                    );
 
                     black_box((detected_gaps, detection_time));
                 });

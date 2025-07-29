@@ -22,8 +22,7 @@
 
 use criterion::{black_box, criterion_group, criterion_main, BenchmarkId, Criterion};
 use fortitude::quality::{
-    OptimizationConfig, ProviderSelectionStrategy, QualityScore,
-    QualityWeights, SelectionCriteria,
+    OptimizationConfig, ProviderSelectionStrategy, QualityScore, QualityWeights, SelectionCriteria,
 };
 use std::time::{Duration, Instant};
 use tokio::runtime::Runtime;
@@ -243,7 +242,7 @@ fn benchmark_concurrent_optimization(c: &mut Criterion) {
                     }
 
                     // Wait for all tasks to complete
-                    let results = futures::future::join_all(tasks).await;
+                    let _results = futures::future::join_all(tasks).await;
                     let total_time = start.elapsed();
 
                     // Calculate throughput

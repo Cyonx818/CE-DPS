@@ -135,7 +135,8 @@ fn bench_batch_processing(c: &mut Criterion) {
     let scorer = ComprehensiveQualityScorer::with_default_config();
     let weights = QualityWeights::research_optimized();
 
-    let queries_responses = [(
+    let queries_responses = [
+        (
             "What is machine learning?",
             "Machine learning enables computers to learn from data.",
         ),
@@ -154,7 +155,8 @@ fn bench_batch_processing(c: &mut Criterion) {
         (
             "Describe computer vision",
             "Computer vision enables machines to interpret and understand visual information.",
-        )];
+        ),
+    ];
 
     let batch_sizes = vec![1, 5, 10];
 
@@ -256,7 +258,7 @@ fn bench_performance_threshold(c: &mut Criterion) {
                             "Evaluation took {eval_time:?}, should be < 100ms"
                         );
 
-                        black_box(result);
+                        let _ = black_box(result);
                     }
 
                     start.elapsed()

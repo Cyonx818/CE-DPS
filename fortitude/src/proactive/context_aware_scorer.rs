@@ -940,8 +940,10 @@ mod tests {
     #[tokio::test]
     async fn test_performance_requirements() {
         // FAILING TEST: Context-aware scoring should meet performance requirements
-        let mut config = ContextAwareScoringConfig::default();
-        config.max_context_overhead_ms = 20; // 20ms limit
+        let config = ContextAwareScoringConfig {
+            max_context_overhead_ms: 20, // 20ms limit
+            ..Default::default()
+        };
 
         let scorer = ContextAwarePriorityScorer::new(config).await.unwrap();
         let gap = create_test_gap();
@@ -973,9 +975,11 @@ mod tests {
     #[tokio::test]
     async fn test_classification_cache_functionality() {
         // FAILING TEST: Classification cache should improve performance
-        let mut config = ContextAwareScoringConfig::default();
-        config.enable_classification_cache = true;
-        config.classification_cache_ttl_secs = 60;
+        let config = ContextAwareScoringConfig {
+            enable_classification_cache: true,
+            classification_cache_ttl_secs: 60,
+            ..Default::default()
+        };
 
         let scorer = ContextAwarePriorityScorer::new(config).await.unwrap();
         let gap = create_test_gap();

@@ -21,6 +21,7 @@ use thiserror::Error;
 use tracing::{debug, error, info, warn};
 
 use crate::api::{ApiClient, ApiError, ClaudeClient, ClaudeConfig, ClaudeRequest, Message};
+use crate::error_handling::PipelineError;
 use crate::prompts::{DefaultTemplateFactory, ParameterValue, QualityValidator, TemplateRegistry};
 use crate::vector::{
     FusionMethod, HybridSearchRequest, HybridSearchService, SearchOptions, SearchStrategy,
@@ -35,6 +36,9 @@ use fortitude_types::{
 pub enum ResearchEngineError {
     #[error("API error: {0}")]
     ApiError(#[from] ApiError),
+
+    #[error("Pipeline error: {0}")]
+    PipelineError(#[from] PipelineError),
 
     #[error("Configuration error: {0}")]
     ConfigError(String),
@@ -56,6 +60,52 @@ pub enum ResearchEngineError {
 
     #[error("Context discovery error: {0}")]
     ContextDiscoveryError(String),
+}
+
+impl ResearchEngineError {
+    /// Check if error is retryable
+    pub fn is_retryable(&self) -> bool {
+        match self {
+            Self::PipelineError(pipeline_error) => pipeline_error.is_retryable(),
+            Self::ApiError(_) => true, // Most API errors are retryable
+            Self::TimeoutError => true,
+            Self::VectorSearchError(_) => true,
+            Self::ContextDiscoveryError(_) => true,
+            Self::ConfigError(_) => false,
+            Self::TemplateError(_) => false,
+            Self::QualityError(_) => false,
+            Self::UnknownResearchType(_) => false,
+        }
+    }
+
+    /// Convert to PipelineError for consistent error handling
+    pub fn to_pipeline_error(&self) -> PipelineError {
+        match self {
+            Self::PipelineError(pipeline_error) => pipeline_error.clone(),
+            Self::ApiError(api_error) => PipelineError::ExternalApi {
+                api_name: "claude".to_string(),
+                status_code: 500, // Default to server error
+                message: api_error.to_string(),
+                retry_after: None,
+                correlation_id: uuid::Uuid::new_v4().to_string(),
+            },
+            Self::TimeoutError => PipelineError::Timeout {
+                timeout_ms: 30000, // Default 30s timeout
+                operation: "research_generation".to_string(),
+                correlation_id: uuid::Uuid::new_v4().to_string(),
+            },
+            Self::VectorSearchError(msg) => PipelineError::Internal {
+                message: format!("Vector search failed: {msg}"),
+                correlation_id: uuid::Uuid::new_v4().to_string(),
+                source: None,
+            },
+            _ => PipelineError::Internal {
+                message: self.to_string(),
+                correlation_id: uuid::Uuid::new_v4().to_string(),
+                source: None,
+            },
+        }
+    }
 }
 
 /// Research engine trait for generating research results

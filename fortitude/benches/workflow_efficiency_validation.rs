@@ -314,10 +314,10 @@ async fn simulate_manual_workflow(task: &DevelopmentTask) -> ManualWorkflowResul
     let mut transitions = Vec::new();
 
     let research_intensity = task.research_intensity();
-    let base_work_time = Duration::from_secs(3600); // 1 hour base work
+    let _base_work_time = Duration::from_secs(3600); // 1 hour base work
 
     // 1. Start with focused development
-    let current_time = Instant::now();
+    let _current_time = Instant::now();
     let initial_focus_duration =
         Duration::from_millis((300.0 * (1.0 - research_intensity) * 1000.0) as u64);
     tokio::time::sleep(Duration::from_millis(50)).await; // Simulate initial work
@@ -433,7 +433,7 @@ async fn simulate_proactive_workflow(task: &DevelopmentTask) -> ProactiveWorkflo
     });
 
     // 4. Enhanced implementation (with ready knowledge)
-    let implementation_start = Instant::now();
+    let _implementation_start = Instant::now();
     let implementation_efficiency = 1.0 + (research_intensity * 0.3); // Better implementation with good info
     let implementation_duration =
         Duration::from_millis((400.0 / implementation_efficiency * 1000.0) as u64);
@@ -566,7 +566,7 @@ fn bench_cognitive_load_impact(c: &mut Criterion) {
 
     let mut group = c.benchmark_group("sprint_008_cognitive_load");
 
-    let tasks = DevelopmentTask::realistic_tasks();
+    let _tasks = DevelopmentTask::realistic_tasks();
 
     for research_intensity in [0.2, 0.5, 0.8].iter() {
         group.bench_with_input(

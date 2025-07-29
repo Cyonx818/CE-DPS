@@ -1667,7 +1667,7 @@ mod tests {
     #[test]
     fn test_metric_value_conversions() {
         assert_eq!(MetricValue::Counter(42).as_f64(), Some(42.0));
-        assert_eq!(MetricValue::Gauge(3.14).as_f64(), Some(3.14));
+        assert_eq!(MetricValue::Gauge(std::f64::consts::PI).as_f64(), Some(std::f64::consts::PI));
         assert_eq!(MetricValue::Boolean(true).as_f64(), Some(1.0));
         assert_eq!(MetricValue::Boolean(false).as_f64(), Some(0.0));
         assert_eq!(
@@ -1778,8 +1778,10 @@ mod tests {
 
     #[tokio::test]
     async fn test_collect_single_metric() {
-        let mut config = MetricsConfig::default();
-        config.enable_batch = false; // Only real-time for this test
+        let config = MetricsConfig {
+            enable_batch: false, // Only real-time for this test
+            ..Default::default()
+        };
 
         let storage = Arc::new(MockMetricsStorage::new());
         let collector = MetricsCollector::new(config, storage.clone());
@@ -1801,9 +1803,11 @@ mod tests {
 
     #[tokio::test]
     async fn test_collect_batch_metrics() {
-        let mut config = MetricsConfig::default();
-        config.enable_realtime = false; // Only batch for this test
-        config.batch_size = 2;
+        let config = MetricsConfig {
+            enable_realtime: false, // Only batch for this test
+            batch_size: 2,
+            ..Default::default()
+        };
 
         let storage = Arc::new(MockMetricsStorage::new());
         let collector = MetricsCollector::new(config, storage.clone());

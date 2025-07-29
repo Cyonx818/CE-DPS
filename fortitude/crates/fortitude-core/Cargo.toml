@@ -25,6 +25,7 @@ dashmap = "5.5"
 qdrant-client = { workspace = true }
 num_cpus = "1.0"
 md5 = "0.7"
+rand = { workspace = true }
 
 # Embedding generation (mock implementation - uncomment for production)
 # candle-core = { workspace = true }
