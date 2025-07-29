@@ -1294,7 +1294,7 @@ mod tests {
         match result {
             Ok(_engine) => {
                 // Engine created successfully
-                assert!(true);
+                // Engine created successfully - test passes
             }
             Err(OptimizationError::ComponentInitialization { component, .. }) => {
                 // Expected failure due to missing dependencies in test environment

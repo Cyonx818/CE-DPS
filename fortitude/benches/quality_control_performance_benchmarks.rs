@@ -36,9 +36,11 @@ use std::time::Duration;
 use tokio::runtime::Runtime;
 
 use fortitude::quality::{
-    ComprehensiveQualityScorer, ConsistencyAnalysis, CrossValidationEngine, FeedbackIntegrationSystem, InMemoryMetricsStorage, MetricsCollector,
-    MetricsConfig, OptimizationConfig, QualityConfigManager, QualityContext, QualityControlConfig, QualityOptimizationEngine, QualityScorer, QualityWeights,
-    ScorerConfig, SelectionCriteria, UrgencyLevel, ValidationMetrics, ValidationResult,
+    ComprehensiveQualityScorer, ConsistencyAnalysis, CrossValidationEngine,
+    FeedbackIntegrationSystem, InMemoryMetricsStorage, MetricsCollector, MetricsConfig,
+    OptimizationConfig, QualityConfigManager, QualityContext, QualityControlConfig,
+    QualityOptimizationEngine, QualityScorer, QualityWeights, ScorerConfig, SelectionCriteria,
+    UrgencyLevel, ValidationMetrics, ValidationResult,
 };
 
 /// Benchmark configuration
@@ -146,7 +148,7 @@ async fn setup_test_environment() -> (
     ));
 
     // Initialize optimization engine
-    let opt_config = OptimizationConfig::production_optimized();
+    let _opt_config = OptimizationConfig::production_optimized();
     let optimization_engine = Arc::new(QualityOptimizationEngine::new().await.unwrap());
 
     // Initialize configuration manager
@@ -242,14 +244,14 @@ fn bench_cross_validation(c: &mut Criterion) {
     let config = BenchmarkConfig::default();
     let test_data = BenchmarkTestData::new(config.test_data_count);
 
-    let (_, cross_validator, _, _, _, _) = rt.block_on(setup_test_environment());
+    let (_, _cross_validator, _, _, _, _) = rt.block_on(setup_test_environment());
 
     let mut group = c.benchmark_group("cross_validation");
 
     // Single validation benchmark
     group.bench_function("single_validation", |b| {
         b.to_async(&rt).iter(|| async {
-            let (query, response, context) = test_data.get_test_case(0);
+            let (_query, _response, _context) = test_data.get_test_case(0);
             // validate_response method not available
             let result: Result<String, String> = Ok("mock".to_string());
             black_box(result)
@@ -267,7 +269,7 @@ fn bench_cross_validation(c: &mut Criterion) {
                 b.to_async(&rt).iter(|| async {
                     let mut results = Vec::new();
                     for i in 0..size {
-                        let (query, response, context) = test_data.get_test_case(i);
+                        let (_query, _response, _context) = test_data.get_test_case(i);
                         // validate_response method not available
                         let result: Result<String, String> = Ok("mock".to_string());
                         results.push(result);
@@ -332,14 +334,14 @@ fn bench_provider_optimization(c: &mut Criterion) {
 /// Benchmark metrics collection performance
 fn bench_metrics_collection(c: &mut Criterion) {
     let rt = Runtime::new().unwrap();
-    let config = BenchmarkConfig::default();
+    let _config = BenchmarkConfig::default();
 
     let (scorer, _, _, metrics_collector, _, _) = rt.block_on(setup_test_environment());
 
     let mut group = c.benchmark_group("metrics_collection");
 
     // Create sample evaluation for metrics recording
-    let sample_evaluation = rt.block_on(async {
+    let _sample_evaluation = rt.block_on(async {
         let test_data = BenchmarkTestData::new(1);
         let (query, response, context) = test_data.get_test_case(0);
         scorer
@@ -420,11 +422,11 @@ fn bench_e2e_quality_workflow(c: &mut Criterion) {
 
     let (
         scorer,
-        cross_validator,
-        feedback_system,
+        _cross_validator,
+        _feedback_system,
         metrics_collector,
-        optimization_engine,
-        config_manager,
+        _optimization_engine,
+        _config_manager,
     ) = rt.block_on(setup_test_environment());
 
     let mut group = c.benchmark_group("end_to_end_workflow");
@@ -497,7 +499,7 @@ fn bench_e2e_quality_workflow(c: &mut Criterion) {
 
                     for i in 0..load {
                         let scorer = scorer.clone();
-                        let metrics_collector = metrics_collector.clone();
+                        let _metrics_collector = metrics_collector.clone();
                         let (query, response, context) = test_data.get_test_case(i);
                         let query = query.to_string();
                         let response = response.to_string();

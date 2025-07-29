@@ -949,9 +949,7 @@ mod tests {
 
         // Both should be reasonable scores, with clear response typically scoring higher
         // But we're testing the algorithm works, not that it's perfect
-        println!(
-            "Clear response score: {score_clear}, Unclear response score: {score_unclear}"
-        );
+        println!("Clear response score: {score_clear}, Unclear response score: {score_unclear}");
     }
 
     #[tokio::test]

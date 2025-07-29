@@ -1345,12 +1345,14 @@ mod tests {
     #[tokio::test]
     async fn test_configuration_validation() {
         // FAILING TEST: Configuration validation should catch invalid weights
-        let mut config = ImpactAssessmentConfig::default();
-        config.usage_frequency_weight = 0.3;
-        config.dependency_impact_weight = 0.3;
-        config.api_visibility_weight = 0.3;
-        config.development_activity_weight = 0.3; // Sum > 1.0
-        config.team_impact_weight = 0.3;
+        let config = ImpactAssessmentConfig {
+            usage_frequency_weight: 0.3,
+            dependency_impact_weight: 0.3,
+            api_visibility_weight: 0.3,
+            development_activity_weight: 0.3, // Sum > 1.0
+            team_impact_weight: 0.3,
+            ..Default::default()
+        };
 
         let result = config.validate();
         assert!(result.is_err());
@@ -1396,9 +1398,11 @@ mod tests {
     #[tokio::test]
     async fn test_impact_caching() {
         // FAILING TEST: Impact caching should improve performance for repeated assessments
-        let mut config = ImpactAssessmentConfig::default();
-        config.enable_impact_caching = true;
-        config.impact_cache_ttl_secs = 60;
+        let config = ImpactAssessmentConfig {
+            enable_impact_caching: true,
+            impact_cache_ttl_secs: 60,
+            ..Default::default()
+        };
 
         let assessor = ImpactAssessor::new(config).await.unwrap();
 

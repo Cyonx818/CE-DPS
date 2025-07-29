@@ -1090,9 +1090,11 @@ mod tests {
 
     #[tokio::test]
     async fn test_failover_mechanism() {
-        let mut config = ProviderConfig::default();
-        config.enable_failover = true;
-        config.max_failover_attempts = 2;
+        let config = ProviderConfig {
+            enable_failover: true,
+            max_failover_attempts: 2,
+            ..Default::default()
+        };
 
         let manager = ProviderManager::new(config).await.unwrap();
 
@@ -1169,10 +1171,12 @@ mod tests {
         assert!(matches!(provider_perf.health_status, HealthStatus::Healthy));
 
         // Test case 2: Provider with some successful requests should be healthy
-        let mut provider_perf_with_success = ProviderPerformance::default();
-        provider_perf_with_success.total_requests = 10;
-        provider_perf_with_success.successful_requests = 8;
-        provider_perf_with_success.failed_requests = 2;
+        let provider_perf_with_success = ProviderPerformance {
+            total_requests: 10,
+            successful_requests: 8,
+            failed_requests: 2,
+            ..Default::default()
+        };
 
         assert!(
             provider_perf_with_success.is_healthy(),
@@ -1181,10 +1185,12 @@ mod tests {
         assert_eq!(provider_perf_with_success.success_rate(), 0.8);
 
         // Test case 3: Provider with low success rate should not be healthy
-        let mut provider_perf_low_success = ProviderPerformance::default();
-        provider_perf_low_success.total_requests = 10;
-        provider_perf_low_success.successful_requests = 3;
-        provider_perf_low_success.failed_requests = 7;
+        let provider_perf_low_success = ProviderPerformance {
+            total_requests: 10,
+            successful_requests: 3,
+            failed_requests: 7,
+            ..Default::default()
+        };
 
         assert!(
             !provider_perf_low_success.is_healthy(),
@@ -1193,10 +1199,12 @@ mod tests {
         assert_eq!(provider_perf_low_success.success_rate(), 0.3);
 
         // Test case 4: Provider with exactly 50% success rate should not be healthy
-        let mut provider_perf_boundary = ProviderPerformance::default();
-        provider_perf_boundary.total_requests = 10;
-        provider_perf_boundary.successful_requests = 5;
-        provider_perf_boundary.failed_requests = 5;
+        let provider_perf_boundary = ProviderPerformance {
+            total_requests: 10,
+            successful_requests: 5,
+            failed_requests: 5,
+            ..Default::default()
+        };
 
         assert!(
             !provider_perf_boundary.is_healthy(),
@@ -1205,10 +1213,12 @@ mod tests {
         assert_eq!(provider_perf_boundary.success_rate(), 0.5);
 
         // Test case 5: Provider with just above 50% success rate should be healthy
-        let mut provider_perf_above_boundary = ProviderPerformance::default();
-        provider_perf_above_boundary.total_requests = 1000;
-        provider_perf_above_boundary.successful_requests = 501;
-        provider_perf_above_boundary.failed_requests = 499;
+        let provider_perf_above_boundary = ProviderPerformance {
+            total_requests: 1000,
+            successful_requests: 501,
+            failed_requests: 499,
+            ..Default::default()
+        };
 
         assert!(
             provider_perf_above_boundary.is_healthy(),
