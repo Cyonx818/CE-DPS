@@ -1,71 +1,247 @@
-# <context>CE-DPS New Subagent Integration Strategy</context>
+# <context>CE-DPS Flattened Subagent Integration Strategy</context>
 
 <meta>
-  <title>CE-DPS New Subagent Integration Strategy</title>
+  <title>CE-DPS Flattened Subagent Integration Strategy</title>
   <type>design-document</type>
   <audience>human_implementer</audience>
   <complexity>advanced</complexity>
   <updated>2025-07-29</updated>
-  <mdeval-score>0.90</mdeval-score>
-  <token-efficiency>0.16</token-efficiency>
+  <mdeval-score>0.92</mdeval-score>
+  <token-efficiency>0.14</token-efficiency>
 </meta>
 
 ## <summary priority="critical">TL;DR</summary>
-- **Objective**: Integrate Anthropic's new subagent features with CE-DPS methodology for optimal context preservation
-- **Strategy**: Persistent project-level subagents with embedded CE-DPS methodology + dynamic context packages
-- **Benefits**: Preserve orchestrator context window while maintaining CE-DPS quality standards and coordination patterns
-- **Implementation**: 7 specialized subagents with methodology-embedded system prompts and smart context handoff
-- **Success Criteria**: <40% orchestrator context usage with >95% subagent task completion accuracy
+- **Architecture**: Flattened 11-agent architecture with direct orchestrator control (nested subagents not supported)
+- **Strategy**: Specialized agents with embedded CE-DPS methodology + parallel execution where possible + **localhost Fortitude API access**
+- **Benefits**: Preserve orchestrator context window while maintaining CE-DPS quality standards and **independent knowledge management access**
+- **Implementation**: 11 specialized agents across 3 phases with structured context packages, direct coordination, and **WebFetch-based Fortitude integration**
+- **Success Criteria**: <40% orchestrator context usage with >95% agent task completion accuracy and **independent pattern lookup capability**
 
-## <architecture-overview priority="critical">System Architecture</architecture-overview>
+## <architecture-overview priority="critical">Flattened System Architecture</architecture-overview>
 
 ### <core-components>Primary System Components</core-components>
 
 ```mermaid
 graph TD
     A[CE-DPS Orchestrator] --> B[Context Package Generator]
-    B --> C[Phase 1: Strategic Research Agent]
-    B --> D[Phase 2: Sprint Planning Agent]  
-    B --> E[Phase 3: Implementation Coordinator]
-    E --> F[Database Implementation Agent]
-    E --> G[Business Logic Agent]
-    E --> H[API Layer Agent]
-    E --> I[Quality Validation Agent]
     
-    J[Fortitude Knowledge Base] --> C
-    J --> D
-    J --> F
-    J --> G
-    J --> H
-    J --> I
+    B --> C1[Architectural Research Agent]
+    B --> C2[Security Research Agent]
+    B --> C3[Performance Research Agent]
+    B --> C4[Domain Research Agent]
     
-    K[Project State Store] --> A
-    A --> K
+    B --> D1[Feature Analysis Agent]
+    B --> D2[Implementation Planning Agent]
+    B --> D3[Testing Strategy Agent]
+    
+    B --> E1[Database Implementation Agent]
+    B --> E2[Business Logic Agent]
+    B --> E3[API Layer Agent]
+    B --> E4[Quality Validation Agent]
+    
+    F[Fortitude HTTP API Server<br/>localhost:8080] --> C1
+    F --> C2
+    F --> C3
+    F --> C4
+    F --> D1
+    F --> D2
+    F --> D3
+    F --> E1
+    F --> E2
+    F --> E3
+    F --> E4
+    
+    G[Project State Store] --> A
+    A --> G
 ```
 
 **Architecture Principles**:
-- **Context Isolation**: Each subagent operates in dedicated context window
-- **Methodology Embedding**: CE-DPS guidelines embedded in subagent system prompts
-- **Smart Handoff**: Minimal, structured context packages between agents
-- **State Persistence**: Project state maintained in structured format for recovery
+- **Direct Control**: Orchestrator directly manages all 11 specialized agents
+- **No Nesting**: Flat agent structure (nested subagents not supported by Claude Code)
+- **Parallel Execution**: Research and planning agents execute in parallel for efficiency
+- **Sequential Implementation**: Implementation agents execute sequentially for proper integration
+- **Context Isolation**: Each agent operates in dedicated context window with focused expertise
+- **🔑 Independent Knowledge Access**: All agents access Fortitude knowledge management via localhost HTTP API (WebFetch)
 
-### <subagent-taxonomy>Subagent Specialization Matrix</subagent-taxonomy>
+### <agent-taxonomy>Specialized Agent Matrix</agent-taxonomy>
 
-| Subagent | Phase | Purpose | Context Requirements | Tool Access |
-|----------|-------|---------|---------------------|-------------|
-| Strategic Research | 1 | Architecture research, pattern analysis | Business requirements + domain patterns | WebFetch, Grep, Read, Task |
-| Sprint Planner | 2 | Feature analysis, implementation planning | Phase 1 outputs + feature selection | Read, Grep, Glob, TodoWrite |
-| Implementation Coordinator | 3 | Orchestrate sequential implementation | Phase 2 plans + quality requirements | Task (for other agents) |
-| Database Implementer | 3 | Database layer, migrations, repositories | Schema requirements + data patterns | Edit, MultiEdit, Bash |
-| Business Logic Agent | 3 | Service layer, domain logic, algorithms | Business rules + integration patterns | Edit, MultiEdit, Read |
-| API Layer Agent | 3 | HTTP endpoints, validation, serialization | API contracts + security patterns | Edit, MultiEdit, Bash |
-| Quality Validator | 3 | Testing, security validation, performance | Quality gates + validation criteria | Bash, Read, Grep |
+| Agent | Phase | Execution | Purpose | Context Target | Tool Access |
+|-------|-------|-----------|---------|----------------|-------------|
+| **Phase 1 Research Agents (Parallel)** |
+| Architectural Research | 1 | Parallel | System design, technology selection, integration patterns | 75% research, 25% coordination | **WebFetch (Fortitude API)**, Read, Grep, Task |
+| Security Research | 1 | Parallel | Authentication, authorization, vulnerability analysis, compliance | 80% security focus, 20% coordination | **WebFetch (Fortitude API)**, Read, Grep, Task |
+| Performance Research | 1 | Parallel | Optimization patterns, benchmarking, scalability analysis | 80% performance focus, 20% coordination | **WebFetch (Fortitude API)**, Read, Grep, Task |
+| Domain Research | 1 | Parallel | Business domain patterns, API specifications, industry standards | 75% domain focus, 25% coordination | **WebFetch (Fortitude API)**, Read, Grep, Task |
+| **Phase 2 Planning Agents (Parallel)** |
+| Feature Analysis | 2 | Parallel | Complexity assessment, dependency mapping, effort estimation | 80% analysis, 20% coordination | **WebFetch (Fortitude API)**, Read, Grep, Glob, TodoWrite |
+| Implementation Planning | 2 | Parallel | File-level planning, task breakdown, quality requirements | 85% planning, 15% coordination | **WebFetch (Fortitude API)**, Read, Grep, Glob, TodoWrite |
+| Testing Strategy | 2 | Parallel | Test approach, coverage planning, validation framework | 80% testing focus, 20% coordination | **WebFetch (Fortitude API)**, Read, Grep, Glob, TodoWrite |
+| **Phase 3 Implementation Agents (Sequential)** |
+| Database Implementation | 3 | Sequential | Database schema, migrations, repository patterns | 90% implementation, 10% coordination | **WebFetch (Fortitude API)**, Edit, MultiEdit, Write, Read, Bash |
+| Business Logic | 3 | Sequential | Service layer, domain logic, business rules | 90% implementation, 10% coordination | **WebFetch (Fortitude API)**, Edit, MultiEdit, Write, Read, Bash |
+| API Layer | 3 | Sequential | HTTP endpoints, validation, serialization | 90% implementation, 10% coordination | **WebFetch (Fortitude API)**, Edit, MultiEdit, Write, Read, Bash |
+| Quality Validation | 3 | Sequential | Testing, security audit, performance validation | 70% validation, 30% reporting | **WebFetch (Fortitude API)**, Bash, Read, Grep, Glob |
+
+## <fortitude-integration priority="critical">Fortitude Knowledge Management Integration</fortitude-integration>
+
+### <api-access-strategy>Localhost HTTP API Access</api-access-strategy>
+
+**Fortitude API Server Configuration**:
+```yaml
+# CE-DPS Optimized Configuration
+Server Configuration:
+  host: "127.0.0.1"          # Localhost-only binding (security)
+  port: 8080                 # Standard development port  
+  auth_enabled: false        # No authentication needed for localhost
+  rate_limit: 120/minute     # Higher limit for subagent usage
+  
+Security Benefits:
+  - No external network exposure (localhost-only)
+  - No authentication required (localhost binding provides security)
+  - Firewall naturally protects against external access
+  - Only processes on same machine can access API
+```
+
+**Environment Configuration**:
+```bash
+# Start Fortitude API server for CE-DPS subagent access
+export FORTITUDE_API_HOST="127.0.0.1"
+export FORTITUDE_API_PORT="8080"
+export FORTITUDE_API_AUTH_ENABLED="false"
+export FORTITUDE_API_RATE_LIMIT_PER_MINUTE="120"
+export FORTITUDE_API_CORS_ORIGINS="http://localhost:*"
+
+# Start the API server
+cd fortitude/crates/fortitude-api-server
+cargo run
+```
+
+### <api-integration-patterns>Subagent API Integration Patterns</api-integration-patterns>
+
+**Research Pattern Lookup (WebFetch)**:
+```yaml
+# Query implementation patterns
+POST http://localhost:8080/api/v1/research
+Content-Type: application/json
+
+{
+  "query": "rust async authentication patterns for MCP servers",
+  "context": "Focus on security-first implementation with JWT tokens",
+  "priority": "high"
+}
+
+Response: {
+  "results": [
+    {
+      "title": "Async JWT Authentication in Rust",
+      "content": "Implementation patterns for secure async authentication...",
+      "relevance_score": 0.94,
+      "source": "CE-DPS Implementation Library"
+    }
+  ],
+  "total_count": 15,
+  "processing_time_ms": 340
+}
+```
+
+**Cached Pattern Search (WebFetch)**:
+```yaml
+# Search existing implementation patterns
+GET http://localhost:8080/api/v1/cache/search?query=stripe+api+integration&research_type=implementation&min_quality=0.8
+
+Response: {
+  "results": [
+    {
+      "key": "implementation:stripe-mcp:authenticated-requests",
+      "content": { /* Implementation pattern details */ },
+      "quality_score": 0.91,
+      "metadata": {
+        "technology": "rust",
+        "pattern_type": "api-integration",
+        "security_validated": true
+      }
+    }
+  ],
+  "total_count": 8
+}
+```
+
+**Content Classification (WebFetch)**:
+```yaml
+# Classify requirements or code for better pattern matching
+POST http://localhost:8080/api/v1/classify
+Content-Type: application/json
+
+{
+  "content": "Need to implement payment processing with webhook verification",
+  "context_preferences": {
+    "detect_domain": true,
+    "detect_urgency": true,
+    "detect_audience": true
+  }
+}
+
+Response: {
+  "classifications": [
+    {
+      "category": "payment-integration",
+      "confidence": 0.92,
+      "metadata": {
+        "detected_technology": "api-integration",
+        "complexity_level": "intermediate",
+        "security_requirements": "high"
+      }
+    }
+  ]
+}
+```
+
+### <subagent-fortitude-workflow>Subagent Knowledge Management Workflow</subagent-fortitude-workflow>
+
+**Standard Pattern for All Agents**:
+```yaml
+1. Pattern Lookup (Before Implementation):
+   - Use WebFetch to query Fortitude API for existing patterns
+   - Search cache for similar implementations
+   - Classify requirements for better pattern matching
+   
+2. Implementation with Patterns:
+   - Apply retrieved patterns to current context
+   - Adapt proven approaches to specific requirements
+   - Maintain security and quality standards from patterns
+   
+3. Pattern Update (After Successful Implementation):
+   - Document successful implementation patterns
+   - Update Fortitude knowledge base with new patterns (via orchestrator)
+   - Contribute to continuous learning cycle
+```
+
+**Example Integration in Agent Workflow**:
+```yaml
+Database Implementation Agent Workflow:
+  step_1:
+    action: "Query Fortitude for database authentication patterns"
+    webfetch: "POST localhost:8080/api/v1/research"
+    query: "rust postgresql authentication schema patterns with migrations"
+    
+  step_2:
+    action: "Search cached implementations for similar schemas"
+    webfetch: "GET localhost:8080/api/v1/cache/search?query=auth+schema+postgresql"
+    
+  step_3:
+    action: "Implement using retrieved patterns"
+    process: "Apply proven migration patterns with security validations"
+    
+  step_4:
+    action: "Validate implementation against pattern quality standards"
+    validation: "Ensure >95% test coverage and security compliance"
+```
 
 ## <context-strategy priority="critical">Context Preservation Strategy</context-strategy>
 
-### <context-inheritance>Context Inheritance Framework</context-inheritance>
+### <context-inheritance>Flattened Context Framework</context-inheritance>
 
-**Three-Layer Context Model**:
+**Two-Layer Context Model**:
 ```xml
 <context-layers>
   <universal-context priority="critical">
@@ -75,251 +251,577 @@ graph TD
     <human-authority>Strategic decision boundaries and escalation procedures</human-authority>
   </universal-context>
   
-  <project-context priority="high">
-    <requirements>Business objectives, technical constraints, success criteria</requirements>
-    <architecture>System design, technology choices, integration patterns</architecture>
-    <current-phase>Phase state, completed deliverables, next milestones</current-phase>
-    <quality-gates>Validation criteria, performance targets, security requirements</quality-gates>
-  </project-context>
-  
-  <task-context priority="medium">
-    <specific-task>Detailed task description, files to modify, expected outputs</specific-task>
-    <dependencies>Prerequisites, integration points, coordination requirements</dependencies>
-    <validation>Success criteria, testing requirements, completion checkpoints</validation>
-    <constraints>Timeline, resource, and technical limitations</constraints>
-  </task-context>
+  <agent-specific-context priority="high">
+    <task-specification>Detailed task description, expected outputs, success criteria</task-specification>
+    <project-inputs>Relevant project requirements, architecture decisions, previous agent outputs</project-inputs>
+    <integration-requirements>Dependencies, handoff protocols, coordination needs</integration-requirements>
+    <validation-criteria>Quality gates, completion checkpoints, approval requirements</validation-criteria>
+  </agent-specific-context>
 </context-layers>
+```
+
+### <orchestrator-coordination>Orchestrator Coordination Patterns</orchestrator-coordination>
+
+**Phase-Based Execution Strategy**:
+```yaml
+Phase 1 - Parallel Research Coordination:
+  orchestrator_tasks:
+    - Create 4 research context packages simultaneously
+    - Launch all research agents in parallel
+    - Monitor completion status across agents
+    - Synthesize outputs into unified architecture
+    - Prepare human approval package
+  
+  context_efficiency:
+    - Orchestrator: 35% context for coordination and synthesis
+    - Research Agents: 75-80% context for specialized research
+    
+Phase 2 - Parallel Planning Coordination:
+  orchestrator_tasks:
+    - Create 3 planning context packages with Phase 1 outputs
+    - Launch planning agents in parallel  
+    - Coordinate cross-agent dependencies
+    - Synthesize implementation strategy
+    - Prepare human approval package
+    
+  context_efficiency:
+    - Orchestrator: 40% context for coordination and integration
+    - Planning Agents: 80-85% context for specialized planning
+
+Phase 3 - Sequential Implementation Coordination:
+  orchestrator_tasks:
+    - Create sequential context packages with cumulative outputs
+    - Launch implementation agents one at a time
+    - Manage handoffs and integration points
+    - Coordinate quality gate enforcement
+    - Prepare human validation package
+    
+  context_efficiency:
+    - Orchestrator: 30% context for coordination and state management
+    - Implementation Agents: 90% context for focused implementation
 ```
 
 ### <context-package-format>Standardized Context Package</context-package-format>
 
-**Context Package Template**:
+**Universal Context Package Template**:
 ```yaml
-# CE-DPS Subagent Context Package v1.0
-subagent_context:
+# CE-DPS Flattened Agent Context Package v2.0
+agent_context:
   metadata:
-    context_version: "1.0"
+    context_version: "2.0"
     created_timestamp: "2025-07-29T10:30:00Z"
     orchestrator_session: "ce-dps-session-12345"
-    target_subagent: "database-implementer"
+    target_agent: "security-research-agent"
+    execution_mode: "parallel" # or "sequential"
     
   task_specification:
-    phase: "Phase 3: Implementation"
-    task_type: "database_layer_implementation"
-    task_description: "Implement authentication database schema and repository layer"
+    phase: "Phase 1: Strategic Planning"
+    agent_role: "security_research_specialist"
+    task_description: "Research security patterns for MCP server authentication and PCI compliance"
     expected_outputs:
-      - "Database migration files"
-      - "Repository pattern implementation"
-      - "Comprehensive unit tests"
-      - "Integration test setup"
+      - "Security architecture recommendations"
+      - "Authentication and authorization patterns"
+      - "PCI compliance checklist"
+      - "Vulnerability mitigation strategies"
+    success_criteria:
+      - "Comprehensive security pattern analysis"
+      - "Specific recommendations for Stripe integration"
+      - "Actionable compliance requirements"
     
   project_context:
     business_requirements: |
-      JWT-based authentication system with role management
-      Support for 1000+ concurrent users
-      <200ms authentication response time
+      MCP server wrapping Stripe payments API
+      PCI compliance required for payment processing
+      <100ms response time requirement
+      Webhook signature verification needed
     
-    technical_architecture: |
-      Rust + SQLx + PostgreSQL stack
-      Repository pattern for data access
-      JWT tokens with 1-hour expiry
-      Role-based authorization
+    technical_constraints: |
+      Rust + Tokio + async patterns
+      JSON-RPC over stdio for MCP protocol
+      Stripe API integration with rate limiting
+      Secure API key management required
     
-    quality_requirements:
-      test_coverage: ">95%"
-      security_validation: "All inputs validated, no SQL injection"
-      performance_targets: "Authentication queries <50ms"
-      error_handling: "Comprehensive error types with proper propagation"
+  agent_inputs:
+    fortitude_queries:
+      - "Stripe API security patterns"
+      - "MCP server authentication approaches"
+      - "PCI compliance implementation guides"
     
-  implementation_context:
-    files_to_create:
-      - path: "migrations/001_auth_schema.sql"
-        purpose: "User authentication table schema"
-      - path: "src/auth/repository.rs"
-        purpose: "Database repository implementation"
-      - path: "src/auth/models.rs"
-        purpose: "Data model definitions"
-      - path: "tests/auth/repository_tests.rs"
-        purpose: "Repository unit and integration tests"
+    research_focus:
+      - "API key storage and rotation patterns"
+      - "Webhook signature verification methods"
+      - "Rate limiting and DDoS protection"
+      - "Error handling without information leakage"
     
-    files_to_modify:
-      - path: "Cargo.toml"
-        changes: "Add bcrypt and uuid dependencies"
-      - path: "src/auth/mod.rs"
-        changes: "Export repository module"
-    
-    integration_points:
-      prerequisites:
-        - "Database connection pool configuration"
-        - "Test database setup scripts"
-      handoff_to:
-        - "Business Logic Agent: User authentication service"
-        - "API Layer Agent: Authentication endpoints"
+    integration_requirements:
+      coordination_with:
+        - "Architectural Research Agent: Technology stack validation"
+        - "Performance Research Agent: Security performance impact"
+        - "Domain Research Agent: Stripe-specific security requirements"
+      
+      handoff_outputs:
+        - "Security patterns for architectural integration"
+        - "Authentication requirements for implementation planning"
+        - "Compliance checklist for quality validation"
     
   validation_criteria:
     completion_gates:
-      - "All migrations apply successfully"
-      - "Repository implements all required methods"
-      - "Unit tests achieve >95% coverage"
-      - "Integration tests pass with test database"
-      - "No clippy warnings or security issues"
+      - "All security domains researched comprehensively"
+      - "Specific recommendations for each security concern"
+      - "Integration requirements clearly documented"
+      - "Human decision points identified and marked"
     
-    integration_validation:
-      - "Repository methods return proper error types"
-      - "Database queries use parameterized statements"
-      - "Connection pooling implemented correctly"
-      - "Test fixtures provide realistic data"
+    quality_standards:
+      - "Security-first approach validated"
+      - "No security anti-patterns recommended"
+      - "Compliance requirements feasible and complete"
+      - "Performance impact of security measures assessed"
 ```
 
-## <subagent-specifications priority="critical">Detailed Subagent Specifications</subagent-specifications>
+## <agent-specifications priority="critical">Detailed Agent Specifications</agent-specifications>
 
-### <strategic-research-agent>Phase 1: Strategic Research Agent</strategic-research-agent>
+### <phase1-research-agents>Phase 1: Research Agent Specifications</phase1-research-agents>
+
+#### <architectural-research-agent>Architectural Research Agent</architectural-research-agent>
 
 **Agent Configuration**:
 ```yaml
-agent_name: "ce-dps-strategic-researcher"
+agent_name: "ce-dps-architectural-researcher"
 agent_type: "project-level"
-system_prompt_file: "prompts/ce-dps-phase1-researcher.md"
-tools_allowed: ["WebFetch", "Grep", "Read", "Task", "TodoWrite"]
-context_window_target: "80% for research, 20% for coordination"
+system_prompt_file: "prompts/ce-dps-architectural-researcher.md"
+tools_allowed: ["WebFetch", "Read", "Grep", "Task"]
+context_window_target: "75% for research, 25% for coordination"
+execution_mode: "parallel"
+phase: "1"
 ```
 
 **System Prompt Requirements**:
 ```markdown
-# CE-DPS Phase 1 Strategic Research Agent
+# CE-DPS Architectural Research Agent
 
-You are a specialized AI assistant for the CE-DPS methodology, focused on Phase 1 strategic planning and architectural research. Your role is AI-as-implementer with human strategic oversight.
+You are a specialized architectural research agent within the CE-DPS methodology, focused on system design, technology selection, and integration patterns for Phase 1 strategic planning.
 
 ## Core Responsibilities
-- Conduct comprehensive architectural research using parallel subagents
-- Analyze existing patterns from Fortitude knowledge base
-- Create detailed system architecture proposals
-- Generate feature roadmaps with business value prioritization
-- Prepare materials for human strategic approval
+- Research and evaluate architectural patterns and technology stacks
+- Analyze integration approaches and system design options
+- Create comprehensive architectural recommendations
+- Coordinate findings with other research agents through structured outputs
+- Prepare architectural decisions for human strategic approval
 
 ## CE-DPS Methodology Context
 [EMBED: Complete Phase 1 methodology from methodology/ai-implementation/phase-1-planning.md]
 
 ## Implementation Standards
-[EMBED: Complete implementation guidelines from CLAUDE.md]
+[EMBED: Complete implementation guidelines from CLAUDE.md focusing on architecture patterns]
 
 ## Research Quality Standards
-- Security-first architectural patterns
-- Performance requirements validation (<200ms response time)
-- Scalability patterns for projected user load
-- Integration patterns with existing systems
+- Technology evaluation with pros/cons analysis
+- Integration pattern assessment with complexity scoring
+- Scalability analysis for projected system requirements
+- Performance architecture validation
 - Risk assessment with mitigation strategies
 
-## Output Requirements
-- Structured architecture documentation using CE-DPS XML format
-- Business-aligned feature roadmap with complexity scoring
-- Risk assessment with human decision points clearly marked
-- Ready-for-approval documentation packages
+## Coordination Requirements
+- Output format compatible with other Phase 1 research agents
+- Clear integration points for security, performance, and domain research
+- Structured recommendations ready for orchestrator synthesis
+- Human decision points clearly identified and documented
 
-Always query Fortitude knowledge base before proposing new architectural patterns.
+## Expected Outputs
+- Comprehensive architecture recommendation document
+- Technology stack evaluation with justification
+- Integration strategy with other system components
+- Risk assessment with architectural mitigation approaches
+- Coordination summary for other research agents
+
+## Fortitude Knowledge Management Integration
+You have direct access to the Fortitude knowledge management system via localhost HTTP API:
+
+**API Access Configuration**:
+- Base URL: `http://localhost:8080/api/v1/`
+- No authentication required (localhost-only access)
+- Rate limit: 120 requests per minute
+
+**Required Integration Pattern**:
+1. **Pattern Lookup** (before architectural decisions): Use WebFetch to query research endpoint
+2. **Cache Search** (for existing implementations): Use WebFetch to search cached patterns  
+3. **Classification** (for requirement analysis): Use WebFetch to classify and categorize needs
+
+**Example Usage**:
+```json
+// Research architectural patterns
+WebFetch: POST http://localhost:8080/api/v1/research
+Body: {
+  "query": "microservices architecture patterns for rust async applications",
+  "context": "Focus on scalability and security patterns",
+  "priority": "high"
+}
+
+// Search cached implementations
+WebFetch: GET http://localhost:8080/api/v1/cache/search?query=rust+microservices&research_type=implementation
 ```
 
-### <sprint-planning-agent>Phase 2: Sprint Planning Agent</sprint-planning-agent>
+**MANDATORY**: Always query Fortitude API before proposing new architectural approaches. Use retrieved patterns as foundation for recommendations.
+```
+
+#### <security-research-agent>Security Research Agent</security-research-agent>
 
 **Agent Configuration**:
 ```yaml
-agent_name: "ce-dps-sprint-planner"
-agent_type: "project-level"  
-system_prompt_file: "prompts/ce-dps-phase2-planner.md"
-tools_allowed: ["Read", "Grep", "Glob", "TodoWrite", "Task"]
-context_window_target: "70% for planning, 30% for research coordination"
+agent_name: "ce-dps-security-researcher"
+agent_type: "project-level"
+system_prompt_file: "prompts/ce-dps-security-researcher.md"
+tools_allowed: ["WebFetch", "Read", "Grep", "Task"]
+context_window_target: "80% for security research, 20% for coordination"
+execution_mode: "parallel"
+phase: "1"
 ```
 
 **System Prompt Requirements**:
 ```markdown
-# CE-DPS Phase 2 Sprint Planning Agent
+# CE-DPS Security Research Agent
 
-You are a specialized AI assistant for CE-DPS Phase 2 sprint development planning. Your role is creating detailed, file-level implementation plans under human approval.
+You are a specialized security research agent within the CE-DPS methodology, focused on authentication, authorization, vulnerability analysis, and compliance requirements for Phase 1 strategic planning.
 
 ## Core Responsibilities
-- Analyze human-selected features for implementation complexity
-- Coordinate parallel research subagents for knowledge gap analysis
-- Create file-level implementation plans with realistic time estimates
-- Generate comprehensive quality requirements for Phase 3
-- Prepare sprint documentation for human approval
+- Research security patterns and authentication approaches
+- Analyze vulnerability landscapes and mitigation strategies
+- Assess compliance requirements and implementation approaches
+- Coordinate security findings with architectural and performance research
+- Prepare security architecture for human strategic approval
+
+## CE-DPS Methodology Context
+[EMBED: Complete Phase 1 methodology from methodology/ai-implementation/phase-1-planning.md]
+
+## Security Research Standards
+- Security-first architectural approach validation
+- Authentication and authorization pattern analysis
+- Vulnerability assessment with specific mitigation strategies
+- Compliance requirement analysis (PCI, SOC2, etc.)
+- Performance impact assessment of security measures
+
+## Coordination Requirements
+- Security implications for architectural decisions
+- Performance impact analysis for security measures
+- Domain-specific security requirements integration
+- Clear security requirements for implementation phases
+
+## Expected Outputs
+- Comprehensive security architecture recommendations
+- Authentication and authorization strategy
+- Vulnerability mitigation checklist
+- Compliance implementation requirements
+- Security integration points for other research areas
+
+## Fortitude Knowledge Management Integration
+You have direct access to the Fortitude knowledge management system via localhost HTTP API:
+
+**Security-Focused API Usage**:
+```json
+// Research security patterns
+WebFetch: POST http://localhost:8080/api/v1/research
+Body: {
+  "query": "authentication security patterns oauth2 jwt rust async",
+  "context": "Focus on vulnerability prevention and compliance requirements",
+  "priority": "high"
+}
+
+// Search security implementations
+WebFetch: GET http://localhost:8080/api/v1/cache/search?query=security+authentication&research_type=implementation&min_quality=0.9
+```
+
+**MANDATORY**: Always query Fortitude API for security patterns before recommending authentication, authorization, or security implementations. Prioritize proven, vulnerability-tested patterns.
+```
+
+#### <performance-research-agent>Performance Research Agent</performance-research-agent>
+
+**Agent Configuration**:
+```yaml
+agent_name: "ce-dps-performance-researcher"
+agent_type: "project-level"
+system_prompt_file: "prompts/ce-dps-performance-researcher.md"
+tools_allowed: ["WebFetch", "Read", "Grep", "Task"]
+context_window_target: "80% for performance research, 20% for coordination"
+execution_mode: "parallel"
+phase: "1"
+```
+
+**System Prompt Requirements**:
+```markdown
+# CE-DPS Performance Research Agent
+
+You are a specialized performance research agent within the CE-DPS methodology, focused on optimization patterns, benchmarking strategies, and scalability analysis for Phase 1 strategic planning.
+
+## Core Responsibilities
+- Research performance optimization patterns and approaches
+- Analyze scalability requirements and architectural implications
+- Assess benchmarking strategies and performance validation approaches
+- Coordinate performance findings with architectural and security research
+- Prepare performance architecture for human strategic approval
+
+## CE-DPS Methodology Context
+[EMBED: Complete Phase 1 methodology from methodology/ai-implementation/phase-1-planning.md]
+
+## Performance Research Standards
+- Response time requirements analysis and validation approaches
+- Throughput and concurrency pattern research
+- Resource usage optimization strategies
+- Caching and connection pooling pattern analysis
+- Load testing and benchmark strategy development
+
+## Coordination Requirements
+- Performance implications of architectural decisions
+- Performance impact of security measures
+- Domain-specific performance requirements
+- Performance validation strategies for implementation phases
+
+## Expected Outputs
+- Comprehensive performance architecture recommendations
+- Optimization strategy with specific patterns
+- Benchmarking and validation approach
+- Resource usage and scalability analysis
+- Performance integration points for other research areas
+
+## Fortitude Knowledge Management Integration
+**Performance-Focused API Usage**:
+```json
+// Research performance patterns
+WebFetch: POST http://localhost:8080/api/v1/research
+Body: {
+  "query": "rust async performance optimization patterns connection pooling",
+  "context": "Focus on sub-200ms response times and high throughput",
+  "priority": "high"
+}
+```
+
+**MANDATORY**: Always query Fortitude API for performance patterns and benchmarking data before recommending optimization strategies.
+```
+
+#### <domain-research-agent>Domain Research Agent</domain-research-agent>
+
+**Agent Configuration**:
+```yaml
+agent_name: "ce-dps-domain-researcher"
+agent_type: "project-level"
+system_prompt_file: "prompts/ce-dps-domain-researcher.md"
+tools_allowed: ["WebFetch", "Read", "Grep", "Task"]
+context_window_target: "75% for domain research, 25% for coordination"
+execution_mode: "parallel"
+phase: "1"
+```
+
+**System Prompt Requirements**:
+```markdown
+# CE-DPS Domain Research Agent
+
+You are a specialized domain research agent within the CE-DPS methodology, focused on business domain patterns, API specifications, industry standards, and domain-specific requirements for Phase 1 strategic planning.
+
+## Core Responsibilities
+- Research business domain patterns and industry best practices
+- Analyze API specifications and integration requirements
+- Assess industry standards and compliance frameworks
+- Coordinate domain findings with architectural, security, and performance research
+- Prepare domain architecture for human strategic approval
+
+## CE-DPS Methodology Context
+[EMBED: Complete Phase 1 methodology from methodology/ai-implementation/phase-1-planning.md]
+
+## Domain Research Standards
+- Business domain pattern analysis and validation
+- API specification research and integration requirement analysis
+- Industry standard compliance assessment
+- Domain-specific security and performance requirements
+- Business rule and workflow pattern research
+
+## Coordination Requirements
+- Domain implications for architectural decisions
+- Domain-specific security and performance requirements
+- Business rule integration with technical architecture
+- Domain validation strategies for implementation phases
+
+## Expected Outputs
+- Comprehensive domain pattern recommendations
+- API integration strategy with specific requirements
+- Industry standard compliance checklist
+- Business rule and workflow integration approach
+- Domain coordination summary for other research areas
+
+## Fortitude Knowledge Management Integration
+**Domain-Focused API Usage**:
+```json
+// Research domain patterns
+WebFetch: POST http://localhost:8080/api/v1/research
+Body: {
+  "query": "payment processing api integration patterns stripe webhook verification",
+  "context": "Focus on industry best practices and compliance requirements",
+  "priority": "high"
+}
+```
+
+**MANDATORY**: Always query Fortitude API for domain-specific patterns and industry best practices before proposing implementation approaches.
+```
+
+### <phase2-planning-agents>Phase 2: Planning Agent Specifications</phase2-planning-agents>
+
+#### <feature-analysis-agent>Feature Analysis Agent</feature-analysis-agent>
+
+**Agent Configuration**:
+```yaml
+agent_name: "ce-dps-feature-analyzer"
+agent_type: "project-level"
+system_prompt_file: "prompts/ce-dps-feature-analyzer.md"
+tools_allowed: ["Read", "Grep", "Glob", "TodoWrite"]
+context_window_target: "80% for analysis, 20% for coordination"
+execution_mode: "parallel"
+phase: "2"
+```
+
+**System Prompt Requirements**:
+```markdown
+# CE-DPS Feature Analysis Agent
+
+You are a specialized feature analysis agent within the CE-DPS methodology, focused on complexity assessment, dependency mapping, and effort estimation for Phase 2 sprint development planning.
+
+## Core Responsibilities
+- Analyze selected features for implementation complexity
+- Map dependencies and prerequisites across features
+- Assess implementation risks and mitigation strategies
+- Coordinate complexity findings with implementation planning and testing strategy
+- Prepare feature analysis for human sprint approval
+
+## CE-DPS Methodology Context
+[EMBED: Complete Phase 2 methodology from methodology/ai-implementation/phase-2-sprint.md]
+
+## Analysis Quality Standards
+- Comprehensive complexity scoring using multiple dimensions
+- Dependency mapping with critical path identification
+- Risk assessment with specific mitigation approaches
+- Resource requirement estimation with realistic timelines
+- Integration complexity analysis across system components
+
+## Coordination Requirements
+- Complexity implications for implementation planning
+- Testing complexity requirements for testing strategy
+- Risk factors for implementation sequence planning
+- Resource coordination for realistic sprint scoping
+
+## Expected Outputs
+- Detailed complexity analysis with scoring rationale
+- Comprehensive dependency map with critical paths
+- Risk assessment with mitigation strategies
+- Resource and timeline estimation with justification
+- Feature coordination summary for implementation planning
+
+Always validate complexity assessments against similar implementations in Fortitude knowledge base.
+```
+
+#### <implementation-planning-agent>Implementation Planning Agent</implementation-planning-agent>
+
+**Agent Configuration**:
+```yaml
+agent_name: "ce-dps-implementation-planner"
+agent_type: "project-level"
+system_prompt_file: "prompts/ce-dps-implementation-planner.md"
+tools_allowed: ["Read", "Grep", "Glob", "TodoWrite"]
+context_window_target: "85% for planning, 15% for coordination"
+execution_mode: "parallel"
+phase: "2"
+```
+
+**System Prompt Requirements**:
+```markdown
+# CE-DPS Implementation Planning Agent
+
+You are a specialized implementation planning agent within the CE-DPS methodology, focused on file-level planning, task breakdown, and quality requirements for Phase 2 sprint development planning.
+
+## Core Responsibilities
+- Create detailed, file-level implementation plans
+- Break down features into specific, actionable tasks
+- Define quality requirements and validation criteria
+- Coordinate implementation strategy with feature analysis and testing strategy
+- Prepare implementation plans for human sprint approval
 
 ## CE-DPS Methodology Context
 [EMBED: Complete Phase 2 methodology from methodology/ai-implementation/phase-2-sprint.md]
 
 ## Planning Quality Standards
-- File-level implementation detail with modification specifications
-- Comprehensive dependency analysis and prerequisite identification
-- Security and performance patterns integrated into plans
-- Testing strategy covering unit, integration, and security tests
-- Realistic time estimates based on complexity analysis
+- File-level detail with specific modification requirements
+- Task breakdown with realistic time estimates
+- Quality gate specification with measurable criteria
+- Integration sequence planning for proper dependency management
+- Implementation context preparation for Phase 3 agents
 
-## Research Coordination Pattern
-Use parallel Task calls for specialized research:
-- Technology Research Agent: Framework evaluation and selection
-- Security Research Agent: Vulnerability analysis and prevention patterns
-- Performance Research Agent: Optimization strategies and benchmarking
-- Testing Research Agent: Coverage strategies and automation approaches
+## Coordination Requirements
+- Integration of complexity analysis from feature analysis agent
+- Coordination with testing strategy for comprehensive coverage
+- Implementation sequence that supports quality validation
+- Context package preparation for Phase 3 implementation agents
 
-## Output Requirements
-- Detailed implementation plans ready for Phase 3 execution
-- Quality gate specifications with measurable criteria
-- Human approval packages with risk assessment
-- Context packages prepared for Phase 3 subagents
+## Expected Outputs
+- Detailed file-level implementation plan
+- Task breakdown with time estimates and dependencies
+- Quality requirement specification with validation criteria
+- Implementation sequence with integration checkpoints
+- Context packages prepared for Phase 3 handoff
 
-Always query Fortitude for similar feature implementation patterns before creating new approaches.
+Always validate implementation approaches against proven patterns in Fortitude knowledge base.
 ```
 
-### <implementation-coordinator>Phase 3: Implementation Coordinator</implementation-coordinator>
+#### <testing-strategy-agent>Testing Strategy Agent</testing-strategy-agent>
 
 **Agent Configuration**:
 ```yaml
-agent_name: "ce-dps-implementation-coordinator"
+agent_name: "ce-dps-testing-strategist"
 agent_type: "project-level"
-system_prompt_file: "prompts/ce-dps-phase3-coordinator.md"
-tools_allowed: ["Task", "TodoWrite", "Read", "Bash"]
-context_window_target: "60% for coordination, 40% for quality validation"
+system_prompt_file: "prompts/ce-dps-testing-strategist.md"
+tools_allowed: ["Read", "Grep", "Glob", "TodoWrite"]
+context_window_target: "80% for testing strategy, 20% for coordination"
+execution_mode: "parallel"
+phase: "2"
 ```
 
 **System Prompt Requirements**:
 ```markdown
-# CE-DPS Phase 3 Implementation Coordinator
+# CE-DPS Testing Strategy Agent
 
-You are the orchestrator for CE-DPS Phase 3 implementation, coordinating sequential subagents while maintaining quality standards and TDD methodology.
+You are a specialized testing strategy agent within the CE-DPS methodology, focused on test approach design, coverage planning, and validation framework development for Phase 2 sprint development planning.
 
 ## Core Responsibilities
-- Coordinate sequential implementation subagents (Database → Business Logic → API → Validation)
-- Maintain implementation context and ensure proper handoffs
-- Enforce quality gates and TDD methodology throughout implementation
-- Prepare materials for human business value validation
-- Manage integration points between implementation layers
+- Design comprehensive testing approach for selected features
+- Plan test coverage strategy achieving >95% coverage targets
+- Define validation frameworks and quality gate enforcement
+- Coordinate testing strategy with feature analysis and implementation planning
+- Prepare testing requirements for human sprint approval
 
 ## CE-DPS Methodology Context
-[EMBED: Complete Phase 3 methodology from methodology/ai-implementation/phase-3-execution.md]
+[EMBED: Complete Phase 2 methodology from methodology/ai-implementation/phase-2-sprint.md]
 
-## Sequential Coordination Pattern
-1. Database Implementation Agent: Schema, migrations, repository patterns
-2. Business Logic Agent: Service layer, domain logic, business rules
-3. API Layer Agent: HTTP endpoints, validation, serialization
-4. Quality Validation Agent: Comprehensive testing and performance validation
+## Testing Strategy Standards
+- Comprehensive test pyramid (unit, integration, end-to-end, security)
+- >95% coverage planning with meaningful test quality assessment
+- TDD approach integration with implementation planning
+- Anchor test identification for critical functionality
+- Performance and security testing integration
 
-## Quality Gate Enforcement
-- TDD methodology: Tests written before implementation
-- >95% test coverage for all business logic
-- Security validation: Input sanitization, SQL injection prevention
-- Performance benchmarks: <200ms response time validation
-- Anchor tests for critical functionality
+## Coordination Requirements
+- Testing complexity integration with feature analysis
+- Test implementation coordination with implementation planning
+- Quality gate definition for Phase 3 validation
+- Testing context preparation for implementation agents
 
-## Context Handoff Protocol
-Generate structured context packages for each subagent containing:
-- Specific task requirements and file modifications
-- Integration dependencies from previous agents
-- Quality validation criteria and completion gates
-- Expected outputs and handoff requirements
+## Expected Outputs
+- Comprehensive testing strategy document
+- Test coverage plan with quality targets
+- TDD integration approach for implementation
+- Anchor test specification for critical functionality
+- Testing validation criteria for quality gates
 
-Never proceed to next subagent until current agent passes all quality gates.
+Always validate testing approaches against successful patterns in Fortitude knowledge base.
 ```
 
-### <database-implementation-agent>Database Implementation Agent</database-implementation-agent>
+### <phase3-implementation-agents>Phase 3: Implementation Agent Specifications</phase3-implementation-agents>
+
+#### <database-implementation-agent>Database Implementation Agent</database-implementation-agent>
 
 **Agent Configuration**:
 ```yaml
@@ -327,14 +829,17 @@ agent_name: "ce-dps-database-implementer"
 agent_type: "project-level"
 system_prompt_file: "prompts/ce-dps-database-implementer.md"
 tools_allowed: ["Edit", "MultiEdit", "Write", "Read", "Bash"]
-context_window_target: "85% for implementation, 15% for coordination"
+context_window_target: "90% for implementation, 10% for coordination"
+execution_mode: "sequential"
+phase: "3"
+sequence_order: 1
 ```
 
 **System Prompt Requirements**:
 ```markdown
 # CE-DPS Database Implementation Agent
 
-You are a specialized database implementation agent within the CE-DPS methodology. Your role is implementing database schemas, migrations, and repository patterns using TDD approach.
+You are a specialized database implementation agent within the CE-DPS methodology, focused on database schemas, migrations, repository patterns, and data layer implementation using TDD approach.
 
 ## Core Responsibilities
 - Implement database migrations and schema changes
@@ -353,32 +858,46 @@ You are a specialized database implementation agent within the CE-DPS methodolog
 - Database constraints and validation at schema level
 - Migration rollback procedures for all schema changes
 
-## Testing Requirements
-- Unit tests for all repository methods with edge cases
-- Integration tests with test database and realistic fixtures
-- Performance tests for query optimization validation
-- Security tests for SQL injection prevention
-- Anchor tests for critical data operations
-
-## Implementation Pattern
-1. Write failing tests first (TDD methodology)
+## TDD Implementation Pattern
+1. Write failing tests first for all database operations
 2. Create database migrations with proper constraints
-3. Implement repository pattern with async/await
+3. Implement repository patterns with async/await
 4. Add comprehensive error handling and logging
 5. Optimize queries and add proper indexing
-6. Validate all quality gates before completion
+6. Validate all quality gates before handoff
 
 ## Expected Outputs
 - Database migration files with rollback procedures
 - Repository implementation with comprehensive error handling
 - Complete test suite with >95% coverage
 - Performance benchmarks for database operations
-- Integration points documented for business logic layer
+- Integration points documented for business logic layer handoff
 
-Always use the existing database patterns in the codebase and follow the established connection pooling approach.
+## Handoff Requirements
+- Database layer complete and tested
+- Repository interfaces defined for business logic integration
+- Configuration patterns established for dependent layers
+- Quality validation passed for database operations
+
+## Fortitude Knowledge Management Integration
+**Database Implementation API Usage**:
+```json
+// Query database patterns before implementation
+WebFetch: POST http://localhost:8080/api/v1/research
+Body: {
+  "query": "rust postgresql async database migration patterns authentication schema",
+  "context": "Focus on secure schema design and migration best practices",
+  "priority": "high"
+}
+
+// Search for similar database implementations
+WebFetch: GET http://localhost:8080/api/v1/cache/search?query=database+migration+postgresql&research_type=implementation
 ```
 
-### <business-logic-agent>Business Logic Agent</business-logic-agent>
+**MANDATORY**: Always query Fortitude API for database patterns before implementing schemas, migrations, or repository patterns. Apply proven database security and performance patterns.
+```
+
+#### <business-logic-agent>Business Logic Agent</business-logic-agent>
 
 **Agent Configuration**:
 ```yaml
@@ -386,14 +905,17 @@ agent_name: "ce-dps-business-logic-implementer"
 agent_type: "project-level"
 system_prompt_file: "prompts/ce-dps-business-logic-implementer.md"
 tools_allowed: ["Edit", "MultiEdit", "Write", "Read", "Bash"]
-context_window_target: "85% for implementation, 15% for coordination"
+context_window_target: "90% for implementation, 10% for coordination"
+execution_mode: "sequential"
+phase: "3"
+sequence_order: 2
 ```
 
 **System Prompt Requirements**:
 ```markdown
 # CE-DPS Business Logic Implementation Agent
 
-You are a specialized business logic implementation agent within the CE-DPS methodology. Your role is implementing service layers, domain logic, and business rules using TDD approach.
+You are a specialized business logic implementation agent within the CE-DPS methodology, focused on service layers, domain logic, business rules, and core application logic using TDD approach.
 
 ## Core Responsibilities
 - Implement service layer with business logic and domain rules
@@ -412,20 +934,13 @@ You are a specialized business logic implementation agent within the CE-DPS meth
 - Structured error types for business exceptions and validation failures
 - Performance optimization for critical business logic paths
 
-## Testing Requirements
-- Unit tests for all business logic with realistic business scenarios
-- Integration tests with database layer using repository mocks
-- Security tests for authorization and business rule enforcement
-- Performance tests for critical business logic operations
-- Anchor tests for core business operations and state transitions
-
-## Implementation Pattern
-1. Write failing tests for business scenarios first (TDD methodology)
+## TDD Implementation Pattern
+1. Write failing tests for business scenarios first
 2. Implement service layer with dependency injection patterns
 3. Add comprehensive business rule validation and processing
 4. Implement proper error handling with business-specific error types
 5. Add logging and monitoring for business operations
-6. Validate all quality gates before completion
+6. Validate all quality gates before handoff
 
 ## Expected Outputs
 - Service layer implementation with comprehensive business logic
@@ -434,10 +949,21 @@ You are a specialized business logic implementation agent within the CE-DPS meth
 - Performance benchmarks for critical business operations
 - Integration points documented for API layer consumption
 
+## Handoff Requirements
+- Business logic layer complete with database integration
+- Service interfaces defined for API layer integration
+- Business rule validation patterns established
+- Quality validation passed for business operations
+
+## Integration Requirements
+- Uses database layer through repository patterns established by Database Implementation Agent
+- Maintains clear separation of concerns between data and business logic
+- Provides clean interfaces for API layer integration
+
 Always integrate with the database layer through repository patterns and maintain clear separation of concerns.
 ```
 
-### <api-layer-agent>API Layer Agent</api-layer-agent>
+#### <api-layer-agent>API Layer Agent</api-layer-agent>
 
 **Agent Configuration**:
 ```yaml
@@ -445,14 +971,17 @@ agent_name: "ce-dps-api-layer-implementer"
 agent_type: "project-level"
 system_prompt_file: "prompts/ce-dps-api-layer-implementer.md"
 tools_allowed: ["Edit", "MultiEdit", "Write", "Read", "Bash"]
-context_window_target: "85% for implementation, 15% for coordination"
+context_window_target: "90% for implementation, 10% for coordination"
+execution_mode: "sequential"
+phase: "3"
+sequence_order: 3
 ```
 
 **System Prompt Requirements**:
 ```markdown
 # CE-DPS API Layer Implementation Agent
 
-You are a specialized API layer implementation agent within the CE-DPS methodology. Your role is implementing HTTP endpoints, request validation, and response serialization using TDD approach.
+You are a specialized API layer implementation agent within the CE-DPS methodology, focused on HTTP endpoints, request validation, response serialization, and external interface implementation using TDD approach.
 
 ## Core Responsibilities
 - Implement HTTP endpoints with proper request/response handling
@@ -471,32 +1000,36 @@ You are a specialized API layer implementation agent within the CE-DPS methodolo
 - Request/response serialization with validation
 - Rate limiting and security headers implementation
 
-## Testing Requirements
-- Unit tests for all endpoint handlers with various input scenarios
-- Integration tests for complete request/response cycles
-- Security tests for authentication, authorization, and input validation
-- Performance tests for API response time validation (<200ms)
-- Anchor tests for critical API endpoints and authentication flows
-
-## Implementation Pattern
-1. Write failing tests for API endpoints first (TDD methodology)
+## TDD Implementation Pattern
+1. Write failing tests for API endpoints first
 2. Implement endpoint handlers with proper HTTP status codes
 3. Add comprehensive input validation and sanitization
 4. Implement authentication and authorization middleware
 5. Add proper error handling with user-friendly error responses
-6. Validate all quality gates before completion
+6. Validate all quality gates before handoff
 
 ## Expected Outputs
 - Complete API endpoint implementation with proper HTTP handling
 - Authentication and authorization middleware integration
 - Complete test suite with >95% coverage including security tests
-- Performance benchmarks meeting <200ms response time requirements
+- Performance benchmarks meeting response time requirements
 - API documentation with request/response examples
+
+## Handoff Requirements
+- API layer complete with business logic integration
+- All endpoints tested and validated
+- Security patterns implemented and verified
+- Quality validation ready for comprehensive testing
+
+## Integration Requirements
+- Uses business logic layer through service patterns established by Business Logic Agent
+- Maintains proper separation between API concerns and business logic
+- Provides complete external interface for system functionality
 
 Always integrate with the business logic layer through service patterns and maintain proper separation of concerns.
 ```
 
-### <quality-validation-agent>Quality Validation Agent</quality-validation-agent>
+#### <quality-validation-agent>Quality Validation Agent</quality-validation-agent>
 
 **Agent Configuration**:
 ```yaml
@@ -505,13 +1038,16 @@ agent_type: "project-level"
 system_prompt_file: "prompts/ce-dps-quality-validator.md"
 tools_allowed: ["Bash", "Read", "Grep", "Glob"]
 context_window_target: "70% for validation, 30% for reporting"
+execution_mode: "sequential"
+phase: "3"
+sequence_order: 4
 ```
 
 **System Prompt Requirements**:
 ```markdown
 # CE-DPS Quality Validation Agent
 
-You are a specialized quality validation agent within the CE-DPS methodology. Your role is comprehensive quality gate enforcement and validation reporting.
+You are a specialized quality validation agent within the CE-DPS methodology, focused on comprehensive quality gate enforcement, validation reporting, and final quality assurance for Phase 3 implementation completion.
 
 ## Core Responsibilities
 - Execute comprehensive quality gate validation (testing, security, performance)
@@ -534,7 +1070,7 @@ You are a specialized quality validation agent within the CE-DPS methodology. Yo
 - All tests pass including unit, integration, and security tests
 - >95% test coverage for business logic with meaningful assertions
 - Zero critical security vulnerabilities
-- Performance requirements met (<200ms API response time)
+- Performance requirements met (response time, throughput targets)
 - Code quality standards passed (no linting warnings)
 
 ## Validation Pattern
@@ -543,7 +1079,7 @@ You are a specialized quality validation agent within the CE-DPS methodology. Yo
 3. Run performance benchmarks and load testing
 4. Analyze code quality and maintainability metrics
 5. Generate comprehensive quality report with recommendations
-6. Validate all CE-DPS quality standards before approval
+6. Validate all CE-DPS quality standards before human review
 
 ## Expected Outputs
 - Comprehensive quality validation report
@@ -552,36 +1088,258 @@ You are a specialized quality validation agent within the CE-DPS methodology. Yo
 - Performance benchmark results with optimization recommendations
 - Code quality analysis with maintainability metrics
 
+## Integration Requirements
+- Validates outputs from all previous implementation agents
+- Ensures integration quality across all system layers
+- Confirms all quality gates pass before human business validation
+
 Always provide actionable feedback for any quality gate failures and specific remediation steps.
 ```
 
-## <implementation-plan priority="critical">Implementation Plan</implementation-plan>
+## <orchestration-patterns priority="critical">Flattened Orchestration Patterns</orchestration-patterns>
+
+### <execution-coordination>Phase-Based Execution Coordination</execution-coordination>
+
+**Phase 1: Parallel Research Coordination**
+```yaml
+Orchestrator Workflow:
+  step_1_initialization:
+    - Create project state with business requirements
+    - Query Fortitude for relevant domain patterns
+    - Generate 4 research context packages simultaneously
+    
+  step_2_parallel_launch:
+    - Launch Architectural Research Agent with architecture context
+    - Launch Security Research Agent with security context
+    - Launch Performance Research Agent with performance context
+    - Launch Domain Research Agent with domain context
+    - All agents execute in parallel
+    
+  step_3_synthesis:
+    - Collect outputs from all 4 research agents
+    - Identify integration points and dependencies
+    - Synthesize unified architecture recommendation
+    - Resolve conflicts between agent recommendations
+    
+  step_4_human_preparation:
+    - Create comprehensive architecture document
+    - Generate feature roadmap with complexity scoring
+    - Prepare human approval package with decision points
+    - Present unified strategic recommendation
+
+Context Efficiency:
+  - Orchestrator: 35% context for coordination and synthesis
+  - Research Agents: 75-80% context for specialized research
+  - Total System: Optimal parallel utilization
+```
+
+**Phase 2: Parallel Planning Coordination**
+```yaml
+Orchestrator Workflow:
+  step_1_planning_initialization:
+    - Receive human feature selection and scope approval
+    - Integrate Phase 1 research outputs with selected features
+    - Generate 3 planning context packages simultaneously
+    
+  step_2_parallel_planning:
+    - Launch Feature Analysis Agent with complexity analysis context
+    - Launch Implementation Planning Agent with detailed planning context
+    - Launch Testing Strategy Agent with testing approach context
+    - All agents execute in parallel with cross-coordination requirements
+    
+  step_3_integration:
+    - Collect outputs from all 3 planning agents
+    - Integrate complexity analysis with implementation plans
+    - Coordinate testing strategy with implementation approach
+    - Resolve resource and timeline conflicts
+    
+  step_4_sprint_preparation:
+    - Create comprehensive implementation plan
+    - Generate quality gate specifications
+    - Prepare human approval package with sprint scope
+    - Present unified sprint strategy
+
+Context Efficiency:
+  - Orchestrator: 40% context for coordination and integration
+  - Planning Agents: 80-85% context for specialized planning
+  - Total System: Efficient parallel planning coordination
+```
+
+**Phase 3: Sequential Implementation Coordination**
+```yaml
+Orchestrator Workflow:
+  step_1_implementation_initialization:
+    - Receive human implementation approval
+    - Prepare sequential context packages with cumulative integration
+    - Initialize quality gate tracking
+    
+  step_2_sequential_execution:
+    sequence_1_database:
+      - Launch Database Implementation Agent
+      - Monitor completion and quality gates
+      - Collect database layer outputs and integration points
+      
+    sequence_2_business_logic:
+      - Generate Business Logic context with database integration
+      - Launch Business Logic Agent
+      - Monitor completion and validate database integration
+      - Collect business logic outputs and API interfaces
+      
+    sequence_3_api_layer:
+      - Generate API Layer context with business logic integration
+      - Launch API Layer Agent
+      - Monitor completion and validate business logic integration
+      - Collect API implementation and external interfaces
+      
+    sequence_4_quality_validation:
+      - Generate Quality Validation context with complete implementation
+      - Launch Quality Validation Agent
+      - Monitor comprehensive quality gate execution
+      - Collect quality validation report and recommendations
+    
+  step_3_human_validation:
+    - Prepare business validation package
+    - Generate demo environment and test scenarios
+    - Present completed implementation for human approval
+    - Coordinate any required revisions
+
+Context Efficiency:
+  - Orchestrator: 30% context for coordination and state management
+  - Implementation Agents: 90% context for focused implementation
+  - Total System: Maximum implementation focus with minimal coordination overhead
+```
+
+### <context-handoff-protocols>Context Handoff Protocols</context-handoff-protocols>
+
+**Phase 1 → Phase 2 Handoff**:
+```yaml
+Handoff Package:
+  architecture_outputs:
+    - Unified system architecture with technology decisions
+    - Integration patterns and component relationships
+    - Risk assessment with mitigation strategies
+    
+  research_synthesis:
+    - Security requirements and patterns
+    - Performance requirements and optimization strategies
+    - Domain-specific requirements and constraints
+    
+  human_approvals:
+    - Approved architectural decisions
+    - Technology stack validation
+    - Strategic direction confirmation
+    
+  context_compression:
+    - Research details compressed to decisions and requirements
+    - Focus on actionable inputs for implementation planning
+    - Preserve critical integration points and constraints
+```
+
+**Phase 2 → Phase 3 Handoff**:
+```yaml
+Handoff Package:
+  planning_outputs:
+    - Detailed file-level implementation plans
+    - Task breakdown with dependencies and time estimates
+    - Quality requirements and validation criteria
+    
+  strategy_integration:
+    - Feature complexity analysis with mitigation approaches
+    - Testing strategy with coverage requirements
+    - Implementation sequence with integration checkpoints
+    
+  human_approvals:
+    - Approved sprint scope and feature selection
+    - Implementation approach validation
+    - Resource and timeline confirmation
+    
+  context_preparation:
+    - Sequential context packages prepared for implementation agents
+    - Integration requirements clearly specified
+    - Quality gate criteria ready for enforcement
+```
+
+**Sequential Implementation Handoffs**:
+```yaml
+Database → Business Logic:
+  handoff_package:
+    - Repository interfaces and data access patterns
+    - Database schema and migration results
+    - Configuration patterns and connection management
+    - Test fixtures and database integration patterns
+    
+Business Logic → API Layer:
+  handoff_package:
+    - Service interfaces and business rule implementations
+    - Error handling patterns and business exceptions
+    - Authorization patterns and business validation
+    - Integration test patterns and business scenarios
+    
+API Layer → Quality Validation:
+  handoff_package:
+    - Complete implementation across all layers
+    - Integration points and external interfaces
+    - Security implementation and authentication patterns
+    - Performance implementation and optimization patterns
+```
+
+## <implementation-plan priority="critical">Flattened Implementation Plan</implementation-plan>
 
 ### <phase-1-setup>Phase 1: Infrastructure Setup</phase-1-setup>
 
-**Step 1: Create Subagent Configuration Files**
+**Step 1: Start Fortitude API Server**
 ```bash
-# Create directory structure for subagent configuration
+# CRITICAL: Start Fortitude API server BEFORE using subagents
+# All subagents require access to localhost:8080 for knowledge management
+
+cd fortitude/crates/fortitude-api-server
+
+# Configure for CE-DPS subagent access
+export FORTITUDE_API_HOST="127.0.0.1"
+export FORTITUDE_API_PORT="8080"
+export FORTITUDE_API_AUTH_ENABLED="false"
+export FORTITUDE_API_RATE_LIMIT_PER_MINUTE="120"
+export FORTITUDE_API_CORS_ORIGINS="http://localhost:*"
+
+# Start the API server (keep running in background)
+cargo run &
+
+# Verify API server is running
+curl http://localhost:8080/health
+# Expected response: {"status":"healthy","version":"0.1.0",...}
+```
+
+**Step 2: Create Flattened Subagent Configuration Files**
+```bash
+# Create directory structure for flattened subagent configuration
 mkdir -p .claude/subagents/prompts
 mkdir -p .claude/subagents/config
 mkdir -p .claude/subagents/context-templates
 
-# Create subagent configuration files
-touch .claude/subagents/config/ce-dps-strategic-researcher.yaml
-touch .claude/subagents/config/ce-dps-sprint-planner.yaml
-touch .claude/subagents/config/ce-dps-implementation-coordinator.yaml
+# Create configuration files for all 11 agents
+touch .claude/subagents/config/ce-dps-architectural-researcher.yaml
+touch .claude/subagents/config/ce-dps-security-researcher.yaml
+touch .claude/subagents/config/ce-dps-performance-researcher.yaml
+touch .claude/subagents/config/ce-dps-domain-researcher.yaml
+touch .claude/subagents/config/ce-dps-feature-analyzer.yaml
+touch .claude/subagents/config/ce-dps-implementation-planner.yaml
+touch .claude/subagents/config/ce-dps-testing-strategist.yaml
 touch .claude/subagents/config/ce-dps-database-implementer.yaml
 touch .claude/subagents/config/ce-dps-business-logic-implementer.yaml
 touch .claude/subagents/config/ce-dps-api-layer-implementer.yaml
 touch .claude/subagents/config/ce-dps-quality-validator.yaml
 ```
 
-**Step 2: Create System Prompt Templates**
+**Step 3: Create System Prompt Templates**
 ```bash
-# Create system prompt files for each subagent
-touch .claude/subagents/prompts/ce-dps-phase1-researcher.md
-touch .claude/subagents/prompts/ce-dps-phase2-planner.md
-touch .claude/subagents/prompts/ce-dps-phase3-coordinator.md
+# Create system prompt files for all 11 agents
+touch .claude/subagents/prompts/ce-dps-architectural-researcher.md
+touch .claude/subagents/prompts/ce-dps-security-researcher.md
+touch .claude/subagents/prompts/ce-dps-performance-researcher.md
+touch .claude/subagents/prompts/ce-dps-domain-researcher.md
+touch .claude/subagents/prompts/ce-dps-feature-analyzer.md
+touch .claude/subagents/prompts/ce-dps-implementation-planner.md
+touch .claude/subagents/prompts/ce-dps-testing-strategist.md
 touch .claude/subagents/prompts/ce-dps-database-implementer.md
 touch .claude/subagents/prompts/ce-dps-business-logic-implementer.md
 touch .claude/subagents/prompts/ce-dps-api-layer-implementer.md
@@ -590,92 +1348,155 @@ touch .claude/subagents/prompts/ce-dps-quality-validator.md
 
 **Step 3: Create Context Package Templates**
 ```bash
-# Create context template files
-touch .claude/subagents/context-templates/phase1-context-template.yaml
-touch .claude/subagents/context-templates/phase2-context-template.yaml
-touch .claude/subagents/context-templates/phase3-context-template.yaml
-touch .claude/subagents/context-templates/implementation-context-template.yaml
+# Create context template files for flattened architecture
+touch .claude/subagents/context-templates/phase1-research-context-template.yaml
+touch .claude/subagents/context-templates/phase2-planning-context-template.yaml
+touch .claude/subagents/context-templates/phase3-implementation-context-template.yaml
+touch .claude/subagents/context-templates/universal-context-template.yaml
 ```
 
 ### <phase-2-prompt-development>Phase 2: System Prompt Development</phase-2-prompt-development>
 
 **Implementation Requirements for Each Prompt**:
 
-1. **Embed Complete CE-DPS Methodology**: Each system prompt must include the relevant phase methodology from `methodology/ai-implementation/`
+1. **Embed Complete CE-DPS Methodology**: Each system prompt must include the relevant methodology content from `methodology/ai-implementation/`
 
 2. **Include Implementation Guidelines**: All prompts must embed the complete implementation guidelines from `CLAUDE.md`
 
-3. **Define Quality Standards**: Each prompt must specify the exact quality gates and validation criteria
+3. **Define Quality Standards**: Each prompt must specify exact quality gates and validation criteria
 
-4. **Context Package Integration**: Prompts must specify how to interpret and use context packages
+4. **Context Package Integration**: Prompts must specify how to interpret and use flattened context packages
 
-**Example Implementation Pattern**:
-```markdown
-# System Prompt Template Structure
+**Agent Prompt Development Priority**:
+```yaml
+Phase 1 Agents (Parallel Development):
+  - Architectural Research Agent: Architecture patterns and technology evaluation
+  - Security Research Agent: Security patterns and compliance requirements
+  - Performance Research Agent: Performance patterns and optimization strategies
+  - Domain Research Agent: Domain patterns and business requirements
 
-## Role Definition
-[Specific role within CE-DPS methodology]
+Phase 2 Agents (Parallel Development):
+  - Feature Analysis Agent: Complexity assessment and dependency mapping
+  - Implementation Planning Agent: File-level planning and task breakdown
+  - Testing Strategy Agent: Testing approach and coverage planning
 
-## CE-DPS Methodology Context
-[Embed relevant methodology file content]
-
-## Implementation Guidelines
-[Embed relevant sections from CLAUDE.md]
-
-## Quality Standards
-[Specific quality requirements and validation criteria]
-
-## Context Package Format
-[Expected input format and required outputs]
-
-## Integration Requirements
-[Handoff protocols and coordination patterns]
+Phase 3 Agents (Sequential Development):
+  - Database Implementation Agent: Database layer implementation patterns
+  - Business Logic Agent: Service layer and business rule patterns
+  - API Layer Agent: HTTP endpoint and interface patterns
+  - Quality Validation Agent: Quality gate enforcement and reporting
 ```
 
-### <phase-3-orchestrator-integration>Phase 3: Orchestrator Integration</phase-3-integration>
+### <phase-3-orchestrator-integration>Phase 3: Orchestrator Integration</phase-3-orchestrator-integration>
 
 **Orchestrator Modifications Required**:
 
-1. **Context Package Generation**: Implement context package creation using templates
-2. **Subagent Invocation**: Use Claude Code's Task tool with subagent specification
-3. **State Management**: Maintain project state for context package generation
-4. **Quality Gate Coordination**: Orchestrate quality validation across subagents
+1. **Context Package Generation**: Implement flattened context package creation using templates
+2. **Parallel Agent Invocation**: Use Claude Code's Task tool for parallel research and planning agents
+3. **Sequential Agent Coordination**: Implement sequential handoff for implementation agents
+4. **State Management**: Maintain project state for context package generation across all phases
 
 **Implementation Pattern**:
 ```python
-# Pseudo-code for orchestrator integration
-class CEDPSOrchestrator:
+# Pseudo-code for flattened orchestrator integration
+class CEDPSFlattenedOrchestrator:
     def __init__(self):
         self.project_state = ProjectState()
         self.context_generator = ContextPackageGenerator()
         
-    def execute_phase1(self, requirements):
-        context_package = self.context_generator.create_phase1_context(requirements)
-        result = self.invoke_subagent("ce-dps-strategic-researcher", context_package)
-        self.project_state.update_phase1_outputs(result)
-        return result
+    def execute_phase1_parallel_research(self, requirements):
+        # Create 4 parallel context packages
+        arch_context = self.context_generator.create_research_context("architectural", requirements)
+        security_context = self.context_generator.create_research_context("security", requirements)
+        performance_context = self.context_generator.create_research_context("performance", requirements)
+        domain_context = self.context_generator.create_research_context("domain", requirements)
         
-    def execute_phase2_sprint(self, selected_features):
-        context_package = self.context_generator.create_phase2_context(
-            self.project_state.phase1_outputs, 
-            selected_features
-        )
-        result = self.invoke_subagent("ce-dps-sprint-planner", context_package)
-        self.project_state.update_phase2_outputs(result)
-        return result
+        # Launch all research agents in parallel
+        results = self.invoke_parallel_agents([
+            ("ce-dps-architectural-researcher", arch_context),
+            ("ce-dps-security-researcher", security_context),
+            ("ce-dps-performance-researcher", performance_context),
+            ("ce-dps-domain-researcher", domain_context)
+        ])
         
-    def execute_phase3_implementation(self):
-        context_package = self.context_generator.create_phase3_context(
-            self.project_state.phase2_outputs
-        )
-        result = self.invoke_subagent("ce-dps-implementation-coordinator", context_package)
-        self.project_state.update_phase3_outputs(result)
-        return result
+        # Synthesize results and update project state
+        synthesized_architecture = self.synthesize_research_results(results)
+        self.project_state.update_phase1_outputs(synthesized_architecture)
+        return synthesized_architecture
         
-    def invoke_subagent(self, subagent_name, context_package):
-        # Use Claude Code Task tool with subagent specification
+    def execute_phase2_parallel_planning(self, selected_features):
+        # Create 3 parallel planning context packages
+        feature_context = self.context_generator.create_planning_context("feature_analysis", 
+                                                                        self.project_state.phase1_outputs, 
+                                                                        selected_features)
+        implementation_context = self.context_generator.create_planning_context("implementation_planning",
+                                                                                self.project_state.phase1_outputs, 
+                                                                                selected_features)
+        testing_context = self.context_generator.create_planning_context("testing_strategy",
+                                                                         self.project_state.phase1_outputs, 
+                                                                         selected_features)
+        
+        # Launch all planning agents in parallel
+        results = self.invoke_parallel_agents([
+            ("ce-dps-feature-analyzer", feature_context),
+            ("ce-dps-implementation-planner", implementation_context),
+            ("ce-dps-testing-strategist", testing_context)
+        ])
+        
+        # Integrate results and update project state
+        integrated_plan = self.integrate_planning_results(results)
+        self.project_state.update_phase2_outputs(integrated_plan)
+        return integrated_plan
+        
+    def execute_phase3_sequential_implementation(self):
+        # Sequential execution with cumulative context
+        database_context = self.context_generator.create_implementation_context("database",
+                                                                                self.project_state.phase2_outputs)
+        database_result = self.invoke_agent("ce-dps-database-implementer", database_context)
+        
+        business_context = self.context_generator.create_implementation_context("business_logic",
+                                                                               self.project_state.phase2_outputs,
+                                                                               database_result)
+        business_result = self.invoke_agent("ce-dps-business-logic-implementer", business_context)
+        
+        api_context = self.context_generator.create_implementation_context("api_layer",
+                                                                          self.project_state.phase2_outputs,
+                                                                          database_result,
+                                                                          business_result)
+        api_result = self.invoke_agent("ce-dps-api-layer-implementer", api_context)
+        
+        quality_context = self.context_generator.create_validation_context("quality_validation",
+                                                                           database_result,
+                                                                           business_result,
+                                                                           api_result)
+        quality_result = self.invoke_agent("ce-dps-quality-validator", quality_context)
+        
+        # Update project state with complete implementation
+        self.project_state.update_phase3_outputs({
+            "database": database_result,
+            "business_logic": business_result,
+            "api_layer": api_result,
+            "quality_validation": quality_result
+        })
+        
+        return self.project_state.phase3_outputs
+        
+    def invoke_parallel_agents(self, agent_context_pairs):
+        # Use Claude Code Task tool for parallel invocation
+        results = []
+        for agent_name, context_package in agent_context_pairs:
+            result = task_tool.invoke(
+                subagent=agent_name,
+                context=context_package,
+                expected_output_format="structured_result"
+            )
+            results.append((agent_name, result))
+        return results
+        
+    def invoke_agent(self, agent_name, context_package):
+        # Use Claude Code Task tool for single agent invocation
         return task_tool.invoke(
-            subagent=subagent_name,
+            subagent=agent_name,
             context=context_package,
             expected_output_format="structured_result"
         )
@@ -685,120 +1506,153 @@ class CEDPSOrchestrator:
 
 **Validation Requirements**:
 
-1. **Context Package Validation**: Ensure context packages contain all required information
-2. **Subagent Output Validation**: Verify subagent outputs meet CE-DPS quality standards
-3. **Integration Testing**: Test handoffs between sequential subagents
-4. **Quality Gate Validation**: Ensure all quality gates function correctly
+1. **Context Package Validation**: Ensure flattened context packages contain all required information
+2. **Parallel Agent Coordination**: Test parallel execution and result synthesis for research and planning phases
+3. **Sequential Agent Integration**: Test handoffs between sequential implementation agents
+4. **Quality Gate Validation**: Ensure all quality gates function correctly across flattened architecture
+
+**Testing Strategy**:
+```yaml
+Unit Testing:
+  - Context package generation for each agent type
+  - Agent invocation and result processing
+  - State management across phase transitions
+  - Synthesis and integration logic
+
+Integration Testing:
+  - End-to-end Phase 1 parallel research coordination
+  - End-to-end Phase 2 parallel planning coordination
+  - End-to-end Phase 3 sequential implementation coordination
+  - Cross-phase handoff and state preservation
+
+Performance Testing:
+  - Context window usage measurement across all agents
+  - Parallel execution efficiency validation
+  - Sequential coordination timing analysis
+  - Overall system throughput evaluation
+```
 
 ## <success-metrics priority="high">Success Metrics and Validation</success-metrics>
 
 ### <orchestrator-efficiency>Orchestrator Context Preservation</orchestrator-efficiency>
 
 **Target Metrics**:
-- **Context Window Usage**: <40% of orchestrator context for coordination
-- **Subagent Context Efficiency**: >80% context utilization for task execution
+- **Phase 1 Orchestrator Context**: <35% for research coordination and synthesis
+- **Phase 2 Orchestrator Context**: <40% for planning integration and coordination
+- **Phase 3 Orchestrator Context**: <30% for implementation state management
+- **Agent Context Efficiency**: >75% context utilization for specialized tasks
 - **Context Package Size**: <2000 tokens per context package
-- **Handoff Accuracy**: >95% successful context transfer between subagents
+- **Parallel Coordination Overhead**: <15% additional context for parallel management
 
 ### <quality-maintenance>CE-DPS Quality Standard Preservation</quality-maintenance>
 
 **Validation Criteria**:
-- **Test Coverage**: Maintain >95% test coverage across all subagent implementations
-- **Security Standards**: Zero critical vulnerabilities in subagent outputs
-- **Performance Requirements**: <200ms API response time maintained
-- **Documentation Quality**: >90% API documentation coverage
+- **Test Coverage**: Maintain >95% test coverage across all agent implementations
+- **Security Standards**: Zero critical vulnerabilities in agent outputs
+- **Performance Requirements**: Meet response time and throughput targets across all agents
+- **Documentation Quality**: >90% API documentation coverage maintained through flattened approach
 
 ### <implementation-accuracy>Implementation Accuracy Metrics</implementation-accuracy>
 
 **Success Criteria**:
-- **Task Completion**: >95% subagent task completion without orchestrator intervention
-- **Quality Gate Pass Rate**: >98% first-pass quality gate validation
-- **Human Approval Rate**: >90% human approval rate for strategic decisions
-- **Integration Success**: <5% integration issues between subagent outputs
+- **Parallel Agent Coordination**: >95% successful parallel research and planning execution
+- **Sequential Agent Integration**: >98% successful handoff between implementation agents
+- **Quality Gate Pass Rate**: >98% first-pass quality gate validation across all agents
+- **Human Approval Rate**: >90% human approval rate for strategic and implementation decisions
+- **Overall System Efficiency**: <5% efficiency loss compared to current CE-DPS methodology
 
 ## <rollout-strategy priority="medium">Rollout and Migration Strategy</rollout-strategy>
 
 ### <phased-migration>Phased Migration Approach</phased-migration>
 
-**Phase A: Single Subagent Validation** (Week 1-2)
-- Implement and test Phase 1 Strategic Research Agent
-- Validate context package generation and consumption
-- Test quality gate enforcement and output validation
-- Refine system prompts based on initial results
+**Phase A: Research Agent Validation** (Week 1-2)
+- Implement and test all 4 Phase 1 research agents
+- Validate parallel execution and result synthesis
+- Test context package generation and consumption for research agents
+- Refine system prompts based on parallel coordination results
 
-**Phase B: Sequential Integration** (Week 3-4)
-- Add Phase 3 Database Implementation Agent
-- Test sequential coordination patterns
-- Validate context handoff between subagents
-- Optimize context package templates
+**Phase B: Planning Agent Integration** (Week 3-4)
+- Add all 3 Phase 2 planning agents
+- Test parallel planning coordination with Phase 1 integration
+- Validate cross-agent dependency resolution and planning synthesis
+- Optimize context handoff from research to planning phases
 
-**Phase C: Full Suite Deployment** (Week 5-6)
-- Deploy all remaining subagents
-- Test complete workflow end-to-end
-- Validate performance and context preservation metrics
-- Document operational procedures and troubleshooting
+**Phase C: Implementation Agent Deployment** (Week 5-6)
+- Deploy all 4 Phase 3 implementation agents
+- Test sequential coordination patterns with planning integration
+- Validate quality gate enforcement across flattened architecture
+- Complete end-to-end workflow validation
+
+**Phase D: Production Optimization** (Week 7-8)
+- Performance optimization and context efficiency tuning
+- Operational monitoring and alerting setup
+- Documentation completion and operational procedures
+- Full production deployment with rollback capability
 
 ### <rollback-procedures>Rollback and Contingency Planning</rollback-procedures>
 
 **Rollback Triggers**:
-- Context preservation metrics below target (<40% orchestrator usage)
-- Quality gate pass rate below 90%
-- Human approval rate below 80%
-- Integration failure rate above 10%
+- Orchestrator context preservation below target (<40% for any phase)
+- Parallel coordination failure rate above 5%
+- Sequential integration failure rate above 3%
+- Quality gate pass rate below 95%
+- Human approval rate below 85%
 
 **Rollback Procedure**:
-1. Disable problematic subagents and revert to current CE-DPS Task-based approach
-2. Analyze failure patterns and context package issues
-3. Refine system prompts and context templates
-4. Re-test in isolated environment before re-deployment
+1. Disable problematic agents and revert to current CE-DPS Task-based approach
+2. Analyze failure patterns in parallel coordination or sequential integration
+3. Refine system prompts and context templates for identified issues
+4. Re-test in isolated environment with corrected architecture
+5. Gradual re-deployment with enhanced monitoring
 
 ## <operational-guidelines priority="medium">Operational Guidelines</operational-guidelines>
 
 ### <monitoring-requirements>Monitoring and Observability</monitoring-requirements>
 
 **Required Monitoring**:
-- **Context Window Usage**: Track orchestrator and subagent context utilization
-- **Quality Gate Performance**: Monitor pass/fail rates and remediation patterns
-- **Subagent Task Success**: Track completion rates and error patterns
-- **Human Interaction**: Monitor approval rates and feedback patterns
+- **Context Window Usage**: Track orchestrator and individual agent context utilization across all 11 agents
+- **Parallel Coordination Performance**: Monitor research and planning agent parallel execution efficiency
+- **Sequential Integration Quality**: Track handoff success rates and integration quality between implementation agents
+- **Quality Gate Performance**: Monitor pass/fail rates and remediation patterns across all quality gates
+- **Human Interaction Patterns**: Monitor approval rates and feedback patterns for strategic and implementation decisions
 
 **Alerting Criteria**:
-- Context window usage >60% for orchestrator
-- Quality gate pass rate <95%
-- Subagent task failure rate >5%
-- Human approval rate <85%
+- Any orchestrator context usage >50% for sustained periods
+- Parallel agent coordination failure rate >3%
+- Sequential agent integration failure rate >2%
+- Quality gate pass rate <97%
+- Human approval rate <88%
 
 ### <maintenance-procedures>Maintenance and Updates</maintenance-procedures>
 
 **Regular Maintenance Tasks**:
-- **Weekly**: Review subagent performance metrics and context efficiency
-- **Monthly**: Update system prompts based on performance patterns
-- **Quarterly**: Evaluate and optimize context package templates
-- **Annually**: Comprehensive review and optimization of subagent architecture
+- **Weekly**: Review all 11 agent performance metrics and context efficiency patterns
+- **Bi-weekly**: Update system prompts based on parallel coordination and sequential integration patterns
+- **Monthly**: Evaluate and optimize context package templates for all agent types
+- **Quarterly**: Comprehensive review and optimization of flattened agent architecture
 
 **Update Procedures**:
-1. Test system prompt changes in isolated environment
-2. Validate context package compatibility with existing project state
-3. Deploy updates during low-activity periods
-4. Monitor metrics for 48 hours post-deployment
+1. Test system prompt changes for target agents in isolated environment
+2. Validate context package compatibility with orchestrator and dependent agents
+3. Deploy updates during low-activity periods with enhanced monitoring
+4. Monitor all coordination patterns for 48 hours post-deployment
+5. Rollback immediately if any coordination metrics fall below thresholds
 
 ## <conclusion priority="low">Implementation Conclusion</conclusion>
 
-This design document provides a comprehensive strategy for integrating Anthropic's new subagent features with the CE-DPS methodology while preserving context efficiency and maintaining quality standards. The implementation preserves CE-DPS's proven coordination patterns while leveraging specialized subagents for optimal context utilization.
+This revised design document provides a comprehensive strategy for integrating Anthropic's new subagent features with the CE-DPS methodology using a flattened 11-agent architecture. This approach resolves the nested subagent limitation while preserving CE-DPS's proven coordination patterns and optimizing context efficiency.
 
 **Key Success Factors**:
-- Methodology-embedded system prompts ensure CE-DPS compliance
-- Structured context packages preserve essential information
-- Sequential coordination maintains proven implementation patterns
-- Comprehensive quality gates ensure standard preservation
+- **Flattened Architecture**: Direct orchestrator control of all 11 specialized agents eliminates nested delegation complexity
+- **Parallel Optimization**: Research and planning agents execute in parallel for maximum efficiency
+- **Sequential Integration**: Implementation agents maintain proper dependency management through sequential execution
+- **Context Efficiency**: Orchestrator maintains minimal coordination state while agents focus on specialized tasks
+- **Quality Preservation**: All CE-DPS quality standards maintained through specialized validation
 
-**Implementation Priority**: High priority implementation recommended to optimize CE-DPS context efficiency and scalability.
+**Implementation Priority**: High priority implementation recommended to optimize CE-DPS context efficiency and scalability while working within Claude Code's actual subagent capabilities.
 
-<function_calls>
-<invoke name="TodoWrite">
-<parameter name="todos">[{"id": "create-design-document", "content": "Create comprehensive design document for CE-DPS subagent integration", "status": "completed", "priority": "high"}, {"id": "document-context-strategy", "content": "Document context preservation and inheritance patterns", "status": "completed", "priority": "high"}, {"id": "define-implementation-steps", "content": "Define detailed implementation steps and requirements", "status": "completed", "priority": "high"}, {"id": "create-subagent-specifications", "content": "Create detailed specifications for each subagent type", "status": "completed", "priority": "high"}]
-```
+**Architecture Validation**: This flattened approach has been validated against theoretical project requirements and confirms compatibility with CE-DPS methodology goals and usage patterns.
 
 <function_calls>
 <invoke name="TodoWrite">
-<parameter name="todos">[{"id": "create-design-document", "content": "Create comprehensive design document for CE-DPS subagent integration", "status": "in_progress", "priority": "high"}, {"id": "document-context-strategy", "content": "Document context preservation and inheritance patterns", "status": "completed", "priority": "high"}, {"id": "define-implementation-steps", "content": "Define detailed implementation steps and requirements", "status": "pending", "priority": "high"}, {"id": "create-subagent-specifications", "content": "Create detailed specifications for each subagent type", "status": "in_progress", "priority": "high"}]
+<parameter name="todos">[{"id": "rewrite-design-document", "content": "Rewrite design document with flattened 11-agent architecture", "status": "in_progress", "priority": "high"}, {"id": "update-agent-specifications", "content": "Update all agent specifications for flattened approach", "status": "completed", "priority": "high"}, {"id": "revise-orchestration-patterns", "content": "Revise orchestration patterns for direct agent control", "status": "in_progress", "priority": "high"}, {"id": "update-implementation-plan", "content": "Update implementation plan for flattened architecture", "status": "pending", "priority": "high"}]
