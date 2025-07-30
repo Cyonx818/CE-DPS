@@ -139,10 +139,10 @@ pub struct SecurityConfig {
 impl Default for ApiServerConfig {
     fn default() -> Self {
         let mut features = std::collections::HashMap::new();
-        features.insert("pattern_tracking".to_string(), true);
+        features.insert("pattern_tracking".to_string(), false);
 
         Self {
-            port: 3000,
+            port: 8080,
             host: "127.0.0.1".to_string(),
             max_connections: 1000,
             request_timeout: 30,

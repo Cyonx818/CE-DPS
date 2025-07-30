@@ -625,17 +625,56 @@ Tool Integration:
 ```
 
 ### <mcp>MCP Server Setup</mcp>
+
+**Fortitude MCP Server Startup Requirements**:
+```bash
+# 1. Navigate to Fortitude MCP server directory
+cd fortitude/crates/fortitude-mcp-server
+
+# 2. Build the MCP server (first time only)
+cargo build
+
+# 3. Start the MCP server with default configuration
+cargo run
+
+# Alternative: Start with custom configuration
+cargo run -- --config path/to/custom-config.toml
+
+# Alternative: Start with command-line overrides
+cargo run -- start --host 127.0.0.1 --port 8091
+```
+
+**Claude Code MCP Integration**:
 ```json
 {
   "mcpServers": {
     "fortitude": {
       "command": "cargo",
-      "args": ["run", "--bin", "fortitude-mcp-server", "--", "--config", "config/ce-dps.toml"],
-      "cwd": "/path/to/CE-DPS/fortitude"
+      "args": ["run", "--bin", "fortitude-mcp-server"],
+      "cwd": "/home/cyonx/Documents/GitHub/CE-DPS/fortitude/crates/fortitude-mcp-server"
     }
   }
 }
 ```
+
+**MCP Server Verification**:
+```bash
+# Verify MCP server functionality (28 tools available)
+cd fortitude/crates/fortitude-mcp-server
+cargo test --lib  # Should pass all 75+ unit tests
+
+# Available tools include:
+# - research_query: Execute research queries with context detection
+# - classify_query: Classify research queries  
+# - detect_context: Detect audience, domain, and urgency context
+# - Plus 25 additional tools for providers, learning, monitoring, quality control
+```
+
+**Critical Notes**:
+- MCP server uses stdin/stdout transport (not HTTP)
+- Storage path defaults to `fortitude_cache` in server directory
+- Authentication is configurable but disabled by default for localhost
+- **MANDATORY**: Always query Fortitude before implementing new patterns
 
 ### <environment>Environment Variables</environment>
 ```bash

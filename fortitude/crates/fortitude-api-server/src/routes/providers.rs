@@ -168,26 +168,26 @@ impl Default for ProviderState {
 pub fn create_router() -> Router<Arc<ProviderState>> {
     Router::new()
         .route("/api/v1/providers", get(list_providers))
-        .route("/api/v1/providers/:provider_id", get(get_provider))
+        .route("/api/v1/providers/{provider_id}", get(get_provider))
         .route(
-            "/api/v1/providers/:provider_id/performance",
+            "/api/v1/providers/{provider_id}/performance",
             get(get_provider_performance),
         )
         .route(
-            "/api/v1/providers/:provider_id/health",
+            "/api/v1/providers/{provider_id}/health",
             get(check_provider_health),
         )
         .route(
-            "/api/v1/providers/:provider_id/health",
+            "/api/v1/providers/{provider_id}/health",
             post(force_health_check),
         )
         .route("/api/v1/providers/switch", post(switch_provider))
         .route(
-            "/api/v1/providers/:provider_id/config",
+            "/api/v1/providers/{provider_id}/config",
             get(get_provider_config),
         )
         .route(
-            "/api/v1/providers/:provider_id/config",
+            "/api/v1/providers/{provider_id}/config",
             put(update_provider_config),
         )
         .route(
