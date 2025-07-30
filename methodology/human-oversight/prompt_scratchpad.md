@@ -1105,15 +1105,27 @@ The research will be considered comprehensive when it can definitively answer:
 - What strategic considerations are needed for positioning and go-to-market
 
 -------------------------------------------------------------------------------
--------------------------------------------------------------------------------
--------------------------------------------------------------------------------
--------------------------------------------------------------------------------
--------------------------------------------------------------------------------
--------------------------------------------------------------------------------
--------------------------------------------------------------------------------
--------------------------------------------------------------------------------
--------------------------------------------------------------------------------
--------------------------------------------------------------------------------
+
+**Error: fortitude command failed**
+
+**Debugging Tips:**
+- Run `claude --debug` to see logs inline
+- View log files in: `/home/cyonx/.cache/claude-cli-nodejs/-home-cyonx-Documents-GitHub-CE-DPS`
+
+**MCP Config Locations:**
+- **User config** (available in all projects): `/home/cyonx/.claude.json`
+- **Project config** (shared via .mcp.json): `/home/cyonx/Documents/GitHub/CE-DPS/.mcp.json`
+- **Local config** (private to this project): `/home/cyonx/.claude.json [project: /home/cyonx/Documents/GitHub/CE-DPS]`
+
+**Help:** For MCP server configuration, see: https://docs.anthropic.com/en/docs/claude-code/mcp
+
+**Fortitude MCP Server Details:**
+- **Status:** ✘ failed
+- **Command:** cargo
+- **Args:** run --bin fortitude-mcp-server
+- **Config location:** `/home/cyonx/Documents/GitHub/CE-DPS/.mcp.json`
+
+
 -------------------------------------------------------------------------------
 -------------------------------------------------------------------------------
 -------------------------------------------------------------------------------

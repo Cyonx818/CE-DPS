@@ -39,7 +39,7 @@ graph TD
     B --> E3[API Layer Agent]
     B --> E4[Quality Validation Agent]
     
-    F[Fortitude HTTP API Server<br/>localhost:8080] --> C1
+    F[Fortitude MCP Server<br/>stdio transport] --> C1
     F --> C2
     F --> C3
     F --> C4
@@ -61,74 +61,70 @@ graph TD
 - **Parallel Execution**: Research and planning agents execute in parallel for efficiency
 - **Sequential Implementation**: Implementation agents execute sequentially for proper integration
 - **Context Isolation**: Each agent operates in dedicated context window with focused expertise
-- **🔑 Independent Knowledge Access**: All agents access Fortitude knowledge management via localhost HTTP API (WebFetch)
+- **🔑 Independent Knowledge Access**: All agents access Fortitude knowledge management via MCP tools (inherited from main Claude Code instance)
 
 ### <agent-taxonomy>Specialized Agent Matrix</agent-taxonomy>
 
 | Agent | Phase | Execution | Purpose | Context Target | Tool Access |
 |-------|-------|-----------|---------|----------------|-------------|
 | **Phase 1 Research Agents (Parallel)** |
-| Architectural Research | 1 | Parallel | System design, technology selection, integration patterns | 75% research, 25% coordination | **WebFetch (Fortitude API)**, Read, Grep, Task |
-| Security Research | 1 | Parallel | Authentication, authorization, vulnerability analysis, compliance | 80% security focus, 20% coordination | **WebFetch (Fortitude API)**, Read, Grep, Task |
-| Performance Research | 1 | Parallel | Optimization patterns, benchmarking, scalability analysis | 80% performance focus, 20% coordination | **WebFetch (Fortitude API)**, Read, Grep, Task |
-| Domain Research | 1 | Parallel | Business domain patterns, API specifications, industry standards | 75% domain focus, 25% coordination | **WebFetch (Fortitude API)**, Read, Grep, Task |
+| Architectural Research | 1 | Parallel | System design, technology selection, integration patterns | 75% research, 25% coordination | **Fortitude MCP Tools**, Read, Grep, Task |
+| Security Research | 1 | Parallel | Authentication, authorization, vulnerability analysis, compliance | 80% security focus, 20% coordination | **Fortitude MCP Tools**, Read, Grep, Task |
+| Performance Research | 1 | Parallel | Optimization patterns, benchmarking, scalability analysis | 80% performance focus, 20% coordination | **Fortitude MCP Tools**, Read, Grep, Task |
+| Domain Research | 1 | Parallel | Business domain patterns, API specifications, industry standards | 75% domain focus, 25% coordination | **Fortitude MCP Tools**, Read, Grep, Task |
 | **Phase 2 Planning Agents (Parallel)** |
-| Feature Analysis | 2 | Parallel | Complexity assessment, dependency mapping, effort estimation | 80% analysis, 20% coordination | **WebFetch (Fortitude API)**, Read, Grep, Glob, TodoWrite |
-| Implementation Planning | 2 | Parallel | File-level planning, task breakdown, quality requirements | 85% planning, 15% coordination | **WebFetch (Fortitude API)**, Read, Grep, Glob, TodoWrite |
-| Testing Strategy | 2 | Parallel | Test approach, coverage planning, validation framework | 80% testing focus, 20% coordination | **WebFetch (Fortitude API)**, Read, Grep, Glob, TodoWrite |
+| Feature Analysis | 2 | Parallel | Complexity assessment, dependency mapping, effort estimation | 80% analysis, 20% coordination | **Fortitude MCP Tools**, Read, Grep, Glob, TodoWrite |
+| Implementation Planning | 2 | Parallel | File-level planning, task breakdown, quality requirements | 85% planning, 15% coordination | **Fortitude MCP Tools**, Read, Grep, Glob, TodoWrite |
+| Testing Strategy | 2 | Parallel | Test approach, coverage planning, validation framework | 80% testing focus, 20% coordination | **Fortitude MCP Tools**, Read, Grep, Glob, TodoWrite |
 | **Phase 3 Implementation Agents (Sequential)** |
-| Database Implementation | 3 | Sequential | Database schema, migrations, repository patterns | 90% implementation, 10% coordination | **WebFetch (Fortitude API)**, Edit, MultiEdit, Write, Read, Bash |
-| Business Logic | 3 | Sequential | Service layer, domain logic, business rules | 90% implementation, 10% coordination | **WebFetch (Fortitude API)**, Edit, MultiEdit, Write, Read, Bash |
-| API Layer | 3 | Sequential | HTTP endpoints, validation, serialization | 90% implementation, 10% coordination | **WebFetch (Fortitude API)**, Edit, MultiEdit, Write, Read, Bash |
-| Quality Validation | 3 | Sequential | Testing, security audit, performance validation | 70% validation, 30% reporting | **WebFetch (Fortitude API)**, Bash, Read, Grep, Glob |
+| Database Implementation | 3 | Sequential | Database schema, migrations, repository patterns | 90% implementation, 10% coordination | **Fortitude MCP Tools**, Edit, MultiEdit, Write, Read, Bash |
+| Business Logic | 3 | Sequential | Service layer, domain logic, business rules | 90% implementation, 10% coordination | **Fortitude MCP Tools**, Edit, MultiEdit, Write, Read, Bash |
+| API Layer | 3 | Sequential | HTTP endpoints, validation, serialization | 90% implementation, 10% coordination | **Fortitude MCP Tools**, Edit, MultiEdit, Write, Read, Bash |
+| Quality Validation | 3 | Sequential | Testing, security audit, performance validation | 70% validation, 30% reporting | **Fortitude MCP Tools**, Bash, Read, Grep, Glob |
 
 ## <fortitude-integration priority="critical">Fortitude Knowledge Management Integration</fortitude-integration>
 
-### <api-access-strategy>Localhost HTTP API Access</api-access-strategy>
+### <mcp-access-strategy>MCP Server Access for Custom Sub-Agents</mcp-access-strategy>
 
-**Fortitude API Server Configuration**:
+**Fortitude MCP Server Configuration**:
 ```yaml
-# CE-DPS Optimized Configuration
-Server Configuration:
-  host: "127.0.0.1"          # Localhost-only binding (security)
-  port: 8080                 # Standard development port  
-  auth_enabled: false        # No authentication needed for localhost
-  rate_limit: 120/minute     # Higher limit for subagent usage
+# CE-DPS MCP Integration Configuration
+MCP Server Configuration:
+  transport: "stdio"           # Standard MCP transport protocol
+  server_path: "fortitude/crates/fortitude-mcp-server"
+  build_command: "cargo run"   # Server startup command
+  tools_available: 28+         # Complete Fortitude tool ecosystem
   
 Security Benefits:
-  - No external network exposure (localhost-only)
-  - No authentication required (localhost binding provides security)
-  - Firewall naturally protects against external access
-  - Only processes on same machine can access API
+  - Process-level isolation (no network exposure)
+  - No authentication required (localhost process communication)
+  - Secure stdin/stdout transport protocol
+  - Built-in Claude Code MCP client integration
 ```
 
-**Environment Configuration**:
+**MCP Server Startup**:
 ```bash
-# Start Fortitude API server for CE-DPS subagent access
-export FORTITUDE_API_HOST="127.0.0.1"
-export FORTITUDE_API_PORT="8080"
-export FORTITUDE_API_AUTH_ENABLED="false"
-export FORTITUDE_API_RATE_LIMIT_PER_MINUTE="120"
-export FORTITUDE_API_CORS_ORIGINS="http://localhost:*"
+# Start Fortitude MCP server for CE-DPS subagent access
+# This should already be configured in .mcp.json
 
-# Start the API server
-cd fortitude/crates/fortitude-api-server
-cargo run
+cd fortitude/crates/fortitude-mcp-server
+
+# Verify server builds and runs correctly
+cargo build
+cargo run  # Server will wait for MCP client connections
 ```
 
-### <api-integration-patterns>Subagent API Integration Patterns</api-integration-patterns>
+### <mcp-integration-patterns>Custom Sub-Agent MCP Integration Patterns</mcp-integration-patterns>
 
-**Research Pattern Lookup (WebFetch)**:
+**Research Pattern Lookup (MCP Tool)**:
 ```yaml
-# Query implementation patterns
-POST http://localhost:8080/api/v1/research
-Content-Type: application/json
-
-{
-  "query": "rust async authentication patterns for MCP servers",
-  "context": "Focus on security-first implementation with JWT tokens",
-  "priority": "high"
-}
+# Query implementation patterns using Fortitude MCP tools
+Tool: research_query
+Parameters:
+  query: "rust async authentication patterns for MCP servers"
+  context: "Focus on security-first implementation with JWT tokens"
+  domain: "rust"
+  research_type: "implementation"
 
 Response: {
   "results": [
@@ -139,60 +135,62 @@ Response: {
       "source": "CE-DPS Implementation Library"
     }
   ],
-  "total_count": 15,
-  "processing_time_ms": 340
-}
-```
-
-**Cached Pattern Search (WebFetch)**:
-```yaml
-# Search existing implementation patterns
-GET http://localhost:8080/api/v1/cache/search?query=stripe+api+integration&research_type=implementation&min_quality=0.8
-
-Response: {
-  "results": [
-    {
-      "key": "implementation:stripe-mcp:authenticated-requests",
-      "content": { /* Implementation pattern details */ },
-      "quality_score": 0.91,
-      "metadata": {
-        "technology": "rust",
-        "pattern_type": "api-integration",
-        "security_validated": true
-      }
-    }
-  ],
-  "total_count": 8
-}
-```
-
-**Content Classification (WebFetch)**:
-```yaml
-# Classify requirements or code for better pattern matching
-POST http://localhost:8080/api/v1/classify
-Content-Type: application/json
-
-{
-  "content": "Need to implement payment processing with webhook verification",
-  "context_preferences": {
-    "detect_domain": true,
-    "detect_urgency": true,
-    "detect_audience": true
+  "metadata": {
+    "total_count": 15,
+    "processing_time_ms": 340,
+    "provider_used": "claude",
+    "cross_validated": true
   }
 }
+```
+
+**Query Classification (MCP Tool)**:
+```yaml
+# Classify requirements or code for better pattern matching
+Tool: classify_query
+Parameters:
+  query: "Need to implement payment processing with webhook verification"
+  context_preferences:
+    detect_domain: true
+    detect_urgency: true
+    detect_audience: true
 
 Response: {
-  "classifications": [
+  "research_type": "implementation",
+  "confidence": 0.92,
+  "matched_keywords": ["payment", "webhook", "verification"],
+  "candidates": [
     {
       "category": "payment-integration",
       "confidence": 0.92,
       "metadata": {
         "detected_technology": "api-integration",
-        "complexity_level": "intermediate",
+        "complexity_level": "intermediate", 
         "security_requirements": "high"
       }
     }
   ]
+}
+```
+
+**Context Detection (MCP Tool)**:
+```yaml
+# Detect context dimensions for targeted research
+Tool: detect_context
+Parameters:
+  query: "urgent production authentication issue needs immediate fix"
+  research_type: "troubleshooting"
+
+Response: {
+  "audience_level": "expert",
+  "technical_domain": "authentication",
+  "urgency_level": "high",
+  "overall_confidence": 0.91,
+  "dimension_confidences": {
+    "audience": 0.89,
+    "domain": 0.95,
+    "urgency": 0.89
+  }
 }
 ```
 
@@ -201,9 +199,9 @@ Response: {
 **Standard Pattern for All Agents**:
 ```yaml
 1. Pattern Lookup (Before Implementation):
-   - Use WebFetch to query Fortitude API for existing patterns
-   - Search cache for similar implementations
-   - Classify requirements for better pattern matching
+   - Use research_query MCP tool for existing implementation patterns
+   - Use classify_query MCP tool for requirement classification
+   - Use detect_context MCP tool for context-aware pattern matching
    
 2. Implementation with Patterns:
    - Apply retrieved patterns to current context
@@ -213,7 +211,7 @@ Response: {
 3. Pattern Update (After Successful Implementation):
    - Document successful implementation patterns
    - Update Fortitude knowledge base with new patterns (via orchestrator)
-   - Contribute to continuous learning cycle
+   - Contribute to continuous learning cycle via learning_feedback MCP tool
 ```
 
 **Example Integration in Agent Workflow**:
@@ -221,20 +219,29 @@ Response: {
 Database Implementation Agent Workflow:
   step_1:
     action: "Query Fortitude for database authentication patterns"
-    webfetch: "POST localhost:8080/api/v1/research"
-    query: "rust postgresql authentication schema patterns with migrations"
+    mcp_tool: "research_query"
+    parameters:
+      query: "rust postgresql authentication schema patterns with migrations"
+      context: "Security-first database design with proper migrations"
+      research_type: "implementation"
     
   step_2:
-    action: "Search cached implementations for similar schemas"
-    webfetch: "GET localhost:8080/api/v1/cache/search?query=auth+schema+postgresql"
+    action: "Classify requirements for pattern matching"
+    mcp_tool: "classify_query" 
+    parameters:
+      query: "postgresql authentication schema with user roles and permissions"
     
   step_3:
     action: "Implement using retrieved patterns"
     process: "Apply proven migration patterns with security validations"
     
   step_4:
-    action: "Validate implementation against pattern quality standards"
-    validation: "Ensure >95% test coverage and security compliance"
+    action: "Validate implementation and provide feedback"
+    mcp_tool: "learning_feedback"
+    parameters:
+      feedback_type: "implementation_success"
+      quality_rating: 0.95
+      content: "Database authentication schema implemented successfully"
 ```
 
 ## <context-strategy priority="critical">Context Preservation Strategy</context-strategy>
@@ -435,33 +442,34 @@ You are a specialized architectural research agent within the CE-DPS methodology
 - Coordination summary for other research agents
 
 ## Fortitude Knowledge Management Integration
-You have direct access to the Fortitude knowledge management system via localhost HTTP API:
+You have direct access to the Fortitude knowledge management system via MCP tools (inherited from main Claude Code instance):
 
-**API Access Configuration**:
-- Base URL: `http://localhost:8080/api/v1/`
-- No authentication required (localhost-only access)
-- Rate limit: 120 requests per minute
+**MCP Tool Access**:
+- Available tools: 28+ Fortitude MCP tools including research_query, classify_query, detect_context
+- Access method: Direct MCP tool invocation (no configuration needed)  
+- Authentication: None required (process-level security)
 
 **Required Integration Pattern**:
-1. **Pattern Lookup** (before architectural decisions): Use WebFetch to query research endpoint
-2. **Cache Search** (for existing implementations): Use WebFetch to search cached patterns  
-3. **Classification** (for requirement analysis): Use WebFetch to classify and categorize needs
+1. **Pattern Lookup** (before architectural decisions): Use research_query MCP tool
+2. **Classification** (for requirement analysis): Use classify_query MCP tool
+3. **Context Detection** (for targeted research): Use detect_context MCP tool
 
 **Example Usage**:
-```json
-// Research architectural patterns
-WebFetch: POST http://localhost:8080/api/v1/research
-Body: {
-  "query": "microservices architecture patterns for rust async applications",
-  "context": "Focus on scalability and security patterns",
-  "priority": "high"
-}
+```yaml
+# Research architectural patterns
+Tool: research_query
+Parameters:
+  query: "microservices architecture patterns for rust async applications"
+  context: "Focus on scalability and security patterns"
+  research_type: "implementation"
 
-// Search cached implementations
-WebFetch: GET http://localhost:8080/api/v1/cache/search?query=rust+microservices&research_type=implementation
+# Classify requirements
+Tool: classify_query  
+Parameters:
+  query: "need scalable rust microservices with async patterns"
 ```
 
-**MANDATORY**: Always query Fortitude API before proposing new architectural approaches. Use retrieved patterns as foundation for recommendations.
+**MANDATORY**: Always use Fortitude MCP tools before proposing new architectural approaches. Use retrieved patterns as foundation for recommendations.
 ```
 
 #### <security-research-agent>Security Research Agent</security-research-agent>
@@ -514,23 +522,24 @@ You are a specialized security research agent within the CE-DPS methodology, foc
 - Security integration points for other research areas
 
 ## Fortitude Knowledge Management Integration
-You have direct access to the Fortitude knowledge management system via localhost HTTP API:
+You have direct access to the Fortitude knowledge management system via MCP tools (inherited from main Claude Code instance):
 
-**Security-Focused API Usage**:
-```json
-// Research security patterns
-WebFetch: POST http://localhost:8080/api/v1/research
-Body: {
-  "query": "authentication security patterns oauth2 jwt rust async",
-  "context": "Focus on vulnerability prevention and compliance requirements",
-  "priority": "high"
-}
+**Security-Focused MCP Tool Usage**:
+```yaml
+# Research security patterns
+Tool: research_query
+Parameters:
+  query: "authentication security patterns oauth2 jwt rust async"
+  context: "Focus on vulnerability prevention and compliance requirements"
+  research_type: "implementation"
 
-// Search security implementations
-WebFetch: GET http://localhost:8080/api/v1/cache/search?query=security+authentication&research_type=implementation&min_quality=0.9
+# Classify security requirements
+Tool: classify_query
+Parameters:
+  query: "need secure authentication with oauth2 and jwt for rust async app"
 ```
 
-**MANDATORY**: Always query Fortitude API for security patterns before recommending authentication, authorization, or security implementations. Prioritize proven, vulnerability-tested patterns.
+**MANDATORY**: Always use Fortitude MCP tools for security patterns before recommending authentication, authorization, or security implementations. Prioritize proven, vulnerability-tested patterns.
 ```
 
 #### <performance-research-agent>Performance Research Agent</performance-research-agent>
@@ -583,18 +592,17 @@ You are a specialized performance research agent within the CE-DPS methodology, 
 - Performance integration points for other research areas
 
 ## Fortitude Knowledge Management Integration
-**Performance-Focused API Usage**:
-```json
-// Research performance patterns
-WebFetch: POST http://localhost:8080/api/v1/research
-Body: {
-  "query": "rust async performance optimization patterns connection pooling",
-  "context": "Focus on sub-200ms response times and high throughput",
-  "priority": "high"
-}
+**Performance-Focused MCP Tool Usage**:
+```yaml
+# Research performance patterns
+Tool: research_query
+Parameters:
+  query: "rust async performance optimization patterns connection pooling"
+  context: "Focus on sub-200ms response times and high throughput"
+  research_type: "implementation"
 ```
 
-**MANDATORY**: Always query Fortitude API for performance patterns and benchmarking data before recommending optimization strategies.
+**MANDATORY**: Always use Fortitude MCP tools for performance patterns and benchmarking data before recommending optimization strategies.
 ```
 
 #### <domain-research-agent>Domain Research Agent</domain-research-agent>
@@ -647,18 +655,17 @@ You are a specialized domain research agent within the CE-DPS methodology, focus
 - Domain coordination summary for other research areas
 
 ## Fortitude Knowledge Management Integration
-**Domain-Focused API Usage**:
-```json
-// Research domain patterns
-WebFetch: POST http://localhost:8080/api/v1/research
-Body: {
-  "query": "payment processing api integration patterns stripe webhook verification",
-  "context": "Focus on industry best practices and compliance requirements",
-  "priority": "high"
-}
+**Domain-Focused MCP Tool Usage**:
+```yaml
+# Research domain patterns
+Tool: research_query
+Parameters:
+  query: "payment processing api integration patterns stripe webhook verification"
+  context: "Focus on industry best practices and compliance requirements"
+  research_type: "implementation"
 ```
 
-**MANDATORY**: Always query Fortitude API for domain-specific patterns and industry best practices before proposing implementation approaches.
+**MANDATORY**: Always use Fortitude MCP tools for domain-specific patterns and industry best practices before proposing implementation approaches.
 ```
 
 ### <phase2-planning-agents>Phase 2: Planning Agent Specifications</phase2-planning-agents>
@@ -880,21 +887,22 @@ You are a specialized database implementation agent within the CE-DPS methodolog
 - Quality validation passed for database operations
 
 ## Fortitude Knowledge Management Integration
-**Database Implementation API Usage**:
-```json
-// Query database patterns before implementation
-WebFetch: POST http://localhost:8080/api/v1/research
-Body: {
-  "query": "rust postgresql async database migration patterns authentication schema",
-  "context": "Focus on secure schema design and migration best practices",
-  "priority": "high"
-}
+**Database Implementation MCP Tool Usage**:
+```yaml
+# Query database patterns before implementation
+Tool: research_query
+Parameters:
+  query: "rust postgresql async database migration patterns authentication schema"
+  context: "Focus on secure schema design and migration best practices"
+  research_type: "implementation"
 
-// Search for similar database implementations
-WebFetch: GET http://localhost:8080/api/v1/cache/search?query=database+migration+postgresql&research_type=implementation
+# Classify database requirements
+Tool: classify_query
+Parameters:
+  query: "postgresql authentication schema with user roles and permissions"
 ```
 
-**MANDATORY**: Always query Fortitude API for database patterns before implementing schemas, migrations, or repository patterns. Apply proven database security and performance patterns.
+**MANDATORY**: Always use Fortitude MCP tools for database patterns before implementing schemas, migrations, or repository patterns. Apply proven database security and performance patterns.
 ```
 
 #### <business-logic-agent>Business Logic Agent</business-logic-agent>
@@ -1287,29 +1295,48 @@ API Layer → Quality Validation:
 
 ### <phase-1-setup>Phase 1: Infrastructure Setup</phase-1-setup>
 
-**Step 1: Start Fortitude API Server**
+**Step 1: Verify Fortitude MCP Server Configuration**
 ```bash
-# CRITICAL: Start Fortitude API server BEFORE using subagents
-# All subagents require access to localhost:8080 for knowledge management
+# CRITICAL: Verify Fortitude MCP server is properly configured
+# All subagents inherit MCP tools from main Claude Code instance
 
-cd fortitude/crates/fortitude-api-server
+# Verify MCP server configuration exists
+cat .mcp.json
+# Should show:
+# {
+#   "mcpServers": {
+#     "fortitude": {
+#       "command": "cargo",
+#       "args": ["run"],
+#       "cwd": "fortitude/crates/fortitude-mcp-server"
+#     }
+#   }
+# }
 
-# Configure for CE-DPS subagent access
-export FORTITUDE_API_HOST="127.0.0.1"
-export FORTITUDE_API_PORT="8080"
-export FORTITUDE_API_AUTH_ENABLED="false"
-export FORTITUDE_API_RATE_LIMIT_PER_MINUTE="120"
-export FORTITUDE_API_CORS_ORIGINS="http://localhost:*"
+# Build and verify MCP server functionality
+cd fortitude/crates/fortitude-mcp-server
+cargo build
 
-# Start the API server (keep running in background)
-cargo run &
-
-# Verify API server is running
-curl http://localhost:8080/health
-# Expected response: {"status":"healthy","version":"0.1.0",...}
+# MCP server will be started automatically by Claude Code when needed
+# No manual server startup required for custom sub-agents
 ```
 
-**Step 2: Create Flattened Subagent Configuration Files**
+**Step 2: Create Custom Sub-Agent Configuration Files**
+
+**Important**: Based on Anthropic's custom sub-agent documentation, sub-agents automatically inherit all MCP tools from the main Claude Code instance. No additional MCP configuration is needed in the custom sub-agent files.
+
+**Sub-Agent Configuration Format**:
+```markdown
+---
+name: agent-name
+description: Description of when this subagent should be invoked
+# tools field is optional - omitting it inherits all MCP tools (recommended)
+---
+
+# Agent system prompt content here
+```
+
+**Step 3: Create Flattened Subagent Configuration Files**
 ```bash
 # Create directory structure for flattened subagent configuration
 mkdir -p .claude/subagents/prompts

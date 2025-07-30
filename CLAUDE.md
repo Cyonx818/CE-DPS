@@ -650,8 +650,8 @@ cargo run -- start --host 127.0.0.1 --port 8091
   "mcpServers": {
     "fortitude": {
       "command": "cargo",
-      "args": ["run", "--bin", "fortitude-mcp-server"],
-      "cwd": "/home/cyonx/Documents/GitHub/CE-DPS/fortitude/crates/fortitude-mcp-server"
+      "args": ["run"],
+      "cwd": "fortitude/crates/fortitude-mcp-server"
     }
   }
 }
